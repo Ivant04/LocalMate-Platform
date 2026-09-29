@@ -32,4 +32,15 @@ public class AuthController {
             return ResponseEntity.status(401).body(java.util.Map.of("message", "Incorrect email or password!"));
         }
     }
+
+    @PostMapping("/google")
+    public ResponseEntity<?> googleLogin(@RequestBody GoogleAuthRequest request) {
+        try {
+            return ResponseEntity.ok(authService.googleLogin(request));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Google login failed: " + e.getMessage()));
+        }
+    }
 }

@@ -89,4 +89,82 @@ public class AuthService {
                 .roles(user.getRoles())
                 .build();
     }
+
+    @SuppressWarnings({"unchecked"})
+    public AuthenticationResponse googleLogin(GoogleAuthRequest request) {
+        String email = null;
+        String fullName = null;
+        String picture = null;
+
+        if (request.getCredential() != null && !request.getCredential().isBlank()) {
+            try {
+                // Verify with Google's public tokeninfo endpoint
+                String verifyUrl = "https://oauth2.googleapis.com/tokeninfo?id_token=" + request.getCredential();
+                org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+                java.util.Map<String, Object> googleUser = restTemplate.getForObject(verifyUrl, java.util.Map.class);
+
+                if (googleUser != null && googleUser.containsKey("email")) {
+                    email = (String) googleUser.get("email");
+                    fullName = (String) googleUser.get("name");
+                    picture = (String) googleUser.get("picture");
+                }
+            } catch (Exception e) {
+                if (request.getEmail() == null || request.getEmail().isBlank()) {
+                    throw new IllegalArgumentException("Invalid Google token: " + e.getMessage());
+                }
+            }
+        }
+
+        // Fallback for demo mode or pre-verified profile
+        if (email == null && request.getEmail() != null && !request.getEmail().isBlank()) {
+            email = request.getEmail();
+            fullName = request.getFullName() != null ? request.getFullName() : email.split("@")[0];
+            picture = request.getAvatarUrl();
+        }
+
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Unable to retrieve email from Google account!");
+        }
+
+        final String userEmail = email.toLowerCase().trim();
+        final String userName = fullName != null && !fullName.isBlank() ? fullName : userEmail.split("@")[0];
+        final String userAvatar = picture;
+
+        User user = userRepository.findByEmail(userEmail).orElseGet(() -> {
+            User newUser = User.builder()
+                    .email(userEmail)
+                    .fullName(userName)
+                    .password(passwordEncoder.encode(java.util.UUID.randomUUID().toString()))
+                    .avatarUrl(userAvatar)
+                    .roles(Collections.singleton("ROLE_TRAVELER"))
+                    .status("ACTIVE")
+                    .build();
+            return userRepository.save(newUser);
+        });
+
+        // Update avatar or name if missing
+        boolean updated = false;
+        if ((user.getAvatarUrl() == null || user.getAvatarUrl().isBlank()) && userAvatar != null) {
+            user.setAvatarUrl(userAvatar);
+            updated = true;
+        }
+        if ((user.getFullName() == null || user.getFullName().isBlank()) && userName != null) {
+            user.setFullName(userName);
+            updated = true;
+        }
+        if (updated) {
+            user = userRepository.save(user);
+        }
+
+        String token = jwtService.generateToken(user.getEmail());
+        return AuthenticationResponse.builder()
+                .token(token)
+                .id(user.getId())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .phone(user.getPhone())
+                .avatarUrl(user.getAvatarUrl())
+                .roles(user.getRoles())
+                .build();
+    }
 }
