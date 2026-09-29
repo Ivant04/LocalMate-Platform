@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AdminLayout from './admin/AdminLayout';
 
 export default function AdminDashboard() {
   const [helpersCount, setHelpersCount] = useState(1240);
@@ -32,52 +33,19 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-on-surface">
-      
-      {/* Sidebar navigation */}
-      <aside className="hidden lg:flex flex-col h-full sticky top-0 py-6 overflow-y-auto bg-surface-container-low border-r border-border-subtle w-64 shrink-0 justify-between">
-        <div className="px-6">
-          <span className="font-headline-md text-headline-md font-bold text-primary block mb-6">Admin Panel</span>
-          <nav className="space-y-2">
-            <button className="w-full bg-secondary-container text-on-secondary-container rounded-xl px-4 py-3 flex items-center gap-3 text-left">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>dashboard</span>
-              <span className="font-label-bold text-label-bold">Overview</span>
-            </button>
-            <button className="w-full text-on-surface-variant hover:bg-surface-variant/50 px-4 py-3 rounded-xl flex items-center gap-3 transition-all text-left">
-              <span className="material-symbols-outlined">verified_user</span>
-              <span className="font-label-bold text-label-bold">Verification List</span>
-            </button>
-          </nav>
+    <AdminLayout>
+      {/* Top bar */}
+      <header className="sticky top-0 z-10 flex items-center justify-between px-6 md:px-10 py-4 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-2xs">
+        <h1 className="font-headline-md text-headline-md font-bold text-gray-900 text-xl">System Overview</h1>
+        <div className="flex items-center gap-4">
+          <button className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-all">
+            <span className="material-symbols-outlined text-xl">notifications</span>
+            <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+          </button>
         </div>
-        
-        <div className="px-6 border-t border-border-subtle pt-4 flex items-center gap-3">
-          <img 
-            alt="Admin" 
-            className="w-10 h-10 rounded-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcjdK4CVHClHJ_2kir-TK__WAiVg-hu9z26POXFOY9laU7-ofeRbtQOWwY3OZ1jNb3yDP7-ujmR-TAY2FGTrqJrxhCXgTmqfRPFcdr__ilFT0em8HAAHxp4TOLI28kNQzlh4LK28yoPH7bqx29M0tSchFXFmu0kRic_gu0PYx43VbUTf-yvqX3HHqXRu5nNRa4wUde6LVbQnXeeAlnmcfVXiwc64u3_LBV5Uh5fyODbgBlv_yMnJyrME12D1lblTek68ZHrgPKz8A" 
-          />
-          <div>
-            <p className="font-label-bold text-label-bold text-on-surface">Alex Rivera</p>
-            <p className="text-[10px] text-on-surface-variant uppercase">System Admin</p>
-          </div>
-        </div>
-      </aside>
+      </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0">
-        
-        {/* Top bar */}
-        <header className="sticky top-0 z-10 flex items-center justify-between px-6 md:px-10 py-4 bg-surface/80 backdrop-blur-md shadow-sm">
-          <h1 className="font-headline-md text-headline-md font-bold text-on-surface">System Overview</h1>
-          <div className="flex items-center gap-4">
-            <button className="relative p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-all">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
-            </button>
-          </div>
-        </header>
-
-        <div className="p-6 md:p-10 space-y-8 w-full max-w-7xl mx-auto">
+      <div className="p-6 md:p-10 space-y-8 w-full max-w-7xl mx-auto">
           
           {/* Stats Cards Section */}
           <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -232,9 +200,7 @@ export default function AdminDashboard() {
 
           </section>
 
-        </div>
-      </main>
-
-    </div>
+      </div>
+    </AdminLayout>
   );
 }

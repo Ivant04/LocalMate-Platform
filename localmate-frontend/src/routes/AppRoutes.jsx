@@ -13,6 +13,8 @@ import TravelerDashboard from '../pages/TravelerDashboard';
 import HelperDashboard from '../pages/HelperDashboard';
 import ReviewManagement from '../pages/ReviewManagement';
 import AdminDashboard from '../pages/AdminDashboard';
+import Customers from '../pages/admin/accounts/Customers';
+import LocalHelpers from '../pages/admin/accounts/LocalHelpers';
 import ProfileEdit from '../pages/ProfileEdit';
 
 export default function AppRoutes() {
@@ -22,6 +24,7 @@ export default function AppRoutes() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<LandingPage />} />
         <Route path="login" element={<Authentication />} />
+        <Route path="auth" element={<Authentication />} />
         <Route path="search" element={<SearchResults />} />
         <Route path="helper/:id" element={<HelperDetail />} />
         <Route path="request/:id" element={<HelperRequestForm />} />
@@ -29,12 +32,16 @@ export default function AppRoutes() {
         <Route path="payment-result" element={<PaymentResult />} />
         <Route path="profile" element={<ProfileEdit />} />
         
-        {/* Dashboards and Chat (Also wrapped in Public layout headers, sidebar layouts inside pages) */}
+        {/* Dashboards and Chat */}
         <Route path="chat" element={<RealtimeChat />} />
         <Route path="traveler" element={<TravelerDashboard />} />
         <Route path="helper-dashboard" element={<HelperDashboard />} />
         <Route path="reviews" element={<ReviewManagement />} />
+        
+        {/* Admin Portal Routes */}
         <Route path="admin" element={<AdminDashboard />} />
+        <Route path="admin/accounts/customers" element={<Customers />} />
+        <Route path="admin/accounts/local-helpers" element={<LocalHelpers />} />
       </Route>
     </Routes>
   );

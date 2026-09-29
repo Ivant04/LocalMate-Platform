@@ -36,7 +36,13 @@ public class User {
     private Set<String> roles = new HashSet<>();
 
     @Builder.Default
-    private String status = "ACTIVE"; // ACTIVE, SUSPENDED, PENDING
+    private String status = "ACTIVE"; // ACTIVE, INACTIVE, BLOCKED
+
+    @Builder.Default
+    private String gender = "Other"; // Nam, Nữ, Khác
+
+    @Builder.Default
+    private String location = "Việt Nam";
 
     @CreatedDate
     private Instant createdAt;

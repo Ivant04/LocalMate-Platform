@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -335,5 +336,154 @@ public class HelperController {
                 "date", date != null ? date : "",
                 "busySlots", busySlots
         ));
+    }
+
+    @SuppressWarnings("unchecked")
+    @PostMapping
+    public ResponseEntity<?> createHelper(@RequestBody Map<String, Object> body) {
+        String email = (String) body.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
+        }
+        if (userRepository.existsByEmail(email.trim().toLowerCase())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email already exists"));
+        }
+
+        String name = (String) body.getOrDefault("name", "Local Helper");
+        String phone = (String) body.getOrDefault("phone", "+84 912 345 678");
+        String city = (String) body.getOrDefault("city", "Đà Nẵng");
+        String title = (String) body.getOrDefault("title", "Local Guide & Explorer");
+        String bio = (String) body.getOrDefault("bio", "Experienced local guide ready to share authentic local culture.");
+        String avatar = (String) body.getOrDefault("avatar", "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150");
+        String availability = (String) body.getOrDefault("availabilityStatus", "AVAILABLE");
+
+        List<String> languages = body.get("languages") instanceof List ? (List<String>) body.get("languages") : List.of("Tiếng Việt", "Tiếng Anh");
+        List<String> skills = body.get("skills") instanceof List ? (List<String>) body.get("skills") : List.of("Food Tour", "Culture");
+
+        double rate = 12.0;
+        if (body.get("hourlyRate") != null) {
+            try { rate = Double.parseDouble(body.get("hourlyRate").toString()); } catch (Exception ignored) {}
+        }
+
+        User user = User.builder()
+                .email(email.trim().toLowerCase())
+                .fullName(name)
+                .phone(phone)
+                .avatarUrl(avatar)
+                .roles(Set.of("ROLE_HELPER"))
+                .status("ACTIVE")
+                .createdAt(Instant.now())
+                .build();
+        user = userRepository.save(user);
+
+        HelperProfile profile = HelperProfile.builder()
+                .userId(user.getId())
+                .title(title)
+                .bio(bio)
+                .city(city)
+                .languages(languages)
+                .skills(skills)
+                .hourlyRate(rate)
+                .rating(5.0)
+                .reviewCount(0)
+                .verified(true)
+                .availabilityStatus(availability.toUpperCase())
+                .createdAt(Instant.now())
+                .build();
+        profile = helperProfileRepository.save(profile);
+
+        return ResponseEntity.ok(toHelperMap(user, profile));
+    }
+
+    @SuppressWarnings("unchecked")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateHelper(@PathVariable String id, @RequestBody Map<String, Object> body) {
+        Optional<HelperProfile> profileOpt = helperProfileRepository.findByUserId(id);
+        Optional<User> userOpt = userRepository.findById(id);
+
+        if (profileOpt.isEmpty()) {
+            profileOpt = helperProfileRepository.findById(id);
+            if (profileOpt.isPresent()) {
+                userOpt = userRepository.findById(profileOpt.get().getUserId());
+            }
+        }
+
+        if (profileOpt.isEmpty()) {
+            List<User> users = userRepository.findAll();
+            for (User u : users) {
+                if (u.getEmail() != null && u.getEmail().equalsIgnoreCase(id)) {
+                    userOpt = Optional.of(u);
+                    profileOpt = helperProfileRepository.findByUserId(u.getId());
+                    break;
+                }
+            }
+        }
+
+        if (profileOpt.isPresent() && userOpt.isPresent()) {
+            HelperProfile profile = profileOpt.get();
+            User user = userOpt.get();
+
+            if (body.containsKey("name") && body.get("name") != null) {
+                user.setFullName(body.get("name").toString());
+            }
+            if (body.containsKey("fullName") && body.get("fullName") != null) {
+                user.setFullName(body.get("fullName").toString());
+            }
+            if (body.containsKey("phone") && body.get("phone") != null) {
+                user.setPhone(body.get("phone").toString());
+            }
+            if (body.containsKey("avatar") && body.get("avatar") != null) {
+                user.setAvatarUrl(body.get("avatar").toString());
+            }
+            if (body.containsKey("status") && body.get("status") != null) {
+                user.setStatus(body.get("status").toString().toUpperCase());
+            }
+
+            if (body.containsKey("city") && body.get("city") != null) {
+                profile.setCity(body.get("city").toString());
+            }
+            if (body.containsKey("title") && body.get("title") != null) {
+                profile.setTitle(body.get("title").toString());
+            }
+            if (body.containsKey("bio") && body.get("bio") != null) {
+                profile.setBio(body.get("bio").toString());
+            }
+            if (body.containsKey("availabilityStatus") && body.get("availabilityStatus") != null) {
+                profile.setAvailabilityStatus(body.get("availabilityStatus").toString().toUpperCase());
+            }
+            if (body.containsKey("hourlyRate") && body.get("hourlyRate") != null) {
+                try { profile.setHourlyRate(Double.parseDouble(body.get("hourlyRate").toString())); } catch (Exception ignored) {}
+            }
+            if (body.containsKey("languages") && body.get("languages") instanceof List) {
+                profile.setLanguages((List<String>) body.get("languages"));
+            }
+
+            userRepository.save(user);
+            helperProfileRepository.save(profile);
+
+            return ResponseEntity.ok(toHelperMap(user, profile));
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteHelper(@PathVariable String id) {
+        Optional<HelperProfile> profileOpt = helperProfileRepository.findByUserId(id);
+        Optional<User> userOpt = userRepository.findById(id);
+
+        if (profileOpt.isEmpty()) {
+            profileOpt = helperProfileRepository.findById(id);
+            if (profileOpt.isPresent()) {
+                userOpt = userRepository.findById(profileOpt.get().getUserId());
+            }
+        }
+
+        if (profileOpt.isPresent()) {
+            helperProfileRepository.delete(profileOpt.get());
+        }
+        userOpt.ifPresent(userRepository::delete);
+
+        return ResponseEntity.ok(Map.of("message", "Helper deleted successfully", "id", id));
     }
 }

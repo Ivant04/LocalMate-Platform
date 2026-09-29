@@ -6,7 +6,12 @@ import Footer from '../components/Footer';
 export default function MainLayout() {
   const location = useLocation();
   const isChat = location.pathname === '/chat' || location.pathname === '/messages';
-  const isAuth = location.pathname === '/login' || location.pathname === '/register';
+  const isAuth = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/auth';
+  const isAdmin = location.pathname.startsWith('/admin');
+
+  if (isAdmin) {
+    return <Outlet />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-surface text-on-surface">
