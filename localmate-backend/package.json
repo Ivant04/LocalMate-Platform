@@ -1,5 +1,5 @@
 {
-  "name": "localmate-backend-node",
+  "name": "localmate-backend",
   "version": "1.0.0",
   "description": "LocalMate Platform Node.js Backend API",
   "main": "src/server.js",
