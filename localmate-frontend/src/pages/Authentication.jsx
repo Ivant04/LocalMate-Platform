@@ -39,6 +39,11 @@ export default function Authentication() {
     if (roleParam === 'guide') {
       setRole('guide');
     }
+
+    // Pre-warm backend immediately when visiting auth page to eliminate cold start wait
+    try {
+      fetch(`${API_BASE_URL}/health`, { method: 'GET', keepalive: true }).catch(() => {});
+    } catch {}
   }, [searchParams]);
 
   // Helper to parse network, deployment, and CORS errors
