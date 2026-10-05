@@ -12,7 +12,7 @@ export default function SearchResults() {
   // Filter States
   const [city, setCity] = useState('');
   const [selectedExpertise, setSelectedExpertise] = useState([]);
-  const [priceMax, setPriceMax] = useState(10);
+  const [priceMax, setPriceMax] = useState(5);
   const [minRating, setMinRating] = useState(4.0);
   const [language, setLanguage] = useState('English');
   const [favorites, setFavorites] = useState([]);
@@ -58,7 +58,7 @@ export default function SearchResults() {
   const handleReset = () => {
     setCity('');
     setSelectedExpertise([]);
-    setPriceMax(10);
+    setPriceMax(5);
     setMinRating(4.0);
     setLanguage('English');
     setSearchParams({});
@@ -174,7 +174,7 @@ export default function SearchResults() {
                 <input
                   type="range"
                   min="1"
-                  max="10"
+                  max="5"
                   value={priceMax}
                   onChange={(e) => setPriceMax(Number(e.target.value))}
                   className="w-full h-1.5 bg-outline-variant rounded-full appearance-none cursor-pointer accent-primary"
@@ -189,8 +189,8 @@ export default function SearchResults() {
                     type="button"
                     onClick={() => setMinRating(4.0)}
                     className={`flex-1 py-1.5 rounded-lg border font-label-bold text-xs transition-all ${minRating === 4.0
-                        ? 'border-primary bg-primary-container/10 text-primary font-bold'
-                        : 'border-outline-variant text-on-surface-variant hover:border-primary'
+                      ? 'border-primary bg-primary-container/10 text-primary font-bold'
+                      : 'border-outline-variant text-on-surface-variant hover:border-primary'
                       }`}
                   >
                     4.0+ ★
@@ -199,8 +199,8 @@ export default function SearchResults() {
                     type="button"
                     onClick={() => setMinRating(4.5)}
                     className={`flex-1 py-1.5 rounded-lg border font-label-bold text-xs transition-all ${minRating === 4.5
-                        ? 'border-primary bg-primary-container/10 text-primary font-bold'
-                        : 'border-outline-variant text-on-surface-variant hover:border-primary'
+                      ? 'border-primary bg-primary-container/10 text-primary font-bold'
+                      : 'border-outline-variant text-on-surface-variant hover:border-primary'
                       }`}
                   >
                     4.5+ ★
@@ -348,8 +348,8 @@ export default function SearchResults() {
                       <button
                         onClick={() => toggleFavorite(guide.id)}
                         className={`p-3 border rounded-xl transition-all ${favorites.includes(guide.id)
-                            ? 'bg-error/10 border-error text-error'
-                            : 'border-border-subtle text-on-surface-variant hover:bg-surface-container'
+                          ? 'bg-error/10 border-error text-error'
+                          : 'border-border-subtle text-on-surface-variant hover:bg-surface-container'
                           }`}
                       >
                         <span className="material-symbols-outlined" style={favorites.includes(guide.id) ? { fontVariationSettings: "'FILL' 1" } : {}}>

@@ -26,6 +26,7 @@ export default function AppRoutes() {
         <Route path="login" element={<Authentication />} />
         <Route path="auth" element={<Authentication />} />
         <Route path="search" element={<SearchResults />} />
+        <Route path="helpers" element={<SearchResults />} />
         <Route path="helper/:id" element={<HelperDetail />} />
         <Route path="request/:id" element={<HelperRequestForm />} />
         <Route path="payment" element={<Payment />} />

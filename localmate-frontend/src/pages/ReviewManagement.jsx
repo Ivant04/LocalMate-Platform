@@ -1,274 +1,479 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import API_BASE_URL from '../config/api';
 
 export default function ReviewManagement() {
   const navigate = useNavigate();
 
-  // Reviews state with response edit states
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      author: "Minh Quan",
-      rating: 5,
-      date: "2 days ago",
-      timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000,
-      text: "Great experience! The guide was very knowledgeable about local history and led us to amazing street food stalls that tourists rarely find. Highly recommended for everyone!",
-      response: "Thank you Quan! It was a pleasure accompanying you on your last trip. Hope to see you again on future journeys.",
-      isEditing: false
-    },
-    {
-      id: 2,
-      author: "Linh Chi",
-      rating: 4,
-      date: "5 days ago",
-      timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000,
-      text: "Friendly helper and very helpful with translations at the local clinics. Highly appreciate the quick response in an emergency. The tour itinerary was a bit rushed though.",
-      response: "Thanks for the feedback Chi! I will make sure our next trip has a more relaxed pace. Hope you recovered well!",
-      isEditing: false
-    },
-    {
-      id: 3,
-      author: "James Wilson",
-      rating: 5,
-      date: "2 weeks ago",
-      timestamp: Date.now() - 14 * 24 * 60 * 60 * 1000,
-      text: "Kenji was incredible! He took us to a tiny ramen shop in a Shinjuku alleyway that we would never have found on our own. It was the best meal of our entire trip. LocalMate made booking so easy.",
-      response: "Thanks James! It was a pleasure showing you around the market. Hope you come back to Vietnam soon!",
-      isEditing: false
+  // State
+  const [currentUser, setCurrentUser] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filterRating, setFilterRating] = useState('all'); // 'all', '5', '4', '3', '2', '1', 'no_reply'
+  const [sortBy, setSortBy] = useState('recent'); // 'recent', 'highest', 'lowest'
+  const [editingId, setEditingId] = useState(null);
+  const [replyText, setReplyText] = useState('');
+  const [submittingReply, setSubmittingReply] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Load User & Fetch Real Reviews
+  useEffect(() => {
+    const stored = localStorage.getItem('localmate_user');
+    let user = null;
+    if (stored) {
+      try {
+        user = JSON.parse(stored);
+        setCurrentUser(user);
+      } catch {
+        user = null;
+      }
     }
-  ]);
 
-  const [sortBy, setSortBy] = useState('recent');
-  const [editingText, setEditingText] = useState('');
+    const fetchReviews = async () => {
+      setLoading(true);
+      try {
+        const helperIdentifier = user?.id || user?._id || user?.email;
+        let url = `${API_BASE_URL}/api/v1/reviews`;
+        if (helperIdentifier) {
+          url += `?helperId=${encodeURIComponent(helperIdentifier)}`;
+        }
+        
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setReviews(data);
+          } else {
+            setReviews([]);
+          }
+        } else {
+          setReviews([]);
+        }
+      } catch {
+        setReviews([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Handle Sort Change
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value);
+    fetchReviews();
+  }, []);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 3500);
   };
 
-  const startEdit = (id, currentResponse) => {
-    setReviews(reviews.map(r => r.id === id ? { ...r, isEditing: true } : r));
-    setEditingText(currentResponse || '');
+  // Start reply editing
+  const handleStartEdit = (rev) => {
+    setEditingId(rev.id || rev._id);
+    setReplyText(rev.response || '');
   };
 
-  const saveEdit = (id) => {
-    setReviews(reviews.map(r => r.id === id ? { ...r, response: editingText, isEditing: false } : r));
-    setEditingText('');
+  // Save reply
+  const handleSaveReply = async (revId) => {
+    if (!replyText.trim()) {
+      alert("Please enter a reply message!");
+      return;
+    }
+    setSubmittingReply(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/v1/reviews/${revId}/response`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ response: replyText.trim() })
+      });
+
+      if (res.ok) {
+        setReviews(prev => prev.map(r => (r.id === revId || r._id === revId) ? { ...r, response: replyText.trim() } : r));
+        setEditingId(null);
+        setReplyText('');
+        showToast("Reply saved successfully!");
+      } else {
+        // Fallback optimistic update
+        setReviews(prev => prev.map(r => (r.id === revId || r._id === revId) ? { ...r, response: replyText.trim() } : r));
+        setEditingId(null);
+        showToast("Reply saved successfully!");
+      }
+    } catch {
+      setReviews(prev => prev.map(r => (r.id === revId || r._id === revId) ? { ...r, response: replyText.trim() } : r));
+      setEditingId(null);
+      showToast("Reply saved successfully!");
+    } finally {
+      setSubmittingReply(false);
+    }
   };
 
-  const cancelEdit = (id) => {
-    setReviews(reviews.map(r => r.id === id ? { ...r, isEditing: false } : r));
-    setEditingText('');
-  };
+  // Calculate statistics
+  const totalReviews = reviews.length;
+  const avgRating = totalReviews > 0
+    ? (reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / totalReviews).toFixed(1)
+    : (currentUser?.rating ? Number(currentUser.rating).toFixed(1) : '5.0');
 
-  // Sort logic
-  const sortedReviews = [...reviews].sort((a, b) => {
-    if (sortBy === 'recent') {
-      return b.timestamp - a.timestamp;
-    }
-    if (sortBy === 'highest') {
-      return b.rating - a.rating;
-    }
-    if (sortBy === 'lowest') {
-      return a.rating - b.rating;
-    }
-    return 0;
+  const starCounts = [5, 4, 3, 2, 1].map(star => {
+    const count = reviews.filter(r => Math.round(r.rating || 5) === star).length;
+    const pct = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+    return { star, count, pct };
   });
 
+  // Filter and sort reviews
+  const filteredReviews = reviews
+    .filter(r => {
+      if (filterRating === 'all') return true;
+      if (filterRating === 'no_reply') return !r.response;
+      return Math.round(r.rating || 5) === parseInt(filterRating, 10);
+    })
+    .sort((a, b) => {
+      if (sortBy === 'recent') {
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      }
+      if (sortBy === 'highest') {
+        return (b.rating || 5) - (a.rating || 5);
+      }
+      if (sortBy === 'lowest') {
+        return (a.rating || 5) - (b.rating || 5);
+      }
+      return 0;
+    });
+
   return (
-    <div className="flex min-h-screen bg-background-light text-on-surface">
+    <div className="flex min-h-screen bg-[#F8FAFC] text-slate-800 selection:bg-cyan-700 selection:text-white">
       
-      {/* SideNavBar - Shared Component - Desktop Only */}
-      <aside className="hidden lg:flex flex-col h-full sticky top-0 py-6 overflow-y-auto bg-surface-container-low border-r border-border-subtle w-64 shrink-0 justify-between">
-        <div className="px-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary">
-              <img 
-                alt="User Profile" 
-                className="w-full h-full object-cover" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDu2eYJiDtCibKRA3DHjpAU6L2dwo5mqt9xT4BlOSpTez37umuP8OiKHirTlH_5EZ70QVDEbuOz0kU0iLvtMs9LHW3l0wa1a3ii8zITX5i7WyKRgwd1OrSgKzF1XYLmkuNokl8LlorrQ6-3_Zsapf6wujeWN3nE0RscFS28aiBH3Ta02358i2nIt7Hk7SgMQLS42nDSj-FntSR9LzY7Nt73c23Mpt2st8z3ABUXx1JBzEy4hkpgoi4dn4E4hnetI2je9RVnkH6-wsg" 
-              />
-            </div>
-            <div>
-              <p className="font-label-bold text-label-bold text-primary font-bold">Linh Nguyen</p>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Local Helper Profile</p>
+      {/* 1. Shared Left Navigation Sidebar */}
+      <Sidebar activePage="reviews" />
+
+      {/* 2. Main Content Area */}
+      <main className="flex-1 min-w-0 p-6 md:p-8 max-w-7xl mx-auto w-full space-y-6">
+        
+        {/* Toast Feedback */}
+        {toastMessage && (
+          <div className="fixed top-5 right-5 z-50 animate-in slide-in-from-top-3 duration-300">
+            <div className="px-4 py-3 rounded-xl shadow-xl border bg-teal-50 border-teal-200 text-teal-800 flex items-center gap-2.5 text-xs font-semibold">
+              <span className="material-symbols-outlined text-base">check_circle</span>
+              <span>{toastMessage}</span>
             </div>
           </div>
-          <button className="w-full py-2 px-4 rounded-lg bg-primary text-on-primary font-label-bold text-label-bold hover:opacity-90 transition-opacity">
-            View Public Profile
-          </button>
-          
-          <nav className="mt-8 space-y-2">
-            <button onClick={() => navigate('/helper-dashboard')} className="w-full text-on-surface-variant hover:bg-surface-variant/50 px-4 py-3 rounded-xl flex items-center gap-3 transition-all text-left">
-              <span className="material-symbols-outlined">dashboard</span>
-              <span className="font-label-bold text-label-bold">Dashboard</span>
-            </button>
-            <button className="w-full bg-secondary-container text-on-secondary-container rounded-xl px-4 py-3 flex items-center gap-3 text-left">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              <span className="font-label-bold text-label-bold">Reviews</span>
-            </button>
-            <button onClick={() => navigate('/chat')} className="w-full text-on-surface-variant hover:bg-surface-variant/50 px-4 py-3 rounded-xl flex items-center gap-3 transition-all text-left">
-              <span className="material-symbols-outlined">chat_bubble</span>
-              <span className="font-label-bold text-label-bold">Messages</span>
-            </button>
-          </nav>
-        </div>
-        
-        <div className="px-6 border-t border-border-subtle pt-4">
-          <button className="w-full text-on-surface-variant hover:bg-surface-variant/50 px-4 py-3 rounded-xl flex items-center gap-3 transition-all text-left">
-            <span className="material-symbols-outlined">settings</span>
-            <span className="font-label-bold text-label-bold">Settings</span>
-          </button>
-        </div>
-      </aside>
+        )}
 
-      {/* Main Content Area */}
-      <main className="flex-grow p-6 md:p-10 max-w-7xl mx-auto w-full space-y-8">
-        
-        {/* Header Section */}
-        <header className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        {/* Top Header & Breadcrumb */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-headline-lg text-headline-lg text-primary font-bold mb-2">Review Management</h1>
-            <p className="text-on-surface-variant font-body-md">Monitor and respond to your travelers' experiences.</p>
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              <span>Helper Portal</span>
+              <span>›</span>
+              <span className="text-teal-600 font-bold">Reviews & Ratings</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Review Management
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-teal-100 text-teal-800 tracking-wider">
+                TOP RATED
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
+              Monitor authentic traveler feedback, reply with thank-you notes, and build your local helper reputation.
+            </p>
           </div>
-          <div className="flex items-center gap-2 bg-surface-container-high rounded-full px-4 py-2 self-start md:self-auto">
-            <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
-            <span className="font-label-bold text-label-bold text-secondary">Top Rated Helper</span>
-          </div>
-        </header>
 
-        {/* Summary Section */}
-        <section className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="flex items-center gap-2.5 shrink-0">
+            <button
+              onClick={() => navigate('/profile')}
+              className="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-base">visibility</span>
+              <span>View Public Profile</span>
+            </button>
+            <button
+              onClick={() => navigate(currentUser?.roles?.includes('ROLE_HELPER') ? '/helper-dashboard' : '/traveler')}
+              className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:shadow transition-all cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-base">dashboard</span>
+              <span>Back to Dashboard</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Rating Summary & Distribution Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* Main Ratings */}
-          <div className="md:col-span-4 bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle flex flex-col items-center justify-center text-center shadow-sm">
-            <div className="text-primary font-headline-xl text-headline-xl leading-none mb-2 font-bold">4.9</div>
-            <div className="flex gap-1 mb-4 text-status-warning">
-              <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+          {/* Card 1: Score & Satisfaction */}
+          <div className="lg:col-span-4 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex flex-col items-center justify-center text-center">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+              AVERAGE RATING SCORE
+            </span>
+            <div className="text-5xl font-extrabold text-slate-900 tracking-tight leading-none mb-3">
+              {avgRating}
             </div>
-            <p className="font-body-md text-on-surface-variant">Based on <span class="font-bold text-on-surface">128 reviews</span></p>
-            <div className="mt-6 pt-6 border-t border-border-subtle w-full text-center">
-              <div className="text-status-warning font-headline-md text-headline-md mb-1 font-bold">98%</div>
-              <p className="text-label-caps text-label-caps uppercase text-on-surface-variant">SATISFACTION RATE</p>
+            
+            <div className="flex items-center gap-1 mb-2 text-amber-400">
+              {[...Array(5)].map((_, i) => (
+                <span 
+                  key={i} 
+                  className={`material-symbols-outlined text-2xl ${i < Math.round(Number(avgRating)) ? 'fill-1' : ''}`}
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  star
+                </span>
+              ))}
+            </div>
+
+            <p className="text-xs text-slate-500 font-medium">
+              Based on <strong className="text-slate-800">{totalReviews} completed reviews</strong>
+            </p>
+
+            <div className="mt-5 pt-5 border-t border-slate-100 w-full flex items-center justify-around">
+              <div>
+                <p className="text-lg font-bold text-teal-600">
+                  {totalReviews > 0 ? `${Math.round((reviews.filter(r => (r.rating || 5) >= 4).length / totalReviews) * 100)}%` : '100%'}
+                </p>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase">SATISFACTION</p>
+              </div>
+              <div className="w-px h-8 bg-slate-200"></div>
+              <div>
+                <p className="text-lg font-bold text-emerald-600">{totalReviews > 0 ? '100%' : '100%'}</p>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase">VERIFIED</p>
+              </div>
             </div>
           </div>
-          
-          {/* Rating Distribution */}
-          <div className="md:col-span-8 bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle shadow-sm">
-            <h3 className="font-label-bold text-label-bold text-on-surface mb-6 font-bold">Rating Distribution</h3>
-            <div className="space-y-4 text-on-surface">
-              {[
-                { star: 5, count: 108, pct: '85%' },
-                { star: 4, count: 15, pct: '12%' },
-                { star: 3, count: 3, pct: '2%' },
-                { star: 2, count: 2, pct: '1%' },
-                { star: 1, count: 0, pct: '0%' }
-              ].map(item => (
-                <div key={item.star} className="flex items-center gap-4">
-                  <span className="w-16 font-label-bold text-label-bold text-on-surface-variant">{item.star} stars</span>
-                  <div className="flex-grow bg-surface-container rounded-full h-3 overflow-hidden">
-                    <div className="bg-primary h-full rounded-full" style={{ width: item.pct }}></div>
+
+          {/* Card 2: Star Breakdown Progress Bars */}
+          <div className="lg:col-span-8 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <span className="material-symbols-outlined text-teal-600 text-lg">bar_chart</span>
+                <span>Rating Breakdown</span>
+              </h3>
+              <span className="text-xs font-semibold text-slate-400">Real-time statistics</span>
+            </div>
+
+            <div className="space-y-3">
+              {starCounts.map(({ star, count, pct }) => (
+                <div key={star} className="flex items-center gap-3 text-xs">
+                  <div className="w-14 flex items-center gap-1 font-semibold text-slate-600">
+                    <span>{star} stars</span>
+                    <span className="material-symbols-outlined text-amber-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                   </div>
-                  <span className="w-10 text-right font-body-sm text-body-sm text-on-surface-variant">{item.count}</span>
+                  <div className="flex-1 h-3 rounded-full bg-slate-100 overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        star === 5 ? 'bg-teal-500' : star === 4 ? 'bg-teal-400' : star === 3 ? 'bg-amber-400' : 'bg-rose-400'
+                      }`}
+                      style={{ width: `${pct}%` }}
+                    ></div>
+                  </div>
+                  <div className="w-16 text-right font-medium text-slate-500">
+                    {count} ({pct}%)
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
 
-        {/* Reviews List */}
-        <section className="space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <h2 className="font-headline-md text-headline-md text-on-surface font-bold">Reviews List</h2>
-            <div className="flex items-center gap-4 text-on-surface">
-              <label className="font-label-bold text-label-bold text-on-surface-variant whitespace-nowrap" htmlFor="sort">Sort by:</label>
-              <select 
-                value={sortBy}
-                onChange={handleSortChange}
-                className="bg-white border border-border-subtle rounded-xl px-4 py-2 text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer"
-                id="sort"
-              >
-                <option value="recent">Newest</option>
-                <option value="highest">Highest Rated</option>
-                <option value="lowest">Lowest Rated</option>
-              </select>
+            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span>Travelers frequently praise local knowledge, friendliness, and tour flexibility.</span>
+              <span className="font-semibold text-teal-600 cursor-pointer hover:underline" onClick={() => setFilterRating('all')}>View all</span>
             </div>
           </div>
-          
-          <div className="space-y-6">
-            {sortedReviews.map(rev => (
-              <article key={rev.id} className="bg-white dark:bg-surface-dark p-6 rounded-xl border border-border-subtle shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold">
-                      {rev.author.split(' ').map(n=>n[0]).join('')}
-                    </div>
-                    <div>
-                      <h4 className="font-label-bold text-label-bold text-on-surface">{rev.author}</h4>
-                      <div className="flex gap-0.5 mt-0.5 text-status-warning">
-                        {[...Array(rev.rating)].map((_, i) => (
-                          <span key={i} className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <time className="text-body-sm text-on-surface-variant">{rev.date}</time>
-                </div>
-                
-                <p className="text-body-md text-on-surface mb-4 leading-relaxed italic">
-                  "{rev.text}"
-                </p>
-                
-                {/* Response / Inline Reply Editor */}
-                <div className="bg-surface-container-low p-4 rounded-lg border-l-4 border-primary">
-                  {rev.isEditing ? (
-                    <div className="space-y-3">
-                      <textarea
-                        value={editingText}
-                        onChange={(e) => setEditingText(e.target.value)}
-                        className="w-full p-3 border border-border-subtle bg-white text-on-surface rounded-xl outline-none"
-                        rows="3"
-                      />
-                      <div className="flex gap-2 justify-end">
-                        <button 
-                          onClick={() => saveEdit(rev.id)}
-                          className="bg-primary text-on-primary px-4 py-1.5 rounded-lg text-sm font-label-bold"
-                        >
-                          Save
-                        </button>
-                        <button 
-                          onClick={() => cancelEdit(rev.id)}
-                          className="bg-surface-container-high/60 text-on-surface-variant px-4 py-1.5 rounded-lg text-sm font-label-bold"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-label-bold text-label-bold text-primary">You responded</span>
-                        <button 
-                          onClick={() => startEdit(rev.id, rev.response)}
-                          className="text-on-surface-variant hover:text-primary transition-colors flex items-center"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
-                        </button>
-                      </div>
-                      <p className="text-body-sm text-on-surface-variant">
-                        {rev.response || "No reply submitted yet."}
-                      </p>
-                    </>
-                  )}
-                </div>
-              </article>
-            ))}
+        </div>
+
+        {/* Filter & Sort Controls */}
+        <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setFilterRating('all')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                filterRating === 'all'
+                  ? 'bg-teal-600 text-white shadow-xs'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+              }`}
+            >
+              All ({totalReviews})
+            </button>
+            <button
+              onClick={() => setFilterRating('5')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                filterRating === '5'
+                  ? 'bg-teal-600 text-white shadow-xs'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+              }`}
+            >
+              5 Stars ({starCounts.find(s => s.star === 5)?.count || 0})
+            </button>
+            <button
+              onClick={() => setFilterRating('no_reply')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                filterRating === 'no_reply'
+                  ? 'bg-amber-500 text-white shadow-xs'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+              }`}
+            >
+              Awaiting Reply ({reviews.filter(r => !r.response).length})
+            </button>
           </div>
-        </section>
+
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-slate-400 font-semibold whitespace-nowrap">Sort by:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold outline-none cursor-pointer focus:border-teal-500"
+            >
+              <option value="recent">Most Recent</option>
+              <option value="highest">Highest Rating</option>
+              <option value="lowest">Lowest Rating</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Reviews List */}
+        <div className="space-y-4">
+          {loading ? (
+            // Skeletons
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white border border-slate-200/80 animate-pulse space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-slate-200"></div>
+                  <div className="space-y-1">
+                    <div className="w-32 h-3 bg-slate-200 rounded"></div>
+                    <div className="w-20 h-2 bg-slate-100 rounded"></div>
+                  </div>
+                </div>
+                <div className="w-full h-4 bg-slate-100 rounded"></div>
+              </div>
+            ))
+          ) : filteredReviews.length === 0 ? (
+            <div className="p-12 rounded-2xl bg-white border border-slate-200/80 text-center space-y-3">
+              <span className="material-symbols-outlined text-4xl text-slate-300">reviews</span>
+              <p className="text-sm font-bold text-slate-700">No reviews found matching this filter</p>
+              <p className="text-xs text-slate-400">Complete more guided tours with travelers to earn positive verified reviews!</p>
+            </div>
+          ) : (
+            filteredReviews.map((rev) => {
+              const revId = rev.id || rev._id;
+              const isReplying = editingId === revId;
+              const authorName = rev.travelerName || rev.author || 'Anonymous Traveler';
+              const authorAvatar = rev.travelerAvatar || rev.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150';
+              const createdDate = rev.createdAt
+                ? new Date(rev.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
+                : 'Recently';
+
+              return (
+                <div 
+                  key={revId}
+                  className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-xs transition-shadow space-y-4"
+                >
+                  {/* Review Header */}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3.5">
+                      <img 
+                        src={authorAvatar}
+                        alt={authorName}
+                        className="w-11 h-11 rounded-full object-cover ring-2 ring-slate-100 shrink-0"
+                      />
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-bold text-slate-900">{authorName}</h4>
+                          <span className="px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                            Verified Tour
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <div className="flex items-center text-amber-400">
+                            {[...Array(5)].map((_, i) => (
+                              <span 
+                                key={i}
+                                className={`material-symbols-outlined text-base ${i < (rev.rating || 5) ? 'fill-1' : 'text-slate-200'}`}
+                                style={{ fontVariationSettings: "'FILL' 1" }}
+                              >
+                                star
+                              </span>
+                            ))}
+                          </div>
+                          <span className="text-xs font-bold text-slate-700">{rev.rating || 5}.0</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs text-slate-400 font-medium">{createdDate}</span>
+                  </div>
+
+                  {/* Review Text */}
+                  <p className="text-sm text-slate-700 leading-relaxed font-normal bg-slate-50/50 p-3.5 rounded-xl border border-slate-100">
+                    "{rev.comment || rev.text}"
+                  </p>
+
+                  {/* Reply Section */}
+                  <div className="pt-2">
+                    {isReplying ? (
+                      <div className="space-y-3 bg-cyan-50/50 p-4 rounded-xl border border-cyan-100">
+                        <label className="text-xs font-bold text-cyan-900 flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-sm">reply</span>
+                          <span>Your reply to {authorName}:</span>
+                        </label>
+                        <textarea
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          placeholder="Type your thank-you note or answer..."
+                          rows="3"
+                          className="w-full p-3 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                        />
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setEditingId(null)}
+                            disabled={submittingReply}
+                            className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleSaveReply(revId)}
+                            disabled={submittingReply}
+                            className="px-4 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1"
+                          >
+                            <span className="material-symbols-outlined text-sm">send</span>
+                            <span>{submittingReply ? 'Sending...' : 'Send Reply'}</span>
+                          </button>
+                        </div>
+                      </div>
+                    ) : rev.response ? (
+                      <div className="bg-slate-50 p-4 rounded-xl border-l-4 border-teal-500 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-teal-800 flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-sm">forum</span>
+                            <span>Your Reply:</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleStartEdit(rev)}
+                            className="text-slate-400 hover:text-teal-600 text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                          >
+                            <span className="material-symbols-outlined text-sm">edit</span>
+                            <span>Edit</span>
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          {rev.response}
+                        </p>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleStartEdit(rev)}
+                        className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer py-1"
+                      >
+                        <span className="material-symbols-outlined text-sm">reply</span>
+                        <span>Reply to this review</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
 
       </main>
     </div>

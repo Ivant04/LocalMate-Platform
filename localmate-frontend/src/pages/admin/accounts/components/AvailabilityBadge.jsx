@@ -6,19 +6,19 @@ export default function AvailabilityBadge({ status, onChange, interactive = fals
   const configs = {
     AVAILABLE: {
       label: 'Available',
-      sub: 'Sẵn sàng nhận tour',
+      sub: 'Ready for tours',
       dotColor: 'bg-emerald-500',
       badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-200/80',
     },
     BUSY: {
       label: 'Busy',
-      sub: 'Đang bận dẫn tour',
+      sub: 'Currently on tour',
       dotColor: 'bg-amber-500',
       badgeClass: 'bg-amber-50 text-amber-800 border-amber-200/80',
     },
     OFFLINE: {
       label: 'Offline',
-      sub: 'Ngoại tuyến / Nghỉ',
+      sub: 'Offline / Resting',
       dotColor: 'bg-gray-400',
       badgeClass: 'bg-gray-100 text-gray-700 border-gray-200',
     },

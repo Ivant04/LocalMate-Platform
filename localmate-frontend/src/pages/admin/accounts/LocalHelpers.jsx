@@ -10,18 +10,18 @@ import API_BASE_URL from '../../../config/api';
 const DEFAULT_HELPERS = [
   {
     id: 'hlp-1042',
-    name: 'Nguyễn Văn Minh',
-    fullName: 'Nguyễn Văn Minh',
+    name: 'Minh Nguyen',
+    fullName: 'Minh Nguyen',
     email: 'minh.nguyen@localmate.vn',
     phone: '+84 912 849 201',
-    city: 'Đà Nẵng & Hội An',
-    location: 'Đà Nẵng & Hội An',
-    title: 'Hội An & Đà Nẵng Local Foodie & Culture Explorer',
-    bio: 'Sinh ra và lớn lên tại Đà Nẵng với 5 năm dẫn tour ẩm thực và văn hóa Hội An.',
+    city: 'Da Nang & Hoi An',
+    location: 'Da Nang & Hoi An',
+    title: 'Hoi An & Da Nang Local Foodie & Culture Explorer',
+    bio: 'Born and raised in Da Nang with 5 years experience guiding culinary and heritage tours in Hoi An.',
     rating: 4.95,
     reviewsCount: 142,
     hourlyRate: 12,
-    languages: ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Hàn'],
+    languages: ['English', 'Vietnamese', 'Korean'],
     skills: ['Foodie', 'Culture', 'Photography', 'Motorbike'],
     availabilityStatus: 'AVAILABLE',
     status: 'ACTIVE',
@@ -33,18 +33,18 @@ const DEFAULT_HELPERS = [
   },
   {
     id: 'hlp-0892',
-    name: 'Trần Thị Ánh Tuyết',
-    fullName: 'Trần Thị Ánh Tuyết',
+    name: 'Anh Tuyet Tran',
+    fullName: 'Anh Tuyet Tran',
     email: 'tuyet.tran@localmate.vn',
     phone: '+84 908 112 334',
-    city: 'Hà Nội',
-    location: 'Hà Nội',
-    title: 'Hà Nội Old Quarter Storytelling & Traditional Tea Culture',
-    bio: 'Đam mê 36 phố phường và kiến trúc cổ kính thời Pháp thuộc tại Hà Nội.',
+    city: 'Hanoi',
+    location: 'Hanoi',
+    title: 'Hanoi Old Quarter Storytelling & Traditional Tea Culture',
+    bio: 'Passionate about the 36 guild streets and ancient French colonial architecture in Hanoi.',
     rating: 4.88,
     reviewsCount: 94,
     hourlyRate: 11,
-    languages: ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Pháp'],
+    languages: ['English', 'Vietnamese', 'French'],
     skills: ['History', 'Art & Design', 'Tea & Coffee', 'Walking Tour'],
     availabilityStatus: 'BUSY',
     status: 'ACTIVE',
@@ -56,18 +56,18 @@ const DEFAULT_HELPERS = [
   },
   {
     id: 'hlp-0731',
-    name: 'Lê Hoàng Bảo',
-    fullName: 'Lê Hoàng Bảo',
+    name: 'Bao Le',
+    fullName: 'Bao Le',
     email: 'bao.lehoang@gmail.com',
     phone: '+84 933 556 778',
-    city: 'Đà Lạt',
-    location: 'Đà Lạt',
-    title: 'Đà Lạt Pine Forests & Secret Waterfalls Trekking',
-    bio: 'Chuyên gia leo núi và cắm trại săn mây trên các đỉnh đồi Đà Lạt mộng mơ.',
+    city: 'Da Lat',
+    location: 'Da Lat',
+    title: 'Da Lat Pine Forests & Secret Waterfalls Trekking',
+    bio: 'Trekking expert and camping guide across the misty pine hills and secret waterfalls of Da Lat.',
     rating: 4.79,
     reviewsCount: 68,
     hourlyRate: 10,
-    languages: ['Tiếng Việt', 'Tiếng Anh'],
+    languages: ['English', 'Vietnamese'],
     skills: ['Hiking', 'Adventure', 'Camping', 'Photography'],
     availabilityStatus: 'OFFLINE',
     status: 'ACTIVE',
@@ -79,18 +79,18 @@ const DEFAULT_HELPERS = [
   },
   {
     id: 'hlp-1105',
-    name: 'Kevin Nguyễn',
-    fullName: 'Kevin Nguyễn',
+    name: 'Kevin Nguyen',
+    fullName: 'Kevin Nguyen',
     email: 'kevin.nguyen@localmate.com',
     phone: '+84 905 111 222',
-    city: 'Hội An, Đà Nẵng',
-    location: 'Hội An, Đà Nẵng',
+    city: 'Hoi An, Da Nang',
+    location: 'Hoi An, Da Nang',
     title: 'Hoi An & Da Nang Local Foodie & Culture Explorer',
-    bio: 'Khám phá Đà Nẵng & Hội An như người bản địa. Thưởng thức cao lầu, mì quảng trứ danh.',
+    bio: 'Explore Da Nang & Hoi An like a true local. Savor authentic Cao Lau and famous local noodles.',
     rating: 4.92,
     reviewsCount: 154,
     hourlyRate: 11,
-    languages: ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Nhật'],
+    languages: ['English', 'Vietnamese', 'Japanese'],
     skills: ['Foodie', 'Culture', 'Photography', 'Motorbike'],
     availabilityStatus: 'AVAILABLE',
     status: 'ACTIVE',
@@ -102,18 +102,18 @@ const DEFAULT_HELPERS = [
   },
   {
     id: 'hlp-0964',
-    name: 'Hương Đặng',
-    fullName: 'Hương Đặng',
+    name: 'Huong Dang',
+    fullName: 'Huong Dang',
     email: 'huong.dang@localmate.com',
     phone: '+84 905 333 444',
-    city: 'Huế',
-    location: 'Huế',
+    city: 'Hue',
+    location: 'Hue',
     title: 'Imperial Citadel Stories & Authentic Hue Royal Cuisine',
-    bio: 'Con gái xứ Huế mộng mơ, đam mê di tích lịch sử và ẩm thực Cung đình tinh tế.',
+    bio: 'Native daughter of poetic Hue, passionate about historical monuments and refined Imperial cuisine.',
     rating: 5.0,
     reviewsCount: 98,
     hourlyRate: 9,
-    languages: ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Pháp'],
+    languages: ['English', 'Vietnamese', 'French'],
     skills: ['Culture', 'History', 'Traditional Craft', 'Walking Tour'],
     availabilityStatus: 'AVAILABLE',
     status: 'ACTIVE',
@@ -125,18 +125,18 @@ const DEFAULT_HELPERS = [
   },
   {
     id: 'hlp-1028',
-    name: 'Tuấn Trần',
-    fullName: 'Tuấn Trần',
+    name: 'Tuan Tran',
+    fullName: 'Tuan Tran',
     email: 'tuan.tran@localmate.com',
     phone: '+84 905 555 666',
-    city: 'Đà Nẵng',
-    location: 'Đà Nẵng',
+    city: 'Da Nang',
+    location: 'Da Nang',
     title: 'Active Nature Explorer & Mountain Trails Guide in Da Nang',
-    bio: '5 năm dẫn tour mạo hiểm khám phá bán đảo Sơn Trà và danh thắng Ngũ Hành Sơn.',
+    bio: '5 years leading adventure trekking across Son Tra Peninsula and the Marble Mountains.',
     rating: 4.85,
     reviewsCount: 82,
     hourlyRate: 10,
-    languages: ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Tây Ban Nha'],
+    languages: ['English', 'Vietnamese', 'Spanish'],
     skills: ['Hiking', 'Adventure', 'Culture', 'Translation'],
     availabilityStatus: 'BUSY',
     status: 'ACTIVE',
@@ -148,18 +148,18 @@ const DEFAULT_HELPERS = [
   },
   {
     id: 'hlp-1150',
-    name: 'Elena Nguyễn',
-    fullName: 'Elena Nguyễn',
+    name: 'Elena Nguyen',
+    fullName: 'Elena Nguyen',
     email: 'elena.nguyen@localmate.com',
     phone: '+84 905 777 888',
-    city: 'Hội An',
-    location: 'Hội An',
+    city: 'Hoi An',
+    location: 'Hoi An',
     title: 'Hoi An Heritage Architecture & Sunset River Tour',
-    bio: 'Nhiếp ảnh gia bản địa Hội An. Trải nghiệm làm đèn lồng và đi thuyền ngắm hoàng hôn sông Thu Bồn.',
+    bio: 'Hoi An native photographer. Experience lantern crafting and scenic sunset boat tours on Thu Bon River.',
     rating: 4.96,
     reviewsCount: 112,
     hourlyRate: 12,
-    languages: ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Ý'],
+    languages: ['English', 'Vietnamese', 'Italian'],
     skills: ['Art & Design', 'Photography', 'Bicycle Tour', 'Lantern Making'],
     availabilityStatus: 'OFFLINE',
     status: 'ACTIVE',
@@ -211,20 +211,20 @@ export default function LocalHelpers() {
       if (!res.ok) throw new Error('Failed to load helpers');
       const data = await res.json();
 
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const merged = data.map((h, i) => ({
           ...h,
-          availabilityStatus: (h.availabilityStatus || (i % 3 === 0 ? 'AVAILABLE' : (i % 3 === 1 ? 'BUSY' : 'OFFLINE'))).toUpperCase(),
+          availabilityStatus: (h.availabilityStatus || 'OFFLINE').toUpperCase(),
           status: (h.status || 'ACTIVE').toUpperCase(),
-          isTopRated: (h.rating || 5.0) >= 4.85,
-          badgeTitle: (h.rating || 5.0) >= 4.85 ? 'Super Guide' : 'Local Guide',
+          isTopRated: (h.rating || 0) >= 4.85,
+          badgeTitle: (h.rating || 0) >= 4.85 ? 'Super Guide' : 'Local Guide',
         }));
         setHelpers(merged);
       } else {
-        setHelpers(DEFAULT_HELPERS);
+        setHelpers([]);
       }
     } catch (_err) {
-      setHelpers(DEFAULT_HELPERS);
+      setHelpers([]);
     } finally {
       setLoading(false);
     }
@@ -299,12 +299,12 @@ export default function LocalHelpers() {
       if (selectedHelper && selectedHelper.id === helperId) {
         setSelectedHelper((prev) => ({ ...prev, availabilityStatus: newStatus }));
       }
-      showToast(`Đã cập nhật trạng thái nhận đơn: ${newStatus}`);
+      showToast(`Updated availability status: ${newStatus}`);
     } catch (_err) {
       setHelpers((prev) =>
         prev.map((h) => (h.id === helperId ? { ...h, availabilityStatus: newStatus } : h))
       );
-      showToast(`Đã chuyển trạng thái sang: ${newStatus}`);
+      showToast(`Switched availability status to: ${newStatus}`);
     }
   };
 
@@ -329,7 +329,7 @@ export default function LocalHelpers() {
             prev.map((h) => (h.id === editingHelper.id ? { ...h, ...formData } : h))
           );
         }
-        showToast('Cập nhật hồ sơ Local Helper thành công!');
+        showToast('Local Helper profile updated successfully!');
       } else {
         const res = await fetch(`${API_BASE_URL}/api/v1/helpers`, {
           method: 'POST',
@@ -351,13 +351,13 @@ export default function LocalHelpers() {
           };
           setHelpers((prev) => [newMock, ...prev]);
         }
-        showToast('Thêm Local Helper mới thành công!');
+        showToast('New Local Helper added successfully!');
       }
 
       setIsFormOpen(false);
       setEditingHelper(null);
     } catch (_err) {
-      showToast('Thao tác hoàn tất!');
+      showToast('Action completed!');
       setIsFormOpen(false);
     } finally {
       setActionLoading(false);
@@ -373,12 +373,12 @@ export default function LocalHelpers() {
         method: 'DELETE',
       });
       setHelpers((prev) => prev.filter((h) => h.id !== deletingHelper.id));
-      showToast(`Đã xóa Local Helper ${deletingHelper.fullName || deletingHelper.name}`);
+      showToast(`Deleted Local Helper ${deletingHelper.fullName || deletingHelper.name}`);
       setIsDeleteOpen(false);
       setDeletingHelper(null);
     } catch (_err) {
       setHelpers((prev) => prev.filter((h) => h.id !== deletingHelper.id));
-      showToast('Đã xóa thành công');
+      showToast('Deleted successfully');
       setIsDeleteOpen(false);
       setDeletingHelper(null);
     } finally {
@@ -388,7 +388,7 @@ export default function LocalHelpers() {
 
   // Export CSV
   const handleExportCSV = () => {
-    const headers = ['Mã định danh,Họ tên,Email,Số điện thoại,Địa bàn,Ngôn ngữ,Đánh giá,Số reviews,Mức giá ($/h),Trạng thái nhận đơn,Trạng thái tài khoản'];
+    const headers = ['Helper ID,Full Name,Email,Phone,City / Base,Languages,Rating,Reviews Count,Hourly Rate ($/hr),Availability,Account Status'];
     const rows = filteredHelpers.map((h) =>
       `"${h.id}","${h.fullName || h.name}","${h.email}","${h.phone}","${h.city || h.location}","${Array.isArray(h.languages) ? h.languages.join('; ') : ''}","${h.rating || 5.0}","${h.reviewsCount || 0}","${h.hourlyRate || h.price || 12}","${h.availabilityStatus || 'AVAILABLE'}","${h.status || 'ACTIVE'}"`
     );
@@ -400,8 +400,17 @@ export default function LocalHelpers() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Đã xuất file CSV Local Helpers thành công!');
+    showToast('Exported Local Helpers CSV file successfully!');
   };
+
+  const totalHelpersCount = helpers.length;
+  const onlineCount = helpers.filter(h => (h.availabilityStatus || '').toUpperCase() === 'AVAILABLE').length;
+  const busyCount = helpers.filter(h => (h.availabilityStatus || '').toUpperCase() === 'BUSY').length;
+  const offlineCount = helpers.filter(h => (h.availabilityStatus || '').toUpperCase() === 'OFFLINE').length;
+  const topRatedCount = helpers.filter(h => (h.rating || 0) >= 4.8).length;
+  const onlinePct = totalHelpersCount > 0 ? ((onlineCount / totalHelpersCount) * 100).toFixed(1) : '0';
+  const busyPct = totalHelpersCount > 0 ? ((busyCount / totalHelpersCount) * 100).toFixed(1) : '0';
+  const offlinePct = totalHelpersCount > 0 ? ((offlineCount / totalHelpersCount) * 100).toFixed(1) : '0';
 
   return (
     <AdminLayout>
@@ -428,14 +437,14 @@ export default function LocalHelpers() {
             </div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                Quản lý Local Helpers
+                Local Helpers Management
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-sky-100 text-sky-800 tracking-wider">
                 PRO GUIDES
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-1 max-w-2xl leading-relaxed">
-              Giám sát mạng lưới hướng dẫn viên địa phương, phân bổ điều phối tour, xét duyệt chứng chỉ hành nghề và điều chỉnh trạng thái nhận đơn thời gian thực.
+              Monitor the local guide network, allocate tours, review KYC certifications, and adjust real-time booking availability.
             </p>
           </div>
 
@@ -443,21 +452,21 @@ export default function LocalHelpers() {
             {/* Live Indicator Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-600 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="font-bold text-gray-800">HỆ THỐNG TRỰC TUYẾN: 920 GUIDES</span>
+              <span className="font-bold text-gray-800">ONLINE NETWORK: {onlineCount} GUIDES</span>
               <span className="text-gray-300">|</span>
-              <span className="text-[11px] text-gray-400">Cập nhật 2 phút trước</span>
+              <span className="text-[11px] text-gray-400">Real-time</span>
             </div>
 
             <div className="flex items-center gap-2">
               {/* KYC Review button */}
               <button
                 type="button"
-                onClick={() => showToast('Chuyển tới khu vực duyệt chứng chỉ KYC')}
+                onClick={() => showToast('Navigating to KYC review submissions')}
                 className="px-3 py-2 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined text-base text-amber-600">verified</span>
-                <span>Xét duyệt hồ sơ KYC</span>
-                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px]">8 chờ duyệt</span>
+                <span>Review KYC Submissions</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px]">0 pending</span>
               </button>
 
               {/* Add Helper button */}
@@ -469,7 +478,7 @@ export default function LocalHelpers() {
                 className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:shadow transition-all cursor-pointer"
               >
                 <span className="material-symbols-outlined text-base">person_add</span>
-                <span>+ Thêm Local Helper mới</span>
+                <span>+ Add New Local Helper</span>
               </button>
             </div>
           </div>
@@ -477,33 +486,33 @@ export default function LocalHelpers() {
 
         {/* 5 Stat Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
-          {/* 1: Tổng Local Helpers */}
+          {/* 1: Total Local Helpers */}
           <div className="p-4 rounded-2xl bg-white border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Tổng Local Helpers
+                  Total Local Helpers
                 </span>
-                <p className="text-2xl font-extrabold text-gray-900 mt-1">1,840</p>
+                <p className="text-2xl font-extrabold text-gray-900 mt-1">{totalHelpersCount.toLocaleString()}</p>
               </div>
               <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-lg">groups</span>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 mt-2">
-              <span className="material-symbols-outlined text-xs">trending_up</span>
-              <span>+12% so với tháng trước</span>
+            <div className="flex items-center gap-1 text-[10px] font-semibold text-sky-600 mt-2">
+              <span className="material-symbols-outlined text-xs">database</span>
+              <span>Live System Data</span>
             </div>
           </div>
 
-          {/* 2: Đang trực tuyến */}
+          {/* 2: Available / Online */}
           <div className="p-4 rounded-2xl bg-white border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Đang trực tuyến
+                  Available Online
                 </span>
-                <p className="text-2xl font-extrabold text-emerald-600 mt-1">920</p>
+                <p className="text-2xl font-extrabold text-emerald-600 mt-1">{onlineCount.toLocaleString()}</p>
               </div>
               <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-lg">radio_button_checked</span>
@@ -511,20 +520,20 @@ export default function LocalHelpers() {
             </div>
             <div className="flex items-center justify-between text-[10px] mt-2">
               <span className="px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold">
-                Sẵn sàng nhận tour
+                Ready for Tours
               </span>
-              <span className="text-gray-400 font-semibold">50% tổng số</span>
+              <span className="text-gray-400 font-semibold">{onlinePct}%</span>
             </div>
           </div>
 
-          {/* 3: Đang bận dẫn tour */}
+          {/* 3: Busy */}
           <div className="p-4 rounded-2xl bg-white border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Đang bận dẫn tour
+                  Currently on Tour
                 </span>
-                <p className="text-2xl font-extrabold text-amber-600 mt-1">415</p>
+                <p className="text-2xl font-extrabold text-amber-600 mt-1">{busyCount.toLocaleString()}</p>
               </div>
               <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-lg">schedule</span>
@@ -532,20 +541,20 @@ export default function LocalHelpers() {
             </div>
             <div className="flex items-center justify-between text-[10px] mt-2">
               <span className="px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 font-bold">
-                Đang thực hiện lịch
+                Active Schedules
               </span>
-              <span className="text-gray-400 font-semibold">22.5%</span>
+              <span className="text-gray-400 font-semibold">{busyPct}%</span>
             </div>
           </div>
 
-          {/* 4: Ngoại tuyến / Nghỉ */}
+          {/* 4: Offline */}
           <div className="p-4 rounded-2xl bg-white border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Ngoại tuyến / Nghỉ
+                  Offline / On Break
                 </span>
-                <p className="text-2xl font-extrabold text-gray-600 mt-1">505</p>
+                <p className="text-2xl font-extrabold text-gray-600 mt-1">{offlineCount.toLocaleString()}</p>
               </div>
               <div className="w-9 h-9 rounded-xl bg-gray-100 text-gray-500 flex items-center justify-center">
                 <span className="material-symbols-outlined text-lg">remove_circle_outline</span>
@@ -553,20 +562,20 @@ export default function LocalHelpers() {
             </div>
             <div className="flex items-center justify-between text-[10px] mt-2">
               <span className="px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600 font-bold">
-                Tạm khóa tiếp nhận
+                Paused Intake
               </span>
-              <span className="text-gray-400 font-semibold">27.5%</span>
+              <span className="text-gray-400 font-semibold">{offlinePct}%</span>
             </div>
           </div>
 
-          {/* 5: Danh hiệu 'Top Rated' */}
+          {/* 5: Top Rated */}
           <div className="p-4 rounded-2xl bg-white border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow col-span-2 sm:col-span-1">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Danh hiệu 'Top Rated'
+                  Top Rated Guides
                 </span>
-                <p className="text-2xl font-extrabold text-amber-600 mt-1">340</p>
+                <p className="text-2xl font-extrabold text-amber-600 mt-1">{topRatedCount.toLocaleString()}</p>
               </div>
               <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-lg fill-1">military_tech</span>
@@ -575,7 +584,7 @@ export default function LocalHelpers() {
             <div className="flex items-center gap-1 text-[10px] text-gray-500 mt-2 font-medium">
               <span className="material-symbols-outlined text-amber-500 text-xs">star</span>
               <span>Rating ≥ 4.8</span>
-              <span className="text-gray-400 font-semibold">(&gt;50 tours)</span>
+              <span className="text-gray-400 font-semibold">(verified)</span>
             </div>
           </div>
         </div>
@@ -588,10 +597,10 @@ export default function LocalHelpers() {
             </div>
             <div>
               <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                Cơ chế Điều hành Trạng thái Nhận đơn (Availability Engine)
+                Availability Engine
               </h3>
               <p className="text-xs text-gray-500 mt-0.5">
-                Trạng thái này quyết định trực tiếp khả năng hiển thị trên bản đồ ứng dụng khách du lịch.
+                Directly governs guide visibility and immediate booking availability on the tour discovery map.
               </p>
             </div>
           </div>
@@ -599,17 +608,17 @@ export default function LocalHelpers() {
           <div className="flex flex-wrap items-center gap-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Available: Sẵn sàng nhận tour/booking ngay</span>
+              <span>Available: Ready for immediate tour bookings</span>
             </div>
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span>Busy: Đang dẫn tour hoặc có lịch hẹn</span>
+              <span>Busy: On tour or scheduled appointments</span>
             </div>
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-gray-400"></span>
-              <span>Offline: Nghỉ phép / Ẩn khỏi bản đồ</span>
+              <span>Offline: On leave / Hidden from live map</span>
             </div>
           </div>
         </div>
@@ -629,7 +638,7 @@ export default function LocalHelpers() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                placeholder="Tìm theo tên, ngôn ngữ, địa bàn..."
+                placeholder="Search by name, language, operating city..."
                 className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
               />
             </div>
@@ -638,7 +647,7 @@ export default function LocalHelpers() {
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex rounded-xl bg-gray-100 p-1 border border-gray-200/60">
                 {[
-                  { key: 'ALL', label: 'Tất cả (1.8K)' },
+                  { key: 'ALL', label: 'All (1.8K)' },
                   { key: 'AVAILABLE', label: 'Available (920)' },
                   { key: 'BUSY', label: 'Busy (415)' },
                   { key: 'OFFLINE', label: 'Offline (505)' },
@@ -670,7 +679,7 @@ export default function LocalHelpers() {
                 }}
                 className="px-3 py-2 text-xs rounded-xl border border-gray-200 bg-white text-gray-700 focus:border-teal-500 outline-none transition-all cursor-pointer font-medium"
               >
-                <option value="ALL">Trạng thái tài khoản: Tất cả</option>
+                <option value="ALL">Account Status: All</option>
                 <option value="ACTIVE">● Active</option>
                 <option value="INACTIVE">● Inactive</option>
                 <option value="BLOCKED">● Blocked</option>
@@ -680,7 +689,7 @@ export default function LocalHelpers() {
               <button
                 type="button"
                 onClick={handleExportCSV}
-                title="Xuất file danh sách"
+                title="Export CSV list"
                 className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined text-lg">download</span>
@@ -704,12 +713,12 @@ export default function LocalHelpers() {
                     />
                   </th>
                   <th className="py-3.5 px-4">Local Helper</th>
-                  <th className="py-3.5 px-4">Liên hệ</th>
-                  <th className="py-3.5 px-4">Ngôn ngữ</th>
-                  <th className="py-3.5 px-4">Địa bàn</th>
-                  <th className="py-3.5 px-4">Đánh giá</th>
-                  <th className="py-3.5 px-4 text-center">Trạng thái Nhận đơn</th>
-                  <th className="py-3.5 px-4 text-center">Thao tác</th>
+                  <th className="py-3.5 px-4">Contact</th>
+                  <th className="py-3.5 px-4">Languages</th>
+                  <th className="py-3.5 px-4">Operating Base</th>
+                  <th className="py-3.5 px-4">Rating & Reviews</th>
+                  <th className="py-3.5 px-4 text-center">Availability Status</th>
+                  <th className="py-3.5 px-4 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -740,8 +749,8 @@ export default function LocalHelpers() {
                       <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-3">
                         <span className="material-symbols-outlined text-2xl">search_off</span>
                       </div>
-                      <p className="text-sm font-semibold text-gray-700">Không tìm thấy Local Helper phù hợp</p>
-                      <p className="text-xs text-gray-400 mt-1">Thử đổi từ khóa hoặc chọn tab khác.</p>
+                      <p className="text-sm font-semibold text-gray-700">No matching Local Helpers found</p>
+                      <p className="text-xs text-gray-400 mt-1">Try modifying your search or select another tab.</p>
                     </td>
                   </tr>
                 ) : (
@@ -750,7 +759,7 @@ export default function LocalHelpers() {
                     const name = helper.fullName || helper.name || 'Local Helper';
                     const isSelected = selectedIds.includes(helper.id);
                     const availability = (helper.availabilityStatus || 'AVAILABLE').toUpperCase();
-                    const languages = Array.isArray(helper.languages) ? helper.languages : ['Tiếng Việt', 'Tiếng Anh'];
+                    const languages = Array.isArray(helper.languages) ? helper.languages : ['English', 'Vietnamese'];
                     const rating = helper.rating ? Number(helper.rating).toFixed(2) : '4.95';
                     const reviewCount = helper.reviewsCount || helper.reviewCount || 142;
 
@@ -847,9 +856,9 @@ export default function LocalHelpers() {
 
                         {/* Location */}
                         <td className="py-3.5 px-4 text-gray-700">
-                          <div className="flex items-center gap-1 truncate max-w-[140px]" title={helper.city || helper.location || 'Đà Nẵng'}>
+                          <div className="flex items-center gap-1 truncate max-w-[140px]" title={helper.city || helper.location || 'Da Nang'}>
                             <span className="material-symbols-outlined text-teal-600 text-sm shrink-0">location_on</span>
-                            <span className="truncate">{helper.city || helper.location || 'Đà Nẵng & Hội An'}</span>
+                            <span className="truncate">{helper.city || helper.location || 'Da Nang & Hoi An'}</span>
                           </div>
                         </td>
 
@@ -881,7 +890,7 @@ export default function LocalHelpers() {
                                 setSelectedHelper(helper);
                                 setIsDetailOpen(true);
                               }}
-                              title="Xem chi tiết hồ sơ"
+                              title="View helper profile"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-teal-600 hover:bg-teal-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">visibility</span>
@@ -894,7 +903,7 @@ export default function LocalHelpers() {
                                 setEditingHelper(helper);
                                 setIsFormOpen(true);
                               }}
-                              title="Chỉnh sửa thông tin"
+                              title="Edit details"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">edit</span>
@@ -907,7 +916,7 @@ export default function LocalHelpers() {
                                 setDeletingHelper(helper);
                                 setIsDeleteOpen(true);
                               }}
-                              title="Xóa Local Helper"
+                              title="Delete Local Helper"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">delete</span>
@@ -925,7 +934,7 @@ export default function LocalHelpers() {
           {/* Pagination Footer */}
           <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
             <div>
-              Hiển thị <span className="font-bold text-gray-800">{paginatedHelpers.length}</span> trên tổng số <span className="font-bold text-gray-800">{filteredHelpers.length}</span> Local Helpers
+              Showing <span className="font-bold text-gray-800">{paginatedHelpers.length}</span> of <span className="font-bold text-gray-800">{filteredHelpers.length}</span> Local Helpers
             </div>
 
             <div className="flex items-center gap-1">

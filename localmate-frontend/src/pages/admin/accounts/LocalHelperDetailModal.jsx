@@ -9,11 +9,11 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
   const name = helper.fullName || helper.name || 'Local Helper';
   const email = helper.email || 'N/A';
   const phone = helper.phone || '+84 912 849 201';
-  const location = helper.city || helper.location || 'Đà Nẵng & Hội An';
+  const location = helper.city || helper.location || 'Da Nang & Hoi An';
   const rating = helper.rating ? Number(helper.rating).toFixed(2) : '4.95';
   const reviewCount = helper.reviewsCount || helper.reviewCount || 142;
   const rate = helper.hourlyRate || helper.price || 12;
-  const languages = Array.isArray(helper.languages) ? helper.languages : ['Tiếng Việt', 'Tiếng Anh'];
+  const languages = Array.isArray(helper.languages) ? helper.languages : ['English', 'Vietnamese'];
   const skills = Array.isArray(helper.skills) ? helper.skills : ['Food Tour', 'Culture Explorer', 'Photography'];
   const availability = (helper.availabilityStatus || 'AVAILABLE').toUpperCase();
   const verified = helper.verified !== false;
@@ -21,14 +21,14 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
       <div 
-        className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col justify-between border-l border-gray-100 transform transition-transform duration-300 ease-out"
+        className="w-full max-w-md bg-white h-full max-h-screen shadow-2xl flex flex-col justify-between border-l border-gray-100 overflow-hidden transform transition-transform duration-300 ease-out"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between shrink-0">
           <div>
             <span className="text-[11px] font-bold tracking-wider text-teal-600 uppercase block mb-1">
-              Hồ sơ Local Helper (Pro Guide)
+              Local Helper Profile (Pro Guide)
             </span>
             <h2 className="text-xl font-bold text-gray-900">{name}</h2>
           </div>
@@ -55,7 +55,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
                   availability === 'AVAILABLE' ? 'bg-emerald-500' :
                   availability === 'BUSY' ? 'bg-amber-500' : 'bg-gray-400'
                 }`}
-                title={`Trạng thái: ${availability}`}
+                title={`Status: ${availability}`}
               ></span>
             </div>
             <div>
@@ -78,12 +78,12 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-teal-900 flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-base text-teal-600">tune</span>
-                Trạng thái Nhận đơn (Availability Engine)
+                Availability Engine
               </span>
               <AvailabilityBadge status={availability} />
             </div>
             <p className="text-xs text-teal-700 mb-3 leading-relaxed">
-              Trực tiếp điều phối khả năng hiển thị của guide này trên bản đồ tìm kiếm tour.
+              Directly control this guide's visibility and booking availability on the tour discovery map.
             </p>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -111,7 +111,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
           <div className="grid grid-cols-3 gap-2.5 text-center">
             <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Đánh giá
+                Rating
               </span>
               <p className="text-base font-bold text-amber-600 flex items-center justify-center gap-0.5">
                 <span className="material-symbols-outlined text-sm fill-1">star</span>
@@ -122,15 +122,15 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
 
             <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Mức giá
+                Hourly Rate
               </span>
               <p className="text-base font-bold text-gray-900">${rate}/hr</p>
-              <span className="text-[10px] text-gray-400">Giá niêm yết</span>
+              <span className="text-[10px] text-gray-400">Standard rate</span>
             </div>
 
             <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                KYC Xét duyệt
+                KYC Verification
               </span>
               <span className={`inline-flex items-center gap-1 text-[11px] font-bold mt-1 ${
                 verified ? 'text-emerald-600' : 'text-amber-600'
@@ -138,7 +138,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
                 <span className="material-symbols-outlined text-sm">
                   {verified ? 'verified' : 'pending'}
                 </span>
-                {verified ? 'Đã duyệt' : 'Chờ duyệt'}
+                {verified ? 'Verified' : 'Pending'}
               </span>
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
           {/* Languages */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-2">
-              Ngôn ngữ hỗ trợ
+              Languages Spoken
             </h4>
             <div className="flex flex-wrap gap-1.5">
               {languages.map((lang, idx) => (
@@ -163,7 +163,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
           {/* Skills / Specialization */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-2">
-              Chuyên môn & Dịch vụ
+              Expertise & Services
             </h4>
             <div className="flex flex-wrap gap-1.5">
               {skills.map((skill, idx) => (
@@ -180,17 +180,17 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
           {/* Bio */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-2">
-              Giới thiệu hồ sơ (Bio)
+              Guide Bio
             </h4>
             <div className="p-3.5 rounded-xl border border-gray-100 bg-gray-50/70 text-xs text-gray-600 leading-relaxed italic">
-              "{helper.bio || 'Chào bạn! Tôi là người con bản địa nhiệt huyết, sẵn sàng dẫn bạn khám phá từng nét đẹp văn hóa, ẩm thực và danh thắng địa phương.'}"
+              "{helper.bio || 'Hello! I am a passionate local insider eager to share hidden gems, regional delicacies, and rich cultural traditions with travelers.'}"
             </div>
           </div>
 
           {/* Contact Details */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-2">
-              Kênh liên lạc & Địa bàn
+              Contact & Base Location
             </h4>
             <div className="space-y-2 bg-white rounded-xl border border-gray-100 p-3.5 text-xs text-gray-700 shadow-2xs">
               <div className="flex items-center gap-2">
@@ -210,12 +210,12 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 border-t border-gray-100 bg-gray-50/50 flex gap-3">
+        <div className="p-5 border-t border-gray-100 bg-gray-50/50 flex gap-3 shrink-0">
           <a
             href={`mailto:${email}`}
             className="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 transition-colors text-center cursor-pointer"
           >
-            Gửi Email
+            Send Email
           </a>
           <button
             onClick={() => {
@@ -224,7 +224,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
             }}
             className="flex-1 py-2.5 px-4 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold shadow-xs hover:shadow transition-all text-center cursor-pointer"
           >
-            Chỉnh sửa hồ sơ
+            Edit Profile
           </button>
         </div>
       </div>

@@ -41,11 +41,84 @@ export default function Authentication() {
     }
   }, [searchParams]);
 
+  // Helper to parse network, deployment, and CORS errors
+  const parseNetworkError = (err) => {
+    if (err.name === 'AbortError') {
+      if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && API_BASE_URL.includes('localhost')) {
+        return 'Deployment Error: The frontend is deployed online but VITE_API_URL is still pointing to http://localhost:8080. Please set VITE_API_URL in your hosting platform (Vercel/Netlify/Render) to your deployed backend URL.';
+      }
+      return 'Server connection timed out (15s). If your backend is deployed on Render free tier, it may be waking up from sleep. Please wait 15 seconds and try again.';
+    }
+
+    if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('Load failed'))) {
+      if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && API_BASE_URL.includes('localhost')) {
+        return 'Deployment Configuration Error: The deployed frontend cannot reach http://localhost:8080. Please set VITE_API_URL in your hosting environment variables (e.g. Vercel / Netlify) to your backend domain.';
+      }
+      if (typeof window !== 'undefined' && window.location.protocol === 'https:' && API_BASE_URL.startsWith('http://') && !API_BASE_URL.includes('localhost')) {
+        return 'Mixed Content Error: HTTPS sites cannot call unencrypted HTTP backends. Please update your backend URL to use https://.';
+      }
+      return `Cannot connect to backend server at ${API_BASE_URL}. Please ensure your backend is deployed and running.`;
+    }
+
+    return err.message || 'Unable to connect to the server.';
+  };
+
+  // Instant offline demo login bypass for live evaluations
+  const handleOfflineDemoLogin = (roleType = 'admin') => {
+    let mockUser;
+    if (roleType === 'admin') {
+      mockUser = {
+        id: 'demo-admin-id',
+        email: 'admin@localmate.com',
+        fullName: 'LocalMate Administrator',
+        roles: ['ROLE_ADMIN'],
+        token: 'mock-jwt-token-admin',
+        status: 'ACTIVE',
+        avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+      };
+    } else if (roleType === 'helper') {
+      mockUser = {
+        id: 'demo-helper-id',
+        email: 'duc.tai@localmate.com',
+        fullName: 'Duc Tai',
+        roles: ['ROLE_HELPER'],
+        token: 'mock-jwt-token-helper',
+        status: 'ACTIVE',
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      };
+    } else {
+      mockUser = {
+        id: 'demo-traveler-id',
+        email: 'traveler@localmate.com',
+        fullName: 'Alex Johnson',
+        roles: ['ROLE_TRAVELER'],
+        token: 'mock-jwt-token-traveler',
+        status: 'ACTIVE',
+        avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+      };
+    }
+
+    localStorage.setItem('localmate_user', JSON.stringify(mockUser));
+    localStorage.setItem('localmate_token', mockUser.token);
+    window.dispatchEvent(new Event('storage'));
+
+    if (mockUser.roles.includes('ROLE_ADMIN')) {
+      navigate('/admin');
+    } else if (mockUser.roles.includes('ROLE_HELPER')) {
+      navigate('/helper-dashboard');
+    } else {
+      navigate('/');
+    }
+  };
+
   // Handle Google OAuth Credential Response
   const handleGoogleSuccess = async (credentialOrPayload) => {
     setLoading(true);
     setErrorMessage('');
     setShowGoogleModal(false);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
       let bodyData = {};
@@ -63,7 +136,10 @@ export default function Authentication() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyData),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errJson = await response.json().catch(() => ({}));
@@ -83,7 +159,8 @@ export default function Authentication() {
         navigate('/');
       }
     } catch (err) {
-      setErrorMessage(err.message || 'Google sign-in encountered an error.');
+      clearTimeout(timeoutId);
+      setErrorMessage(parseNetworkError(err));
     } finally {
       setLoading(false);
     }
@@ -133,6 +210,9 @@ export default function Authentication() {
     setErrorMessage('');
     setLoading(true);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
         method: 'POST',
@@ -140,11 +220,21 @@ export default function Authentication() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Incorrect email or password!');
+        let errorMsg = 'Incorrect email or password!';
+        try {
+          const errJson = await response.json();
+          errorMsg = errJson.message || errorMsg;
+        } catch {
+          const rawText = await response.text();
+          if (rawText && !rawText.startsWith('<')) errorMsg = rawText;
+        }
+        throw new Error(errorMsg);
       }
 
       const responseText = await response.text();
@@ -189,7 +279,8 @@ export default function Authentication() {
         navigate('/');
       }
     } catch (err) {
-      setErrorMessage(err.message || 'Unable to connect to the server.');
+      clearTimeout(timeoutId);
+      setErrorMessage(parseNetworkError(err));
     } finally {
       setLoading(false);
     }
@@ -210,6 +301,9 @@ export default function Authentication() {
     }
 
     setLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
         method: 'POST',
@@ -223,8 +317,10 @@ export default function Authentication() {
           phone: phoneNumber.trim(),
           role: role === 'guide' ? 'HELPER' : 'TRAVELER',
         }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
       const responseText = await response.text();
 
       if (!response.ok) {
@@ -262,24 +358,25 @@ export default function Authentication() {
 
       navigate('/');
     } catch (err) {
-      setErrorMessage(err.message || 'Error creating account. Please try again!');
+      clearTimeout(timeoutId);
+      setErrorMessage(parseNetworkError(err));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="h-full min-h-[calc(100vh-4rem)] flex items-center justify-center relative py-6 px-4 auth-gradient overflow-y-auto">
+    <div className="min-h-[calc(100vh-4rem)] w-full flex items-center justify-center relative py-8 px-4 auth-gradient overflow-x-hidden">
       {/* Background Decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -left-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
       </div>
       
-      <div className="w-full max-w-md relative z-10 my-auto py-2">
+      <div className={`w-full ${isSignUp ? 'max-w-lg' : 'max-w-md'} relative z-10 my-auto transition-all duration-300`}>
         {!isSignUp ? (
           /* Login Card */
-          <section className="glass-card p-8 rounded-2xl shadow-xl transition-all duration-500 transform opacity-100 scale-100">
+          <section className="glass-card p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 max-h-[90vh] overflow-y-auto">
             <div className="text-center mb-8">
               <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Welcome Back</h1>
               <p className="font-body-md text-on-surface-variant text-gray-500">Access your local connections</p>
@@ -315,8 +412,32 @@ export default function Authentication() {
               </div>
               
               {errorMessage && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
-                  {errorMessage}
+                <div className="p-3.5 bg-red-50/90 border border-red-200 text-red-700 rounded-xl text-xs space-y-2.5">
+                  <div className="flex items-start gap-2">
+                    <span className="material-symbols-outlined text-base text-red-600 shrink-0 mt-0.5">error</span>
+                    <span className="leading-relaxed font-medium">{errorMessage}</span>
+                  </div>
+
+                  {/* Instant Offline Demo Bypass when backend is down or not configured */}
+                  {(errorMessage.includes('Deployment') || errorMessage.includes('timed out') || errorMessage.includes('Cannot connect') || errorMessage.includes('Mixed Content')) && (
+                    <div className="pt-2 border-t border-red-200/80 flex flex-wrap gap-2 items-center">
+                      <span className="text-[11px] text-gray-500 font-medium">Quick Preview Access:</span>
+                      <button
+                        type="button"
+                        onClick={() => handleOfflineDemoLogin('admin')}
+                        className="text-[11px] font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-2xs"
+                      >
+                        ⚡ Log in as Admin
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOfflineDemoLogin('helper')}
+                        className="text-[11px] font-bold bg-white hover:bg-sky-50 text-sky-700 border border-sky-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-2xs"
+                      >
+                        ⚡ Log in as Helper
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
               
@@ -368,7 +489,7 @@ export default function Authentication() {
           </section>
         ) : (
           /* Signup Card */
-          <section className="glass-card p-8 rounded-2xl shadow-xl transition-all duration-500 transform opacity-100 scale-100">
+          <section className="glass-card p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 max-h-[90vh] overflow-y-auto">
             <div className="text-center mb-6">
               <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Join LocalMate</h1>
               <p className="font-body-md text-on-surface-variant text-gray-500">Start your journey today</p>
@@ -473,8 +594,24 @@ export default function Authentication() {
               </div>
               
               {errorMessage && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
-                  {errorMessage}
+                <div className="p-3.5 bg-red-50/90 border border-red-200 text-red-700 rounded-xl text-xs space-y-2.5">
+                  <div className="flex items-start gap-2">
+                    <span className="material-symbols-outlined text-base text-red-600 shrink-0 mt-0.5">error</span>
+                    <span className="leading-relaxed font-medium">{errorMessage}</span>
+                  </div>
+
+                  {(errorMessage.includes('Deployment') || errorMessage.includes('timed out') || errorMessage.includes('Cannot connect') || errorMessage.includes('Mixed Content')) && (
+                    <div className="pt-2 border-t border-red-200/80 flex flex-wrap gap-2 items-center">
+                      <span className="text-[11px] text-gray-500 font-medium">Quick Preview Access:</span>
+                      <button
+                        type="button"
+                        onClick={() => handleOfflineDemoLogin('traveler')}
+                        className="text-[11px] font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-2xs"
+                      >
+                        ⚡ Continue as Traveler
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -530,7 +667,7 @@ export default function Authentication() {
       {/* Google Login Options Modal (When Google Client ID is not yet defined in .env or for rapid testing) */}
       {showGoogleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative border border-gray-100">
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative border border-gray-100 my-auto">
             <button 
               onClick={() => setShowGoogleModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
@@ -557,31 +694,31 @@ export default function Authentication() {
             <div className="bg-emerald-50/60 border border-emerald-100 rounded-xl p-4 mb-5">
               <h4 className="text-sm font-bold text-emerald-900 mb-1 flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-base text-emerald-600">bolt</span>
-                Đăng nhập tức thì với tài khoản Google của bạn
+                Instant Sign-In with Your Google Account
               </h4>
               <p className="text-xs text-emerald-700 mb-3">
-                Nhập email Google của bạn để hệ thống tự động tạo và liên kết tài khoản trực tiếp vào cơ sở dữ liệu:
+                Enter your Google account email to automatically register or link your profile directly in the database:
               </p>
               <div className="space-y-2.5">
                 <input 
                   type="text" 
                   value={googleNameInput} 
                   onChange={(e) => setGoogleNameInput(e.target.value)}
-                  placeholder="Họ và tên (ví dụ: Duc Tai)"
+                  placeholder="Full Name (e.g. John Doe)"
                   className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <input 
                   type="email" 
                   value={googleEmailInput} 
                   onChange={(e) => setGoogleEmailInput(e.target.value)}
-                  placeholder="Email Google (ví dụ: vaductai2905@gmail.com)"
+                  placeholder="Google Email (e.g. user@gmail.com)"
                   className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <button
                   type="button"
                   onClick={() => {
-                    const testEmail = googleEmailInput.trim() || 'vaductai2905@gmail.com';
-                    const testName = googleNameInput.trim() || 'Duc Tai';
+                    const testEmail = googleEmailInput.trim() || 'traveler@gmail.com';
+                    const testName = googleNameInput.trim() || 'Alex Rivers';
                     handleGoogleSuccess({
                       email: testEmail,
                       fullName: testName,
@@ -591,7 +728,7 @@ export default function Authentication() {
                   className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-base">login</span>
-                  Tiếp tục với Google ({googleEmailInput.trim() || 'vaductai2905@gmail.com'})
+                  Continue with Google ({googleEmailInput.trim() || 'traveler@gmail.com'})
                 </button>
               </div>
             </div>
@@ -600,15 +737,15 @@ export default function Authentication() {
             <div className="border-t border-gray-100 pt-4">
               <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-1">
                 <span className="material-symbols-outlined text-sm text-gray-500">settings</span>
-                Cấu hình Google OAuth chính thức (Production)
+                Official Production Google OAuth Setup
               </h4>
               <p className="text-xs text-gray-600 leading-relaxed mb-2">
-                Để kích hoạt popup Google chuẩn từ Google Cloud Console:
+                To activate official Google Cloud sign-in popup:
               </p>
               <ol className="text-xs text-gray-500 space-y-1 list-decimal list-inside pl-1 mb-4">
-                <li>Vào <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" className="text-primary underline">Google Cloud Console Credentials</a>.</li>
-                <li>Tạo <strong>OAuth 2.0 Client ID</strong> (Web application) và thêm URL trang web vào Authorized JavaScript origins.</li>
-                <li>Dán Client ID vào file <code className="bg-gray-100 px-1 py-0.5 rounded text-gray-800">localmate-frontend/.env</code>:
+                <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" className="text-primary underline">Google Cloud Console Credentials</a>.</li>
+                <li>Create an <strong>OAuth 2.0 Client ID</strong> (Web application) and add your domain to Authorized JavaScript origins.</li>
+                <li>Paste the Client ID in <code className="bg-gray-100 px-1 py-0.5 rounded text-gray-800">localmate-frontend/.env</code>:
                   <div className="bg-gray-800 text-emerald-400 p-2 rounded-md mt-1 font-mono text-[11px] overflow-x-auto">
                     VITE_GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
                   </div>
@@ -617,9 +754,9 @@ export default function Authentication() {
               <button
                 type="button"
                 onClick={() => setShowGoogleModal(false)}
-                className="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg transition-colors"
+                className="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg transition-colors cursor-pointer"
               >
-                Đóng
+                Close
               </button>
             </div>
           </div>

@@ -205,13 +205,13 @@ export default function HelperDetail() {
   const normalizeDay = (d) => {
     if (!d) return '';
     const s = d.toLowerCase().trim();
-    if (s.includes('2') || s.includes('hai') || s.includes('mon')) return 'Monday';
-    if (s.includes('3') || s.includes('ba') || s.includes('tue')) return 'Tuesday';
-    if (s.includes('4') || s.includes('tư') || s.includes('tu') || s.includes('wed')) return 'Wednesday';
-    if (s.includes('5') || s.includes('năm') || s.includes('nam') || s.includes('thu')) return 'Thursday';
-    if (s.includes('6') || s.includes('sáu') || s.includes('sau') || s.includes('fri')) return 'Friday';
-    if (s.includes('7') || s.includes('bảy') || s.includes('bay') || s.includes('sat')) return 'Saturday';
-    if (s.includes('nhật') || s.includes('nhat') || s.includes('sun')) return 'Sunday';
+    if (s === 'monday' || s.startsWith('mon') || s.includes('hai') || s.includes('t2') || s === 'thứ 2' || s === 'thu 2' || s === '2') return 'Monday';
+    if (s === 'tuesday' || s.startsWith('tue') || s.includes('ba') || s.includes('t3') || s === 'thứ 3' || s === 'thu 3' || s === '3') return 'Tuesday';
+    if (s === 'wednesday' || s.startsWith('wed') || s.includes('tư') || s.includes('t4') || s === 'thứ 4' || s === 'thu 4' || s.includes('thu tu') || s === '4') return 'Wednesday';
+    if (s === 'thursday' || s.startsWith('thu') || s.includes('năm') || s.includes('nam') || s.includes('t5') || s === 'thứ 5' || s === 'thu 5' || s === '5') return 'Thursday';
+    if (s === 'friday' || s.startsWith('fri') || s.includes('sáu') || s.includes('sau') || s.includes('t6') || s === 'thứ 6' || s === 'thu 6' || s === '6') return 'Friday';
+    if (s === 'saturday' || s.startsWith('sat') || s.includes('bảy') || s.includes('bay') || s.includes('t7') || s === 'thứ 7' || s === 'thu 7' || s === '7') return 'Saturday';
+    if (s === 'sunday' || s.startsWith('sun') || s.includes('nhật') || s.includes('nhat') || s.includes('cn')) return 'Sunday';
     return d;
   };
 

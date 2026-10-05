@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
 
 export default function TravelerDashboard() {
   const location = useLocation();
@@ -233,7 +234,7 @@ export default function TravelerDashboard() {
     alert("Your booking has been cancelled.");
   };
 
-  const displayName = currentUser?.fullName || 'Alex Rivers';
+  const displayName = currentUser?.fullName || 'Traveler';
   const displayAvatar = currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300';
   const roleLabel = currentUser?.roles?.includes('ROLE_HELPER') ? 'Local Helper Profile' : 'Traveler Explorer';
 
@@ -241,79 +242,7 @@ export default function TravelerDashboard() {
     <div className="flex min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-cyan-600 selection:text-white">
       
       {/* SideNavBar - Desktop Only */}
-      <aside className="hidden lg:flex flex-col sticky top-16 h-[calc(100vh-4rem)] py-6 overflow-y-auto bg-white border-r border-slate-200 w-64 shadow-sm shrink-0">
-
-        <div className="px-4 mb-6">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-            <img 
-              alt={displayName} 
-              className="w-10 h-10 rounded-full object-cover ring-2 ring-cyan-600/20" 
-              src={displayAvatar} 
-            />
-            <div className="min-w-0">
-              <p className="font-label-bold text-sm text-slate-900 truncate font-semibold">{displayName}</p>
-              <p className="font-body-sm text-xs text-slate-500 truncate">{roleLabel}</p>
-            </div>
-          </div>
-          <button 
-            onClick={() => navigate('/profile')}
-            className="mt-3 w-full py-2 px-4 rounded-lg bg-cyan-50 text-cyan-800 font-label-bold text-xs border border-cyan-200 hover:bg-cyan-100 transition-all font-semibold"
-          >
-            Edit Profile
-          </button>
-        </div>
-
-        <nav className="flex-1 space-y-1 px-2">
-          {/* Active item: Dashboard */}
-          <button 
-            className="w-full bg-cyan-50 text-cyan-800 font-semibold rounded-xl px-4 py-2.5 flex items-center gap-3 border border-cyan-100 text-left"
-          >
-            <span className="material-symbols-outlined text-cyan-700 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>dashboard</span>
-            <span className="font-label-bold text-sm">Dashboard</span>
-          </button>
-
-          <button 
-            onClick={() => navigate('/search')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">explore</span>
-            <span className="font-label-bold text-sm">Explore Guides</span>
-          </button>
-
-          <button 
-            onClick={() => navigate('/chat')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">chat_bubble</span>
-            <span className="font-label-bold text-sm">Messages</span>
-          </button>
-
-          <button 
-            onClick={() => navigate('/profile')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">person</span>
-            <span className="font-label-bold text-sm">Profile</span>
-          </button>
-        </nav>
-
-        <div className="mt-auto border-t border-slate-200 pt-4 px-2">
-          <button 
-            onClick={() => navigate('/profile')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">settings</span>
-            <span className="font-label-bold text-sm">Settings</span>
-          </button>
-          <button 
-            onClick={() => navigate('/')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">help_outline</span>
-            <span className="font-label-bold text-sm">Help</span>
-          </button>
-        </div>
-      </aside>
+      <Sidebar activePage="dashboard" />
 
       {/* Main Content Canvas */}
       <main className="flex-1 min-h-screen overflow-y-auto relative bg-[#F8FAFC]">

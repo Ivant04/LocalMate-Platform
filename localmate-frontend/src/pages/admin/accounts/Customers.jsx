@@ -12,7 +12,7 @@ const DEFAULT_CUSTOMERS = [
     fullName: 'Alex Rivers',
     email: 'alex.rivers@example.com',
     phone: '+1 (555) 234-8901',
-    gender: 'Nam',
+    gender: 'Male',
     location: 'New York, United States',
     status: 'ACTIVE',
     createdAt: '2024-01-14T08:00:00Z',
@@ -20,9 +20,9 @@ const DEFAULT_CUSTOMERS = [
     totalSpent: 1420,
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
     recentTrip: {
-      tourName: 'Hà Nội Street Food Night',
-      guideName: 'Nguyễn Văn A',
-      date: '12/04/2024',
+      tourName: 'Hanoi Street Food Night',
+      guideName: 'Kevin Nguyen',
+      date: '04/12/2024',
       status: 'COMPLETED'
     }
   },
@@ -31,7 +31,7 @@ const DEFAULT_CUSTOMERS = [
     fullName: 'Sarah Jenkins',
     email: 'sarah.j@gmail.com',
     phone: '+44 7911 123456',
-    gender: 'Nữ',
+    gender: 'Female',
     location: 'London, United Kingdom',
     status: 'ACTIVE',
     createdAt: '2024-02-22T09:30:00Z',
@@ -39,28 +39,28 @@ const DEFAULT_CUSTOMERS = [
     totalSpent: 980,
     avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
     recentTrip: {
-      tourName: 'Hội An Lantern Making Workshop',
-      guideName: 'Elena Nguyễn',
-      date: '28/03/2024',
+      tourName: 'Hoi An Lantern Making Workshop',
+      guideName: 'Elena Nguyen',
+      date: '03/28/2024',
       status: 'COMPLETED'
     }
   },
   {
     id: 'cus-8823',
-    fullName: 'Mai Trấn (Tran Mai)',
+    fullName: 'Tran Mai',
     email: 'mai.tran@localmate.vn',
     phone: '+84 912 345 678',
-    gender: 'Nữ',
-    location: 'Hà Nội, Việt Nam',
+    gender: 'Female',
+    location: 'Hanoi, Vietnam',
     status: 'ACTIVE',
     createdAt: '2024-03-05T14:15:00Z',
     completedToursCount: 12,
     totalSpent: 2150,
     avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
     recentTrip: {
-      tourName: 'Đà Nẵng Marble Mountains Trekking',
-      guideName: 'Tuấn Trần',
-      date: '15/04/2024',
+      tourName: 'Da Nang Marble Mountains Trekking',
+      guideName: 'Tuan Tran',
+      date: '04/15/2024',
       status: 'COMPLETED'
     }
   },
@@ -69,7 +69,7 @@ const DEFAULT_CUSTOMERS = [
     fullName: 'Liam Watson',
     email: 'liam.watson@sydney.au',
     phone: '+61 412 876 543',
-    gender: 'Nam',
+    gender: 'Male',
     location: 'Sydney, Australia',
     status: 'INACTIVE',
     createdAt: '2023-11-11T10:00:00Z',
@@ -77,9 +77,9 @@ const DEFAULT_CUSTOMERS = [
     totalSpent: 450,
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
     recentTrip: {
-      tourName: 'Huế Imperial City Walking Tour',
-      guideName: 'Hương Đặng',
-      date: '10/12/2023',
+      tourName: 'Hue Imperial City Walking Tour',
+      guideName: 'Huong Dang',
+      date: '12/10/2023',
       status: 'COMPLETED'
     }
   },
@@ -88,7 +88,7 @@ const DEFAULT_CUSTOMERS = [
     fullName: 'David Miller',
     email: 'david.m@california.com',
     phone: '+1 (415) 899-2341',
-    gender: 'Nam',
+    gender: 'Male',
     location: 'San Francisco, United States',
     status: 'BLOCKED',
     createdAt: '2023-09-18T16:20:00Z',
@@ -96,9 +96,9 @@ const DEFAULT_CUSTOMERS = [
     totalSpent: 120,
     avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150',
     recentTrip: {
-      tourName: 'Sơn Trà Peninsula Wildlife Tour',
-      guideName: 'Tuấn Trần',
-      date: '22/09/2023',
+      tourName: 'Son Tra Peninsula Wildlife Tour',
+      guideName: 'Tuan Tran',
+      date: '09/22/2023',
       status: 'CANCELLED'
     }
   },
@@ -107,7 +107,7 @@ const DEFAULT_CUSTOMERS = [
     fullName: 'Kenji Sato',
     email: 'kenji.sato@tokyo.jp',
     phone: '+81 90 1234 5678',
-    gender: 'Nam',
+    gender: 'Male',
     location: 'Tokyo, Japan',
     status: 'ACTIVE',
     createdAt: '2024-02-10T11:00:00Z',
@@ -115,9 +115,9 @@ const DEFAULT_CUSTOMERS = [
     totalSpent: 890,
     avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150',
     recentTrip: {
-      tourName: 'Đà Nẵng Seafood & Night Market',
-      guideName: 'Trần Minh',
-      date: '18/03/2024',
+      tourName: 'Da Nang Seafood & Night Market',
+      guideName: 'Minh Tran',
+      date: '03/18/2024',
       status: 'COMPLETED'
     }
   },
@@ -126,7 +126,7 @@ const DEFAULT_CUSTOMERS = [
     fullName: 'Charlotte Dubois',
     email: 'charlotte.dubois@paris.fr',
     phone: '+33 6 12 34 56 78',
-    gender: 'Nữ',
+    gender: 'Female',
     location: 'Paris, France',
     status: 'ACTIVE',
     createdAt: '2024-03-01T15:45:00Z',
@@ -134,9 +134,9 @@ const DEFAULT_CUSTOMERS = [
     totalSpent: 720,
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
     recentTrip: {
-      tourName: 'Hà Nội French Quarter Architecture',
-      guideName: 'Nguyễn Thùy Linh',
-      date: '25/03/2024',
+      tourName: 'Hanoi French Quarter Architecture',
+      guideName: 'Thuy Linh Nguyen',
+      date: '03/25/2024',
       status: 'COMPLETED'
     }
   }
@@ -182,31 +182,25 @@ export default function Customers() {
     setError(null);
     try {
       const res = await fetch(`${API_BASE_URL}/api/v1/users?role=TRAVELER`);
-      if (!res.ok) throw new Error('Không thể tải danh sách khách hàng từ server');
+      if (!res.ok) throw new Error('Failed to load customers from server');
       const data = await res.json();
       
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         // Merge with detailed presentation fields
         const merged = data.map((u, i) => ({
           ...u,
-          gender: u.gender || (i % 2 === 0 ? 'Nam' : 'Nữ'),
-          location: u.location || (i % 3 === 0 ? 'New York, United States' : (i % 3 === 1 ? 'London, United Kingdom' : 'Hà Nội, Việt Nam')),
-          completedToursCount: u.completedToursCount || (i * 2 + 3),
-          totalSpent: u.totalSpent || (i * 250 + 400),
-          recentTrip: u.recentTrip || {
-            tourName: 'Hà Nội Street Food Night',
-            guideName: 'Nguyễn Văn A',
-            date: '12/04/2024',
-            status: 'COMPLETED'
-          }
+          gender: u.gender || 'Male',
+          location: u.location || 'Vietnam',
+          completedToursCount: u.completedToursCount || 0,
+          totalSpent: u.totalSpent || 0,
+          recentTrip: u.recentTrip || null
         }));
         setCustomers(merged);
       } else {
-        setCustomers(DEFAULT_CUSTOMERS);
+        setCustomers([]);
       }
     } catch (_err) {
-      // Fallback seamlessly to mock data so UI never breaks
-      setCustomers(DEFAULT_CUSTOMERS);
+      setCustomers([]);
     } finally {
       setLoading(false);
     }
@@ -270,13 +264,13 @@ export default function Customers() {
       setCustomers((prev) =>
         prev.map((c) => (c.id === customer.id ? { ...c, status: nextStatus } : c))
       );
-      showToast(`Đã chuyển trạng thái ${customer.fullName || customer.name} sang ${nextStatus}`);
+      showToast(`Switched status of ${customer.fullName || customer.name} to ${nextStatus}`);
     } catch (_err) {
       // Local fallback
       setCustomers((prev) =>
         prev.map((c) => (c.id === customer.id ? { ...c, status: nextStatus } : c))
       );
-      showToast(`Đã chuyển trạng thái sang ${nextStatus}`);
+      showToast(`Switched status to ${nextStatus}`);
     }
   };
 
@@ -302,7 +296,7 @@ export default function Customers() {
             prev.map((c) => (c.id === editingCustomer.id ? { ...c, ...formData } : c))
           );
         }
-        showToast('Cập nhật thông tin khách hàng thành công!');
+        showToast('Customer profile updated successfully!');
       } else {
         // Create
         const res = await fetch(`${API_BASE_URL}/api/v1/users`, {
@@ -324,13 +318,13 @@ export default function Customers() {
           };
           setCustomers((prev) => [newMock, ...prev]);
         }
-        showToast('Thêm khách hàng mới thành công!');
+        showToast('New customer added successfully!');
       }
 
       setIsFormOpen(false);
       setEditingCustomer(null);
     } catch (_err) {
-      showToast('Thao tác thành công!', 'success');
+      showToast('Action completed successfully!', 'success');
       setIsFormOpen(false);
     } finally {
       setActionLoading(false);
@@ -346,12 +340,12 @@ export default function Customers() {
         method: 'DELETE',
       });
       setCustomers((prev) => prev.filter((c) => c.id !== deletingCustomer.id));
-      showToast(`Đã xóa tài khoản ${deletingCustomer.fullName || deletingCustomer.name}`);
+      showToast(`Deleted customer account ${deletingCustomer.fullName || deletingCustomer.name}`);
       setIsDeleteOpen(false);
       setDeletingCustomer(null);
     } catch (_err) {
       setCustomers((prev) => prev.filter((c) => c.id !== deletingCustomer.id));
-      showToast(`Đã xóa tài khoản thành công`);
+      showToast('Customer account deleted successfully');
       setIsDeleteOpen(false);
       setDeletingCustomer(null);
     } finally {
@@ -361,9 +355,9 @@ export default function Customers() {
 
   // Export CSV
   const handleExportCSV = () => {
-    const headers = ['Mã định danh,Họ tên,Email,Số điện thoại,Giới tính,Địa điểm,Trạng thái,Số tour đã đi,Tổng chi tiêu'];
+    const headers = ['Customer ID,Full Name,Email,Phone,Gender,Location,Status,Completed Tours,Total Spent ($)'];
     const rows = filteredCustomers.map((c) =>
-      `"${c.id}","${c.fullName || c.name}","${c.email}","${c.phone}","${c.gender || 'Nam'}","${c.location || 'Việt Nam'}","${c.status || 'ACTIVE'}","${c.completedToursCount || 0}","${c.totalSpent || 0}"`
+      `"${c.id}","${c.fullName || c.name}","${c.email}","${c.phone}","${c.gender || 'Male'}","${c.location || 'Vietnam'}","${c.status || 'ACTIVE'}","${c.completedToursCount || 0}","${c.totalSpent || 0}"`
     );
     const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers, ...rows].join('\n');
     const encodedUri = encodeURI(csvContent);
@@ -373,8 +367,16 @@ export default function Customers() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Đã xuất file CSV thành công!');
+    showToast('Exported CSV file successfully!');
   };
+
+  const totalCount = customers.length;
+  const activeCount = customers.filter(c => (c.status || 'ACTIVE').toUpperCase() === 'ACTIVE').length;
+  const inactiveCount = customers.filter(c => (c.status || '').toUpperCase() === 'INACTIVE').length;
+  const blockedCount = customers.filter(c => (c.status || '').toUpperCase() === 'BLOCKED').length;
+  const activePct = totalCount > 0 ? ((activeCount / totalCount) * 100).toFixed(1) : '0';
+  const inactivePct = totalCount > 0 ? ((inactiveCount / totalCount) * 100).toFixed(1) : '0';
+  const blockedPct = totalCount > 0 ? ((blockedCount / totalCount) * 100).toFixed(1) : '0';
 
   return (
     <AdminLayout>
@@ -406,10 +408,10 @@ export default function Customers() {
               <span className="text-teal-600 font-bold">Customers</span>
             </div>
             <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-              Quản lý Khách hàng <span className="text-gray-400 font-normal text-xl">(Customers)</span>
+              Customers Management
             </h1>
             <p className="text-xs text-gray-500 mt-1 max-w-2xl leading-relaxed">
-              Theo dõi danh sách, phân loại quốc tịch, kiểm duyệt quyền truy cập và kiểm soát hoạt động của các du khách.
+              Track traveler directory, nationality breakdown, account status, and booking activity.
             </p>
           </div>
 
@@ -419,7 +421,7 @@ export default function Customers() {
               className="px-3.5 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-base">download</span>
-              <span>Xuất danh sách (CSV)</span>
+              <span>Export CSV</span>
             </button>
             <button
               onClick={() => {
@@ -429,40 +431,40 @@ export default function Customers() {
               className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:shadow transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-base">person_add</span>
-              <span>+ Thêm khách hàng</span>
+              <span>+ Add Customer</span>
             </button>
           </div>
         </div>
 
         {/* 4 Stat Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Card 1: Tổng khách hàng */}
+          {/* Card 1: Total Customers */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Tổng khách hàng
+                  Total Customers
                 </span>
-                <p className="text-3xl font-extrabold text-gray-900 mt-1">12,480</p>
+                <p className="text-3xl font-extrabold text-gray-900 mt-1">{totalCount.toLocaleString()}</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-xl">group</span>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 mt-3">
-              <span className="material-symbols-outlined text-sm">trending_up</span>
-              <span>+12% so với tháng trước</span>
+            <div className="flex items-center gap-1 text-[11px] font-semibold text-sky-600 mt-3">
+              <span className="material-symbols-outlined text-sm">database</span>
+              <span>Live Database Records</span>
             </div>
           </div>
 
-          {/* Card 2: Đang hoạt động */}
+          {/* Card 2: Active */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Đang hoạt động
+                  Active Travelers
                 </span>
-                <p className="text-3xl font-extrabold text-gray-900 mt-1">11,820</p>
+                <p className="text-3xl font-extrabold text-gray-900 mt-1">{activeCount.toLocaleString()}</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-xl">check_circle</span>
@@ -470,20 +472,20 @@ export default function Customers() {
             </div>
             <div className="flex items-center gap-2 mt-3">
               <span className="px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold text-[10px]">
-                94.7%
+                {activePct}%
               </span>
-              <span className="text-[11px] text-gray-400">tỷ lệ duy trì ổn định</span>
+              <span className="text-[11px] text-gray-400">stable retention rate</span>
             </div>
           </div>
 
-          {/* Card 3: Tạm ngưng / Nghỉ */}
+          {/* Card 3: Inactive */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Tạm ngưng / Nghỉ
+                  Inactive Travelers
                 </span>
-                <p className="text-3xl font-extrabold text-gray-900 mt-1">540</p>
+                <p className="text-3xl font-extrabold text-gray-900 mt-1">{inactiveCount.toLocaleString()}</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-xl">pause_circle</span>
@@ -491,20 +493,20 @@ export default function Customers() {
             </div>
             <div className="flex items-center gap-2 mt-3">
               <span className="px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600 font-bold text-[10px]">
-                4.3%
+                {inactivePct}%
               </span>
-              <span className="text-[11px] text-gray-400">không phát sinh chuyến 90d</span>
+              <span className="text-[11px] text-gray-400">no recent activity</span>
             </div>
           </div>
 
-          {/* Card 4: Bị khóa (Blocked) */}
+          {/* Card 4: Blocked */}
           <div className="p-5 rounded-2xl bg-white border border-gray-200/80 shadow-2xs hover:shadow-xs transition-shadow">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Bị khóa (Blocked)
+                  Blocked Accounts
                 </span>
-                <p className="text-3xl font-extrabold text-rose-600 mt-1">120</p>
+                <p className="text-3xl font-extrabold text-rose-600 mt-1">{blockedCount.toLocaleString()}</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-xl">block</span>
@@ -512,9 +514,9 @@ export default function Customers() {
             </div>
             <div className="flex items-center gap-2 mt-3">
               <span className="px-1.5 py-0.5 rounded-md bg-rose-50 text-rose-700 font-bold text-[10px]">
-                1.0%
+                {blockedPct}%
               </span>
-              <span className="text-[11px] text-gray-400">vi phạm điều khoản đặt tour</span>
+              <span className="text-[11px] text-gray-400">restricted accounts</span>
             </div>
           </div>
         </div>
@@ -534,7 +536,7 @@ export default function Customers() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                placeholder="Tìm theo Tên, Email, SĐT..."
+                placeholder="Search by name, email, phone..."
                 className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
               />
             </div>
@@ -550,7 +552,7 @@ export default function Customers() {
                 }}
                 className="px-3 py-2 text-xs rounded-xl border border-gray-200 bg-white text-gray-700 focus:border-teal-500 outline-none transition-all cursor-pointer font-medium"
               >
-                <option value="ALL">Tất cả trạng thái</option>
+                <option value="ALL">All Statuses</option>
                 <option value="ACTIVE">● Active</option>
                 <option value="INACTIVE">● Inactive</option>
                 <option value="BLOCKED">● Blocked</option>
@@ -565,10 +567,10 @@ export default function Customers() {
                 }}
                 className="px-3 py-2 text-xs rounded-xl border border-gray-200 bg-white text-gray-700 focus:border-teal-500 outline-none transition-all cursor-pointer font-medium"
               >
-                <option value="ALL">Giới tính: Tất cả</option>
-                <option value="Nam">Nam</option>
-                <option value="Nữ">Nữ</option>
-                <option value="Khác">Khác</option>
+                <option value="ALL">Gender: All</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
               </select>
 
               {/* Location Filter */}
@@ -580,8 +582,8 @@ export default function Customers() {
                 }}
                 className="px-3 py-2 text-xs rounded-xl border border-gray-200 bg-white text-gray-700 focus:border-teal-500 outline-none transition-all cursor-pointer font-medium max-w-[170px] truncate"
               >
-                <option value="ALL">Địa điểm / Quốc gia</option>
-                <option value="Việt Nam">Việt Nam</option>
+                <option value="ALL">Location / Country</option>
+                <option value="Vietnam">Vietnam</option>
                 <option value="United States">United States</option>
                 <option value="United Kingdom">United Kingdom</option>
                 <option value="Australia">Australia</option>
@@ -602,7 +604,7 @@ export default function Customers() {
                 className="px-3 py-2 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer flex items-center gap-1"
               >
                 <span className="material-symbols-outlined text-sm">refresh</span>
-                <span>Đặt lại</span>
+                <span>Reset</span>
               </button>
             </div>
           </div>
@@ -622,14 +624,14 @@ export default function Customers() {
                       className="rounded border-gray-300 text-teal-600 focus:ring-teal-500 cursor-pointer"
                     />
                   </th>
-                  <th className="py-3.5 px-4">Khách hàng</th>
+                  <th className="py-3.5 px-4">Customer</th>
                   <th className="py-3.5 px-4">Email</th>
-                  <th className="py-3.5 px-4">Số điện thoại</th>
-                  <th className="py-3.5 px-4">Giới tính</th>
-                  <th className="py-3.5 px-4">Địa điểm / Quốc tịch</th>
-                  <th className="py-3.5 px-4">Trạng thái</th>
-                  <th className="py-3.5 px-4">Ngày tham gia</th>
-                  <th className="py-3.5 px-4 text-center">Thao tác</th>
+                  <th className="py-3.5 px-4">Phone Number</th>
+                  <th className="py-3.5 px-4">Gender</th>
+                  <th className="py-3.5 px-4">Location / Nationality</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4">Joined Date</th>
+                  <th className="py-3.5 px-4 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -663,19 +665,22 @@ export default function Customers() {
                       <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-3">
                         <span className="material-symbols-outlined text-2xl">search_off</span>
                       </div>
-                      <p className="text-sm font-semibold text-gray-700">Không tìm thấy khách hàng phù hợp</p>
-                      <p className="text-xs text-gray-400 mt-1">Thử thay đổi từ khóa tìm kiếm hoặc bỏ chọn các bộ lọc.</p>
+                      <p className="text-sm font-semibold text-gray-700">No matching customers found</p>
+                      <p className="text-xs text-gray-400 mt-1">Try changing your search keywords or clearing active filters.</p>
                     </td>
                   </tr>
                 ) : (
                   // Customer Rows
                   paginatedCustomers.map((customer) => {
                     const idCode = customer.id ? `#CUS-${customer.id.slice(-4).toUpperCase()}` : '#CUS-8821';
-                    const name = customer.fullName || customer.name || 'Khách hàng';
+                    const name = customer.fullName || customer.name || 'Customer';
                     const isSelected = selectedIds.includes(customer.id);
                     const formattedDate = customer.createdAt
-                      ? new Date(customer.createdAt).toLocaleDateString('vi-VN')
-                      : '14/01/2024';
+                      ? new Date(customer.createdAt).toLocaleDateString('en-US')
+                      : '01/14/2024';
+
+                    const isFemale = customer.gender === 'Nữ' || customer.gender === 'Female';
+                    const displayGender = isFemale ? 'Female' : (customer.gender === 'Nam' || customer.gender === 'Male' ? 'Male' : (customer.gender || 'Other'));
 
                     return (
                       <tr
@@ -711,17 +716,17 @@ export default function Customers() {
                         <td className="py-3.5 px-4 font-mono text-gray-600">{customer.phone || '+84 901 234 567'}</td>
                         <td className="py-3.5 px-4">
                           <span className={`inline-block px-2 py-0.5 text-[11px] font-semibold rounded-md ${
-                            (customer.gender || 'Nam') === 'Nữ'
+                            isFemale
                               ? 'bg-sky-50 text-sky-700 border border-sky-100'
                               : 'bg-gray-100 text-gray-700'
                           }`}>
-                            {customer.gender || 'Nam'}
+                            {displayGender}
                           </span>
                         </td>
                         <td className="py-3.5 px-4 text-gray-600">
-                          <div className="flex items-center gap-1 truncate max-w-[160px]" title={customer.location || 'Việt Nam'}>
+                          <div className="flex items-center gap-1 truncate max-w-[160px]" title={customer.location || 'Vietnam'}>
                             <span className="material-symbols-outlined text-gray-400 text-sm shrink-0">location_on</span>
-                            <span className="truncate">{customer.location || 'Việt Nam'}</span>
+                            <span className="truncate">{customer.location || 'Vietnam'}</span>
                           </div>
                         </td>
                         <td className="py-3.5 px-4">
@@ -739,7 +744,7 @@ export default function Customers() {
                                 setSelectedCustomer(customer);
                                 setIsDetailOpen(true);
                               }}
-                              title="Xem chi tiết"
+                              title="View details"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-teal-600 hover:bg-teal-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">visibility</span>
@@ -752,7 +757,7 @@ export default function Customers() {
                                 setEditingCustomer(customer);
                                 setIsFormOpen(true);
                               }}
-                              title="Chỉnh sửa"
+                              title="Edit customer"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">edit</span>
@@ -762,7 +767,7 @@ export default function Customers() {
                             <button
                               type="button"
                               onClick={() => handleToggleStatus(customer)}
-                              title="Đổi trạng thái"
+                              title="Change status"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">swap_horiz</span>
@@ -775,7 +780,7 @@ export default function Customers() {
                                 setDeletingCustomer(customer);
                                 setIsDeleteOpen(true);
                               }}
-                              title="Xóa tài khoản"
+                              title="Delete account"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">delete</span>
@@ -793,7 +798,7 @@ export default function Customers() {
           {/* Pagination Footer */}
           <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
             <div>
-              Hiển thị <span className="font-bold text-gray-800">{paginatedCustomers.length}</span> trên tổng số <span className="font-bold text-gray-800">{filteredCustomers.length}</span> khách hàng
+              Showing <span className="font-bold text-gray-800">{paginatedCustomers.length}</span> of <span className="font-bold text-gray-800">{filteredCustomers.length}</span> customers
             </div>
 
             <div className="flex items-center gap-1">

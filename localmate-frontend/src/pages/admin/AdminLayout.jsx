@@ -1,33 +1,67 @@
-import React, { useState } from 'react';
-import { NavLink, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 
 export default function AdminLayout({ children }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [accountMgmtOpen, setAccountMgmtOpen] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('localmate_user');
+    if (!stored) {
+      alert('Please log in with an Administrator account!');
+      navigate('/login');
+      return;
+    }
+    try {
+      const user = JSON.parse(stored);
+      if (!user?.roles?.includes('ROLE_ADMIN')) {
+        alert('Access denied: Administrator privileges required!');
+        navigate('/');
+        return;
+      }
+      setCurrentUser(user);
+    } catch {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const isCustomersActive = location.pathname === '/admin/accounts/customers';
   const isHelpersActive = location.pathname === '/admin/accounts/local-helpers';
   const isAccountMgmtActive = isCustomersActive || isHelpersActive;
 
+  const displayName = currentUser?.fullName || "System Admin";
+  const displayAvatar = currentUser?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150";
+
   return (
-    <div className="flex min-h-screen bg-[#f8fafc] text-gray-800 antialiased font-sans">
+    <div className="flex min-h-screen w-full max-w-full bg-[#F8FAFC] text-slate-800 antialiased font-sans overflow-x-hidden selection:bg-cyan-700 selection:text-white">
       {/* Sidebar Navigation */}
-      <aside className="w-64 shrink-0 bg-white border-r border-gray-200/80 flex flex-col justify-between sticky top-0 h-screen z-20 overflow-y-auto">
+      <aside className="w-64 shrink-0 bg-white border-r border-slate-200/80 flex flex-col justify-between sticky top-0 h-screen z-20 overflow-y-auto select-none">
         <div>
-          {/* Brand Header */}
-          <div className="p-6 pb-5">
-            <Link to="/" className="block">
-              <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 flex items-center gap-1.5">
-                Local<span className="text-teal-600">Mate</span>
-              </h1>
-              <span className="text-[11px] font-semibold tracking-wider text-gray-400 uppercase block mt-0.5">
-                Admin Portal
-              </span>
-            </Link>
+          {/* User Profile Card - Consistent with App Header & Sidebar */}
+          <div className="p-4 border-b border-slate-100 mb-2">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <img 
+                alt={displayName} 
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-cyan-600/20 shrink-0" 
+                src={displayAvatar} 
+              />
+              <div className="min-w-0">
+                <p className="font-semibold text-sm text-slate-900 truncate">{displayName}</p>
+                <p className="text-xs text-slate-500 truncate">System Admin</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => navigate('/profile')}
+              className="mt-3 w-full py-2 px-4 rounded-lg bg-cyan-50 text-cyan-800 text-xs border border-cyan-200 hover:bg-cyan-100 transition-all font-semibold cursor-pointer"
+            >
+              Edit Profile
+            </button>
           </div>
 
           {/* Navigation Links */}
-          <nav className="px-4 space-y-1 text-sm font-medium">
+          <nav className="px-3 space-y-1 text-sm font-medium">
             {/* Dashboard / Overview */}
             <NavLink
               to="/admin"
@@ -35,13 +69,22 @@ export default function AdminLayout({ children }) {
               className={({ isActive }) =>
                 `w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all ${
                   isActive
-                    ? 'bg-teal-500 text-white font-bold shadow-xs'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-cyan-50 text-cyan-800 font-semibold border border-cyan-100'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`
               }
             >
-              <span className="material-symbols-outlined text-xl">grid_view</span>
-              <span>Dashboard</span>
+              {({ isActive }) => (
+                <>
+                  <span 
+                    className={`material-symbols-outlined text-[20px] ${isActive ? 'text-cyan-700' : 'text-slate-400'}`}
+                    style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+                  >
+                    dashboard
+                  </span>
+                  <span>Dashboard</span>
+                </>
+              )}
             </NavLink>
 
             {/* Account Mgmt Section */}
@@ -50,11 +93,13 @@ export default function AdminLayout({ children }) {
                 type="button"
                 onClick={() => setAccountMgmtOpen(!accountMgmtOpen)}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors cursor-pointer ${
-                  isAccountMgmtActive ? 'text-gray-900 font-bold' : 'text-gray-600 hover:bg-gray-100'
+                  isAccountMgmtActive ? 'bg-cyan-50 text-cyan-800 font-semibold border border-cyan-100' : 'text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-xl">manage_accounts</span>
+                  <span className={`material-symbols-outlined text-[20px] ${isAccountMgmtActive ? 'text-cyan-700' : 'text-slate-400'}`}>
+                    manage_accounts
+                  </span>
                   <span>Account Mgmt</span>
                 </div>
                 <span className={`material-symbols-outlined text-lg transition-transform duration-200 ${accountMgmtOpen ? 'rotate-180' : ''}`}>
@@ -69,12 +114,12 @@ export default function AdminLayout({ children }) {
                     className={({ isActive }) =>
                       `flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs transition-all ${
                         isActive
-                          ? 'bg-teal-400 text-teal-950 font-bold shadow-2xs'
-                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                          ? 'bg-cyan-100/70 text-cyan-900 font-bold border border-cyan-200'
+                          : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                       }`
                     }
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${isCustomersActive ? 'bg-teal-900' : 'bg-gray-300'}`}></span>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isCustomersActive ? 'bg-cyan-700' : 'bg-slate-300'}`}></span>
                     <span>Customers</span>
                   </NavLink>
 
@@ -83,12 +128,12 @@ export default function AdminLayout({ children }) {
                     className={({ isActive }) =>
                       `flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs transition-all ${
                         isActive
-                          ? 'bg-teal-400 text-teal-950 font-bold shadow-2xs'
-                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                          ? 'bg-cyan-100/70 text-cyan-900 font-bold border border-cyan-200'
+                          : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                       }`
                     }
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${isHelpersActive ? 'bg-teal-900' : 'bg-gray-300'}`}></span>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isHelpersActive ? 'bg-cyan-700' : 'bg-slate-300'}`}></span>
                     <span>Local Helpers</span>
                   </NavLink>
                 </div>
@@ -97,74 +142,61 @@ export default function AdminLayout({ children }) {
 
             {/* Other System Menus */}
             <NavLink
-              to="/admin/approvals"
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              to="/admin"
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
             >
-              <span className="material-symbols-outlined text-xl">verified_user</span>
+              <span className="material-symbols-outlined text-slate-400 text-[20px]">verified_user</span>
               <span>Helper Approval</span>
             </NavLink>
 
             <NavLink
-              to="/admin/bookings"
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              to="/traveler"
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
             >
-              <span className="material-symbols-outlined text-xl">calendar_month</span>
+              <span className="material-symbols-outlined text-slate-400 text-[20px]">calendar_month</span>
               <span>Booking Mgmt</span>
             </NavLink>
 
             <NavLink
-              to="/admin/reviews"
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              to="/reviews"
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
             >
-              <span className="material-symbols-outlined text-xl">star</span>
+              <span className="material-symbols-outlined text-slate-400 text-[20px]">star</span>
               <span>Reviews</span>
             </NavLink>
 
             <NavLink
-              to="/admin/revenue"
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              to="/chat"
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
             >
-              <span className="material-symbols-outlined text-xl">payments</span>
-              <span>Revenue</span>
-            </NavLink>
-
-            <NavLink
-              to="/admin/reports"
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-            >
-              <span className="material-symbols-outlined text-xl">bar_chart</span>
-              <span>Reports</span>
+              <span className="material-symbols-outlined text-slate-400 text-[20px]">chat_bubble</span>
+              <span>Messages</span>
             </NavLink>
           </nav>
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-gray-200/80 space-y-2">
+        <div className="p-3 border-t border-slate-200/80 space-y-1">
           <NavLink
-            to="/admin/settings"
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+            to="/profile"
+            className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
           >
-            <span className="material-symbols-outlined text-lg">settings</span>
+            <span className="material-symbols-outlined text-slate-400 text-[20px]">settings</span>
             <span>Settings</span>
           </NavLink>
 
-          {/* Admin User Profile Card */}
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-gray-50 border border-gray-200/60">
-            <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
-              alt="Alex Rivera"
-              className="w-9 h-9 rounded-full object-cover border border-teal-200 shrink-0"
-            />
-            <div className="overflow-hidden">
-              <p className="text-xs font-bold text-gray-900 truncate">Alex Rivera</p>
-              <p className="text-[10px] font-semibold text-teal-700 tracking-wider uppercase">SYSTEM ADMIN</p>
-            </div>
-          </div>
+          <NavLink
+            to="/"
+            className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+          >
+            <span className="material-symbols-outlined text-slate-400 text-[20px]">help_outline</span>
+            <span>Help</span>
+          </NavLink>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 min-w-0 flex flex-col bg-[#f8fafc]">
+      <main className="flex-1 min-w-0 flex flex-col bg-[#F8FAFC] overflow-x-hidden">
         {children}
       </main>
     </div>

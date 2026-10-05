@@ -81,11 +81,11 @@ export default function HelperRequestForm() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-10 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 py-10 w-full overflow-hidden">
       
       {/* Progress Indicator */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between max-w-3xl mx-auto relative">
+      <div className="mb-12 overflow-x-auto pb-2">
+        <div className="flex items-center justify-between max-w-3xl mx-auto relative min-w-[500px]">
           <div className="flex flex-col items-center z-10">
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold mb-2">
               <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
@@ -117,7 +117,7 @@ export default function HelperRequestForm() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Side: Form Container */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 space-y-6 min-w-0">
           <form className="space-y-6" onSubmit={handleSubmit}>
             
             {/* Section 1: Basic Information */}
@@ -342,7 +342,7 @@ export default function HelperRequestForm() {
         </div>
 
         {/* Right Side Info Widget */}
-        <aside className="lg:col-span-4 bg-white dark:bg-surface-dark p-6 rounded-3xl border border-border-subtle shadow-sm">
+        <aside className="lg:col-span-4 bg-white dark:bg-surface-dark p-6 rounded-3xl border border-border-subtle shadow-sm min-w-0 break-words">
           <h3 className="font-headline-md text-headline-md font-bold mb-4 text-on-surface">Request Guide</h3>
           <p className="font-body-md text-on-surface-variant mb-6">
             You are submitting a customized request to **{guideName}**. They will review your trip details and build a tailored itinerary for you.

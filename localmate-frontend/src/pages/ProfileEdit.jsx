@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../config/api';
 
 export default function ProfileEdit() {
   const navigate = useNavigate();
@@ -11,16 +12,16 @@ export default function ProfileEdit() {
   const [activeTab, setActiveTab] = useState('basic');
 
   // Form Fields - Basic Information
-  const [fullName, setFullName] = useState('Alex Rivers');
-  const [email, setEmail] = useState('alex.rivers@example.com');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
   const [countryCode, setCountryCode] = useState('+84');
-  const [phoneNumber, setPhoneNumber] = useState('912 345 678');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [birthDate, setBirthDate] = useState('1995-08-15');
   const [gender, setGender] = useState('male');
   const [nationality, setNationality] = useState('VN');
-  const [address, setAddress] = useState('123 Hue Street, Hoan Kiem, Hanoi');
-  const [bio, setBio] = useState('Passionate about street food culture and ancient architectural marvels. Love connecting with locals.');
-  const [avatarUrl, setAvatarUrl] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuCrkWHwSWr_MVTYTL_74lmUVbLd0NyK1b49ZGWAAsUJVmlmkNRs3tFcY0hfnZN-VkR69-HFkajVlwTQB97xeFvl1fMt0ziOUxtxRvNDpH8z7BvUfABt3ULq7D2BlxqYlyIitRSsp5z0-WVzk0PEhW1TaAP6p8eGCFly6nYFggijP3ZUgEaK1neLdGdRcJPXPrFU3MI8-hS07b_P7IRBuu1Z1gZCE9X8PzNzQvBiP4XQTY4RgDQE345t');
+  const [address, setAddress] = useState('');
+  const [bio, setBio] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
 
   // Security Form Fields
   const [currentPassword, setCurrentPassword] = useState('');
@@ -43,40 +44,78 @@ export default function ProfileEdit() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('Your profile details have been synchronized across the LocalMate platform.');
+  const [toastMessage, setToastMessage] = useState('Personal profile synchronized successfully.');
 
-  // Load user from localStorage
+  // Load user from localStorage and backend
   useEffect(() => {
     const stored = localStorage.getItem('localmate_user');
-    if (stored) {
-      try {
-        const user = JSON.parse(stored);
-        setCurrentUser(user);
-        if (user.fullName) setFullName(user.fullName);
-        if (user.email) setEmail(user.email);
-        if (user.phone) {
-          setPhoneNumber(user.phone.replace('+84', '').replace('+1', '').replace('+44', '').replace('+81', '').trim());
-        }
-        if (user.avatarUrl) setAvatarUrl(user.avatarUrl);
-        if (user.address) setAddress(user.address);
-        if (user.bio) setBio(user.bio);
-
-        // Fetch helper rate if role is helper
-        if (user.roles?.includes('ROLE_HELPER')) {
-          fetch(`http://localhost:8080/api/v1/helpers/${user.id || user.email}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.hourlyRate !== undefined || data.price !== undefined) {
-                setHourlyRate(Number(data.hourlyRate || data.price) || 15);
-              }
-            })
-            .catch(err => console.error('Error fetching helper rate:', err));
-        }
-      } catch (err) {
-        console.error('Error loading stored user:', err);
-      }
+    if (!stored) {
+      alert("Please sign in to view and edit your profile!");
+      navigate('/login');
+      return;
     }
-  }, []);
+
+    let user = null;
+    try {
+      user = JSON.parse(stored);
+      setCurrentUser(user);
+      if (user.fullName) setFullName(user.fullName);
+      if (user.email) setEmail(user.email);
+      if (user.phone) {
+        setPhoneNumber(user.phone.replace('+84', '').replace('+1', '').replace('+44', '').replace('+81', '').trim());
+      }
+      if (user.avatarUrl) setAvatarUrl(user.avatarUrl);
+      if (user.address) setAddress(user.address);
+      if (user.bio) setBio(user.bio);
+      if (user.birthDate) setBirthDate(user.birthDate);
+      if (user.gender) setGender(user.gender);
+      if (user.nationality) setNationality(user.nationality);
+      if (user.prefLang) setPrefLang(user.prefLang);
+      if (user.prefCurrency) setPrefCurrency(user.prefCurrency);
+      if (user.notifBookings !== undefined) setNotifBookings(user.notifBookings);
+      if (user.notifMessages !== undefined) setNotifMessages(user.notifMessages);
+      if (user.notifPromos !== undefined) setNotifPromos(user.notifPromos);
+      if (user.hourlyRate !== undefined) setHourlyRate(user.hourlyRate);
+    } catch (err) {
+      console.error('Error loading stored user:', err);
+    }
+
+    if (user?.email || user?.id) {
+      const queryParams = new URLSearchParams();
+      if (user.email) queryParams.set('email', user.email);
+      if (user.id) queryParams.set('id', user.id);
+
+      fetch(`${API_BASE_URL}/api/v1/users/profile?${queryParams.toString()}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(freshUser => {
+          if (freshUser) {
+            setCurrentUser(prev => ({ ...(prev || {}), ...freshUser }));
+            if (freshUser.fullName) setFullName(freshUser.fullName);
+            if (freshUser.email) setEmail(freshUser.email);
+            if (freshUser.phone) {
+              setPhoneNumber(freshUser.phone.replace('+84', '').replace('+1', '').replace('+44', '').replace('+81', '').trim());
+            }
+            if (freshUser.avatarUrl) setAvatarUrl(freshUser.avatarUrl);
+            if (freshUser.address) setAddress(freshUser.address);
+            if (freshUser.bio) setBio(freshUser.bio);
+            if (freshUser.birthDate) setBirthDate(freshUser.birthDate);
+            if (freshUser.gender) setGender(freshUser.gender);
+            if (freshUser.nationality) setNationality(freshUser.nationality);
+            if (freshUser.prefLang) setPrefLang(freshUser.prefLang);
+            if (freshUser.prefCurrency) setPrefCurrency(freshUser.prefCurrency);
+            if (freshUser.notifBookings !== undefined) setNotifBookings(freshUser.notifBookings);
+            if (freshUser.notifMessages !== undefined) setNotifMessages(freshUser.notifMessages);
+            if (freshUser.notifPromos !== undefined) setNotifPromos(freshUser.notifPromos);
+            if (freshUser.hourlyRate !== undefined) setHourlyRate(freshUser.hourlyRate);
+
+            // update localStorage with fresh info
+            const merged = { ...(user || {}), ...freshUser };
+            localStorage.setItem('localmate_user', JSON.stringify(merged));
+          }
+        })
+        .catch(err => console.warn('Could not fetch latest profile:', err));
+    }
+  }, [navigate]);
 
   // Profile completion calculation
   const calculateCompletion = () => {
@@ -92,17 +131,43 @@ export default function ProfileEdit() {
 
   const completionPercentage = calculateCompletion();
 
-  // Avatar upload
+  // Avatar upload with smart canvas compression
   const handleAvatarChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('File size exceeds 5MB limit!');
+      if (file.size > 50 * 1024 * 1024) {
+        alert('File size exceeds the 50MB limit!');
         return;
       }
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarUrl(reader.result);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 500;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          setAvatarUrl(compressedDataUrl);
+        };
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -117,11 +182,15 @@ export default function ProfileEdit() {
     e.preventDefault();
     setIsSaving(true);
 
+    const storedUser = JSON.parse(localStorage.getItem('localmate_user') || '{}');
+    const activeEmail = email || currentUser?.email || storedUser.email;
+    const activeId = currentUser?.id || currentUser?._id || storedUser.id || storedUser._id;
+
     const fullPhone = `${countryCode} ${phoneNumber}`.trim();
-    const updatedUser = {
-      ...(currentUser || {}),
+    const payload = {
+      id: activeId,
+      email: activeEmail,
       fullName,
-      email,
       phone: fullPhone,
       avatarUrl,
       birthDate,
@@ -129,29 +198,41 @@ export default function ProfileEdit() {
       nationality,
       address,
       bio,
+      location: address || currentUser?.location || 'Vietnam',
+      hourlyRate: Number(hourlyRate) || 15,
+      prefLang,
+      prefCurrency,
+      notifBookings,
+      notifMessages,
+      notifPromos,
     };
 
     try {
-      // Also update in backend if available
-      await fetch('http://localhost:8080/api/v1/users/profile', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/users/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedUser)
+        body: JSON.stringify(payload)
       });
 
-      // If Helper, also update price in helper profile
-      if (currentUser?.roles?.includes('ROLE_HELPER') && hourlyRate) {
-        await fetch(`http://localhost:8080/api/v1/helpers/${currentUser.id || currentUser.email}/price`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hourlyRate: Number(hourlyRate) })
-        });
+      if (!res.ok) {
+        let errorMsg = 'Failed to update personal profile!';
+        try {
+          const errorData = await res.json();
+          if (errorData && errorData.message) errorMsg = errorData.message;
+        } catch {
+          const text = await res.text().catch(() => '');
+          if (text) errorMsg = text;
+        }
+        throw new Error(errorMsg);
       }
-    } catch {
-      // Backend optional
-    }
 
-    setTimeout(() => {
+      const savedUser = await res.json();
+      const updatedUser = {
+        ...(currentUser || {}),
+        ...savedUser,
+        token: currentUser?.token || storedUser.token,
+      };
+
       localStorage.setItem('localmate_user', JSON.stringify(updatedUser));
       setCurrentUser(updatedUser);
       window.dispatchEvent(new Event('storage'));
@@ -159,43 +240,64 @@ export default function ProfileEdit() {
       setIsSaving(false);
       setSaveSuccess(true);
       setShowToast(true);
-      setToastMessage('Your profile details have been synchronized across the LocalMate platform.');
+      setToastMessage('Personal profile saved successfully to database!');
 
-      setTimeout(() => {
-        setSaveSuccess(false);
-      }, 2500);
-
-      setTimeout(() => {
-        setShowToast(false);
-      }, 5000);
-    }, 800);
+      setTimeout(() => setSaveSuccess(false), 2500);
+      setTimeout(() => setShowToast(false), 5000);
+    } catch (err) {
+      setIsSaving(false);
+      alert('Failed to save profile: ' + err.message);
+    }
   };
 
   // Submit Password Change
-  const handleSubmitSecurity = (e) => {
+  const handleSubmitSecurity = async (e) => {
     e.preventDefault();
+    if (!currentPassword) {
+      alert('Please enter your current password!');
+      return;
+    }
     if (newPassword.length < 6) {
       alert('New password must be at least 6 characters long!');
       return;
     }
     if (newPassword !== confirmPassword) {
-      alert('Password confirmation does not match!');
+      alert('Confirmation password does not match!');
       return;
     }
 
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/v1/users/password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: currentUser?.id,
+          email: currentUser?.email,
+          currentPassword,
+          newPassword,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Password update failed!');
+      }
+
       setIsSaving(false);
       setSaveSuccess(true);
       setShowToast(true);
-      setToastMessage('Your account password has been updated successfully.');
+      setToastMessage('Account password updated successfully!');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
 
       setTimeout(() => setSaveSuccess(false), 2500);
       setTimeout(() => setShowToast(false), 5000);
-    }, 800);
+    } catch (err) {
+      setIsSaving(false);
+      alert(err.message);
+    }
   };
 
   const isHelper = currentUser?.roles?.includes('ROLE_HELPER');
@@ -359,10 +461,10 @@ export default function ProfileEdit() {
           </div>
 
           {/* Main Grid: Tabs and Main Form Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full overflow-hidden">
             
             {/* Sub-Navigation Side Column */}
-            <aside className="lg:col-span-3 flex lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none w-full">
+            <aside className="lg:col-span-3 flex lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none w-full min-w-0">
               <button 
                 onClick={() => setActiveTab('basic')}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl font-label-bold text-sm shadow-sm shrink-0 transition-all text-left w-full ${
@@ -428,7 +530,7 @@ export default function ProfileEdit() {
             </aside>
 
             {/* Main Content Area Based on Active Tab */}
-            <section className="lg:col-span-9 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-8">
+            <section className="lg:col-span-9 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-8 min-w-0 max-w-full overflow-hidden">
               
               {/* TAB 1: BASIC INFORMATION */}
               {activeTab === 'basic' && (
@@ -481,7 +583,7 @@ export default function ProfileEdit() {
                       </div>
                       
                       <p className="font-body-sm text-[12px] text-slate-400 mt-3 leading-normal">
-                        Supports JPG, PNG, or WEBP. Maximum file size 5MB. Recommended dimensions 400x400px.
+                        Supports JPG, PNG, or WEBP. Max file size 50MB. Recommended resolution 400x400px.
                       </p>
                     </div>
                   </div>

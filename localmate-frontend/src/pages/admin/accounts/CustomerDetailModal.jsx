@@ -5,35 +5,35 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
   if (!isOpen || !customer) return null;
 
   const idCode = customer.id ? `#CUS-${customer.id.slice(-4).toUpperCase()}` : '#CUS-8821';
-  const name = customer.fullName || customer.name || 'Khách hàng';
+  const name = customer.fullName || customer.name || 'Customer';
   const email = customer.email || 'N/A';
   const phone = customer.phone || '+84 901 234 567';
-  const gender = customer.gender || 'Nam';
-  const location = customer.location || customer.city || 'Việt Nam';
+  const gender = customer.gender || 'Male';
+  const location = customer.location || customer.city || 'Vietnam';
   const toursCount = customer.completedToursCount || 8;
   const spent = customer.totalSpent ? `$${Number(customer.totalSpent).toLocaleString()}` : '$1,420';
   const createdAtFormatted = customer.createdAt 
-    ? new Date(customer.createdAt).toLocaleDateString('vi-VN') 
-    : '14/01/2024';
+    ? new Date(customer.createdAt).toLocaleDateString('en-US') 
+    : '01/14/2024';
 
   const recentTrip = customer.recentTrip || {
-    tourName: 'Hà Nội Street Food Night',
-    guideName: 'Nguyễn Văn A',
-    date: '12/04/2024',
+    tourName: 'Hanoi Street Food Night',
+    guideName: 'Kevin Nguyen',
+    date: '04/12/2024',
     status: 'COMPLETED',
   };
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
       <div 
-        className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col justify-between border-l border-gray-100 transform transition-transform duration-300 ease-out"
+        className="w-full max-w-md bg-white h-full max-h-screen shadow-2xl flex flex-col justify-between border-l border-gray-100 overflow-hidden transform transition-transform duration-300 ease-out"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between shrink-0">
           <div>
             <span className="text-[11px] font-bold tracking-wider text-gray-400 uppercase block mb-1">
-              Thông tin chi tiết hồ sơ
+              Customer Profile Details
             </span>
             <h2 className="text-xl font-bold text-gray-900">{name}</h2>
           </div>
@@ -64,7 +64,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
                   {gender}
                 </span>
               </div>
-              <p className="text-xs text-gray-500">Khách du lịch nền tảng LocalMate</p>
+              <p className="text-xs text-gray-500">LocalMate Travel Explorer</p>
             </div>
           </div>
 
@@ -72,13 +72,13 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
           <div className="grid grid-cols-2 gap-3">
             <div className="p-4 rounded-xl bg-gray-50/80 border border-gray-100 text-center">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Đã hoàn thành
+                Completed Tours
               </span>
               <p className="text-xl font-bold text-gray-900">{toursCount} tours</p>
             </div>
             <div className="p-4 rounded-xl bg-teal-50/60 border border-teal-100/60 text-center">
               <span className="text-[10px] font-bold text-teal-600 uppercase tracking-wider block mb-1">
-                Tổng chi tiêu
+                Total Spent
               </span>
               <p className="text-xl font-bold text-teal-700">{spent}</p>
             </div>
@@ -87,13 +87,13 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
           {/* Contact & Location Info */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-3">
-              Liên hệ & Định vị
+              Contact & Location
             </h4>
             <div className="space-y-3 bg-white rounded-xl border border-gray-100 p-4 shadow-2xs">
               <div className="flex items-start gap-3">
                 <span className="material-symbols-outlined text-gray-400 text-lg mt-0.5">mail</span>
                 <div>
-                  <span className="text-xs text-gray-500 block">Địa chỉ Email</span>
+                  <span className="text-xs text-gray-500 block">Email Address</span>
                   <a href={`mailto:${email}`} className="font-medium text-gray-800 hover:text-teal-600 text-sm">
                     {email}
                   </a>
@@ -103,7 +103,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
               <div className="flex items-start gap-3 pt-2 border-t border-gray-50">
                 <span className="material-symbols-outlined text-gray-400 text-lg mt-0.5">call</span>
                 <div>
-                  <span className="text-xs text-gray-500 block">Số điện thoại</span>
+                  <span className="text-xs text-gray-500 block">Phone Number</span>
                   <span className="font-medium text-gray-800 text-sm">{phone}</span>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
               <div className="flex items-start gap-3 pt-2 border-t border-gray-50">
                 <span className="material-symbols-outlined text-gray-400 text-lg mt-0.5">location_on</span>
                 <div>
-                  <span className="text-xs text-gray-500 block">Quốc tịch / Nơi cư trú</span>
+                  <span className="text-xs text-gray-500 block">Location / Country</span>
                   <span className="font-medium text-gray-800 text-sm">{location}</span>
                 </div>
               </div>
@@ -119,7 +119,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
               <div className="flex items-start gap-3 pt-2 border-t border-gray-50">
                 <span className="material-symbols-outlined text-gray-400 text-lg mt-0.5">calendar_month</span>
                 <div>
-                  <span className="text-xs text-gray-500 block">Ngày gia nhập nền tảng</span>
+                  <span className="text-xs text-gray-500 block">Member Since</span>
                   <span className="font-medium text-gray-800 text-sm">{createdAtFormatted}</span>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
           {/* Recent Trip */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-3">
-              Chuyến đi gần nhất
+              Latest Booking
             </h4>
             <div className="p-3.5 rounded-xl border border-gray-100 bg-gray-50/60 flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors">
               <div className="flex items-center gap-3">
@@ -146,19 +146,19 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
                 </div>
               </div>
               <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                Hoàn thành
+                Completed
               </span>
             </div>
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 border-t border-gray-100 bg-gray-50/50 flex gap-3">
+        <div className="p-5 border-t border-gray-100 bg-gray-50/50 flex gap-3 shrink-0">
           <a
             href={`mailto:${email}`}
             className="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 transition-colors text-center cursor-pointer"
           >
-            Gửi Email
+            Send Email
           </a>
           <button
             onClick={() => {
@@ -167,7 +167,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
             }}
             className="flex-1 py-2.5 px-4 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold shadow-xs hover:shadow transition-all text-center cursor-pointer"
           >
-            Chỉnh sửa hồ sơ
+            Edit Profile
           </button>
         </div>
       </div>

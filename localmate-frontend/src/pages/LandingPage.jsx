@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PlacesAutocompleteInput from '../components/PlacesAutocompleteInput';
+import GoogleMapsExplore from '../components/GoogleMapsExplore';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -7,6 +9,7 @@ export default function LandingPage() {
   const [searchWhen, setSearchWhen] = useState('');
   const [searchLang, setSearchLang] = useState('English');
 
+  const [allGuides, setAllGuides] = useState([]);
   const [featuredGuides, setFeaturedGuides] = useState([]);
   const [loadingGuides, setLoadingGuides] = useState(true);
 
@@ -19,11 +22,12 @@ export default function LandingPage() {
     const fetchGuides = async () => {
       setLoadingGuides(true);
       try {
-        const res = await fetch('http://localhost:8080/api/v1/helpers');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+        const res = await fetch(`${apiUrl}/api/v1/helpers`);
         if (res.ok) {
           const data = await res.json();
-          // Filter or pick the 4 featured guides (Kevin Nguyen, Huong Dang, Tuan Tran, Elena Nguyen)
           if (Array.isArray(data) && data.length > 0) {
+            setAllGuides(data);
             setFeaturedGuides(data.slice(0, 4));
           }
         }
@@ -84,10 +88,10 @@ export default function LandingPage() {
               <span className="material-symbols-outlined text-primary mr-3">location_on</span>
               <div className="text-left w-full">
                 <label className="block font-label-caps text-label-caps text-on-surface-variant">LOCATION</label>
-                <input
-                  type="text"
+                <PlacesAutocompleteInput
                   value={searchLocation}
-                  onChange={(e) => setSearchLocation(e.target.value)}
+                  onChange={setSearchLocation}
+                  onSelectPlace={(place) => setSearchLocation(place.name || place.city || '')}
                   className="w-full bg-transparent border-none p-0 focus:ring-0 font-body-md text-on-surface placeholder:text-outline-variant outline-none"
                   placeholder="Where are you going?"
                 />
@@ -257,6 +261,9 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* Interactive Google Maps Explore Section */}
+      <GoogleMapsExplore helpers={allGuides.length > 0 ? allGuides : featuredGuides} />
 
       {/* Customer Reviews Slider */}
       <section className="py-24 bg-primary text-white overflow-hidden">

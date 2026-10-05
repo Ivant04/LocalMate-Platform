@@ -360,8 +360,8 @@ export default function Payment() {
                         <span className="text-[8px] font-black tracking-tighter leading-none mt-0.5">VIETQR</span>
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-slate-900">PayOS (VietQR / Chuyển khoản ngân hàng 24/7)</p>
-                        <p className="text-xs text-slate-500">Quét mã VietQR bằng mọi app ngân hàng (VCB, MB, Techcombank, VPBank...)</p>
+                        <p className="font-semibold text-sm text-slate-900">PayOS (VietQR / Instant Bank Transfer 24/7)</p>
+                        <p className="text-xs text-slate-500">Scan VietQR with any mobile banking app (VCB, MB, Techcombank, VPBank...)</p>
                       </div>
                     </div>
                     <span className="text-[11px] font-bold text-cyan-700 bg-cyan-100/60 px-2 py-0.5 rounded">RECOMMENDED</span>
