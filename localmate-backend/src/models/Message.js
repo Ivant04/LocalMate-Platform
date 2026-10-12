@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema(
   {
+    conversationId: {
+      type: String,
+      required: true,
+      index: true,
+    },
     senderId: {
       type: String,
       required: true,
@@ -20,6 +25,10 @@ const messageSchema = new mongoose.Schema(
       type: String,
       enum: ['TEXT', 'LOCATION', 'IMAGE'],
       default: 'TEXT',
+    },
+    imgAttachment: {
+      type: String,
+      default: null,
     },
     latitude: {
       type: Number,

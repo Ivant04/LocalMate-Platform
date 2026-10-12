@@ -7,170 +7,6 @@ import AccountForm from './components/AccountForm';
 import DeleteAccountDialog from './components/DeleteAccountDialog';
 import API_BASE_URL from '../../../config/api';
 
-const DEFAULT_HELPERS = [
-  {
-    id: 'hlp-1042',
-    name: 'Minh Nguyen',
-    fullName: 'Minh Nguyen',
-    email: 'minh.nguyen@localmate.vn',
-    phone: '+84 912 849 201',
-    city: 'Da Nang & Hoi An',
-    location: 'Da Nang & Hoi An',
-    title: 'Hoi An & Da Nang Local Foodie & Culture Explorer',
-    bio: 'Born and raised in Da Nang with 5 years experience guiding culinary and heritage tours in Hoi An.',
-    rating: 4.95,
-    reviewsCount: 142,
-    hourlyRate: 12,
-    languages: ['English', 'Vietnamese', 'Korean'],
-    skills: ['Foodie', 'Culture', 'Photography', 'Motorbike'],
-    availabilityStatus: 'AVAILABLE',
-    status: 'ACTIVE',
-    verified: true,
-    isTopRated: true,
-    badgeTitle: 'Super Guide',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-    createdAt: '2023-08-15T08:00:00Z',
-  },
-  {
-    id: 'hlp-0892',
-    name: 'Anh Tuyet Tran',
-    fullName: 'Anh Tuyet Tran',
-    email: 'tuyet.tran@localmate.vn',
-    phone: '+84 908 112 334',
-    city: 'Hanoi',
-    location: 'Hanoi',
-    title: 'Hanoi Old Quarter Storytelling & Traditional Tea Culture',
-    bio: 'Passionate about the 36 guild streets and ancient French colonial architecture in Hanoi.',
-    rating: 4.88,
-    reviewsCount: 94,
-    hourlyRate: 11,
-    languages: ['English', 'Vietnamese', 'French'],
-    skills: ['History', 'Art & Design', 'Tea & Coffee', 'Walking Tour'],
-    availabilityStatus: 'BUSY',
-    status: 'ACTIVE',
-    verified: true,
-    isTopRated: true,
-    badgeTitle: 'Super Guide',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-    createdAt: '2023-09-20T10:30:00Z',
-  },
-  {
-    id: 'hlp-0731',
-    name: 'Bao Le',
-    fullName: 'Bao Le',
-    email: 'bao.lehoang@gmail.com',
-    phone: '+84 933 556 778',
-    city: 'Da Lat',
-    location: 'Da Lat',
-    title: 'Da Lat Pine Forests & Secret Waterfalls Trekking',
-    bio: 'Trekking expert and camping guide across the misty pine hills and secret waterfalls of Da Lat.',
-    rating: 4.79,
-    reviewsCount: 68,
-    hourlyRate: 10,
-    languages: ['English', 'Vietnamese'],
-    skills: ['Hiking', 'Adventure', 'Camping', 'Photography'],
-    availabilityStatus: 'OFFLINE',
-    status: 'ACTIVE',
-    verified: false,
-    isTopRated: false,
-    badgeTitle: 'Local Guide',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
-    createdAt: '2023-11-05T14:20:00Z',
-  },
-  {
-    id: 'hlp-1105',
-    name: 'Kevin Nguyen',
-    fullName: 'Kevin Nguyen',
-    email: 'kevin.nguyen@localmate.com',
-    phone: '+84 905 111 222',
-    city: 'Hoi An, Da Nang',
-    location: 'Hoi An, Da Nang',
-    title: 'Hoi An & Da Nang Local Foodie & Culture Explorer',
-    bio: 'Explore Da Nang & Hoi An like a true local. Savor authentic Cao Lau and famous local noodles.',
-    rating: 4.92,
-    reviewsCount: 154,
-    hourlyRate: 11,
-    languages: ['English', 'Vietnamese', 'Japanese'],
-    skills: ['Foodie', 'Culture', 'Photography', 'Motorbike'],
-    availabilityStatus: 'AVAILABLE',
-    status: 'ACTIVE',
-    verified: true,
-    isTopRated: true,
-    badgeTitle: 'Super Guide',
-    avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150',
-    createdAt: '2023-07-12T09:00:00Z',
-  },
-  {
-    id: 'hlp-0964',
-    name: 'Huong Dang',
-    fullName: 'Huong Dang',
-    email: 'huong.dang@localmate.com',
-    phone: '+84 905 333 444',
-    city: 'Hue',
-    location: 'Hue',
-    title: 'Imperial Citadel Stories & Authentic Hue Royal Cuisine',
-    bio: 'Native daughter of poetic Hue, passionate about historical monuments and refined Imperial cuisine.',
-    rating: 5.0,
-    reviewsCount: 98,
-    hourlyRate: 9,
-    languages: ['English', 'Vietnamese', 'French'],
-    skills: ['Culture', 'History', 'Traditional Craft', 'Walking Tour'],
-    availabilityStatus: 'AVAILABLE',
-    status: 'ACTIVE',
-    verified: true,
-    isTopRated: true,
-    badgeTitle: 'Super Guide',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-    createdAt: '2023-10-18T11:15:00Z',
-  },
-  {
-    id: 'hlp-1028',
-    name: 'Tuan Tran',
-    fullName: 'Tuan Tran',
-    email: 'tuan.tran@localmate.com',
-    phone: '+84 905 555 666',
-    city: 'Da Nang',
-    location: 'Da Nang',
-    title: 'Active Nature Explorer & Mountain Trails Guide in Da Nang',
-    bio: '5 years leading adventure trekking across Son Tra Peninsula and the Marble Mountains.',
-    rating: 4.85,
-    reviewsCount: 82,
-    hourlyRate: 10,
-    languages: ['English', 'Vietnamese', 'Spanish'],
-    skills: ['Hiking', 'Adventure', 'Culture', 'Translation'],
-    availabilityStatus: 'BUSY',
-    status: 'ACTIVE',
-    verified: true,
-    isTopRated: true,
-    badgeTitle: 'Local Guide',
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150',
-    createdAt: '2023-08-25T13:40:00Z',
-  },
-  {
-    id: 'hlp-1150',
-    name: 'Elena Nguyen',
-    fullName: 'Elena Nguyen',
-    email: 'elena.nguyen@localmate.com',
-    phone: '+84 905 777 888',
-    city: 'Hoi An',
-    location: 'Hoi An',
-    title: 'Hoi An Heritage Architecture & Sunset River Tour',
-    bio: 'Hoi An native photographer. Experience lantern crafting and scenic sunset boat tours on Thu Bon River.',
-    rating: 4.96,
-    reviewsCount: 112,
-    hourlyRate: 12,
-    languages: ['English', 'Vietnamese', 'Italian'],
-    skills: ['Art & Design', 'Photography', 'Bicycle Tour', 'Lantern Making'],
-    availabilityStatus: 'OFFLINE',
-    status: 'ACTIVE',
-    verified: true,
-    isTopRated: true,
-    badgeTitle: 'Super Guide',
-    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150',
-    createdAt: '2023-06-14T15:20:00Z',
-  }
-];
-
 export default function LocalHelpers() {
   const [helpers, setHelpers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -214,7 +50,9 @@ export default function LocalHelpers() {
       if (Array.isArray(data)) {
         const merged = data.map((h, i) => ({
           ...h,
-          availabilityStatus: (h.availabilityStatus || 'OFFLINE').toUpperCase(),
+          totalRevenue: h.totalRevenue || h.revenue || 0,
+          completedToursCount: h.completedToursCount || 0,
+          availabilityStatus: (h.availabilityStatus || 'AVAILABLE').toUpperCase(),
           status: (h.status || 'ACTIVE').toUpperCase(),
           isTopRated: (h.rating || 0) >= 4.85,
           badgeTitle: (h.rating || 0) >= 4.85 ? 'Super Guide' : 'Local Guide',
@@ -388,9 +226,9 @@ export default function LocalHelpers() {
 
   // Export CSV
   const handleExportCSV = () => {
-    const headers = ['Helper ID,Full Name,Email,Phone,City / Base,Languages,Rating,Reviews Count,Hourly Rate ($/hr),Availability,Account Status'];
+    const headers = ['Helper ID,Full Name,Email,Phone,City / Base,Languages,Rating,Reviews Count,Hourly Rate ($/hr),Total Revenue ($),Completed Tours,Availability,Account Status'];
     const rows = filteredHelpers.map((h) =>
-      `"${h.id}","${h.fullName || h.name}","${h.email}","${h.phone}","${h.city || h.location}","${Array.isArray(h.languages) ? h.languages.join('; ') : ''}","${h.rating || 5.0}","${h.reviewsCount || 0}","${h.hourlyRate || h.price || 12}","${h.availabilityStatus || 'AVAILABLE'}","${h.status || 'ACTIVE'}"`
+      `"${h.id}","${h.fullName || h.name}","${h.email}","${h.phone}","${h.city || h.location}","${Array.isArray(h.languages) ? h.languages.join('; ') : ''}","${h.rating || 5.0}","${h.reviewsCount || 0}","${h.hourlyRate || h.price || 12}","${h.totalRevenue || h.revenue || 0}","${h.completedToursCount || 0}","${h.availabilityStatus || 'AVAILABLE'}","${h.status || 'ACTIVE'}"`
     );
     const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers, ...rows].join('\n');
     const encodedUri = encodeURI(csvContent);
@@ -408,6 +246,7 @@ export default function LocalHelpers() {
   const busyCount = helpers.filter(h => (h.availabilityStatus || '').toUpperCase() === 'BUSY').length;
   const offlineCount = helpers.filter(h => (h.availabilityStatus || '').toUpperCase() === 'OFFLINE').length;
   const topRatedCount = helpers.filter(h => (h.rating || 0) >= 4.8).length;
+  const unverifiedCount = helpers.filter(h => !h.verified).length;
   const onlinePct = totalHelpersCount > 0 ? ((onlineCount / totalHelpersCount) * 100).toFixed(1) : '0';
   const busyPct = totalHelpersCount > 0 ? ((busyCount / totalHelpersCount) * 100).toFixed(1) : '0';
   const offlinePct = totalHelpersCount > 0 ? ((offlineCount / totalHelpersCount) * 100).toFixed(1) : '0';
@@ -466,7 +305,7 @@ export default function LocalHelpers() {
               >
                 <span className="material-symbols-outlined text-base text-amber-600">verified</span>
                 <span>Review KYC Submissions</span>
-                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px]">0 pending</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px]">{unverifiedCount} pending</span>
               </button>
 
               {/* Add Helper button */}
@@ -647,10 +486,10 @@ export default function LocalHelpers() {
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex rounded-xl bg-gray-100 p-1 border border-gray-200/60">
                 {[
-                  { key: 'ALL', label: 'All (1.8K)' },
-                  { key: 'AVAILABLE', label: 'Available (920)' },
-                  { key: 'BUSY', label: 'Busy (415)' },
-                  { key: 'OFFLINE', label: 'Offline (505)' },
+                  { key: 'ALL', label: `All (${totalHelpersCount})` },
+                  { key: 'AVAILABLE', label: `Available (${onlineCount})` },
+                  { key: 'BUSY', label: `Busy (${busyCount})` },
+                  { key: 'OFFLINE', label: `Offline (${offlineCount})` },
                 ].map((tab) => (
                   <button
                     key={tab.key}
@@ -717,6 +556,7 @@ export default function LocalHelpers() {
                   <th className="py-3.5 px-4">Languages</th>
                   <th className="py-3.5 px-4">Operating Base</th>
                   <th className="py-3.5 px-4">Rating & Reviews</th>
+                  <th className="py-3.5 px-4">Revenue</th>
                   <th className="py-3.5 px-4 text-center">Availability Status</th>
                   <th className="py-3.5 px-4 text-center">Actions</th>
                 </tr>
@@ -739,13 +579,14 @@ export default function LocalHelpers() {
                       <td className="py-4 px-4"><div className="w-24 h-4 bg-gray-100 rounded"></div></td>
                       <td className="py-4 px-4"><div className="w-20 h-3 bg-gray-200 rounded"></div></td>
                       <td className="py-4 px-4"><div className="w-16 h-3 bg-gray-200 rounded"></div></td>
+                      <td className="py-4 px-4"><div className="w-16 h-3 bg-gray-200 rounded"></div></td>
                       <td className="py-4 px-4 text-center"><div className="w-20 h-5 bg-gray-200 rounded-full mx-auto"></div></td>
                       <td className="py-4 px-4 text-center"><div className="w-16 h-4 bg-gray-200 rounded mx-auto"></div></td>
                     </tr>
                   ))
                 ) : paginatedHelpers.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="py-12 text-center text-gray-500">
+                    <td colSpan="9" className="py-12 text-center text-gray-500">
                       <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-3">
                         <span className="material-symbols-outlined text-2xl">search_off</span>
                       </div>
@@ -760,8 +601,8 @@ export default function LocalHelpers() {
                     const isSelected = selectedIds.includes(helper.id);
                     const availability = (helper.availabilityStatus || 'AVAILABLE').toUpperCase();
                     const languages = Array.isArray(helper.languages) ? helper.languages : ['English', 'Vietnamese'];
-                    const rating = helper.rating ? Number(helper.rating).toFixed(2) : '4.95';
-                    const reviewCount = helper.reviewsCount || helper.reviewCount || 142;
+                    const rating = helper.rating ? Number(helper.rating).toFixed(1) : '5.0';
+                    const reviewCount = helper.reviewsCount ?? helper.reviewCount ?? 0;
 
                     return (
                       <tr
@@ -868,6 +709,18 @@ export default function LocalHelpers() {
                             <span className="material-symbols-outlined text-amber-500 text-sm fill-1">star</span>
                             <span>{rating}</span>
                             <span className="text-gray-400 font-normal text-[11px]">({reviewCount})</span>
+                          </div>
+                        </td>
+
+                        {/* Revenue of individual helper */}
+                        <td className="py-3.5 px-4">
+                          <div className="flex flex-col">
+                            <span className="font-extrabold text-emerald-600 text-xs font-mono">
+                              ${Number(helper.totalRevenue || helper.revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                            </span>
+                            <span className="text-[10px] text-gray-400 font-medium">
+                              {(helper.completedToursCount || 0)} tours
+                            </span>
                           </div>
                         </td>
 

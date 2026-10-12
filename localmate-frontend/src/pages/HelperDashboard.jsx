@@ -79,9 +79,10 @@ export default function HelperDashboard() {
 
   // Update helper hourly rate ($/hr)
   const handleSavePrice = async (newPrice) => {
-    const rateToSave = Number(newPrice);
-    if (!rateToSave || rateToSave <= 0 || rateToSave > 1000) {
-      alert("Please enter a valid hourly rate between $1 and $1,000/hr.");
+    const normalized = String(newPrice).replace(',', '.');
+    const rateToSave = parseFloat(normalized);
+    if (isNaN(rateToSave) || rateToSave <= 0 || rateToSave > 1000) {
+      alert("Please enter a valid hourly rate between $0.1 and $1,000/hr.");
       return;
     }
     setSavingPrice(true);
@@ -294,7 +295,8 @@ export default function HelperDashboard() {
   // Real Total Earnings Calculation from confirmed bookings
   const realTotalEarnings = confirmedTours.reduce((sum, t) => {
     const val = Number(t.price || t.totalPrice) || 0;
-    return sum + (val > 1000 ? Math.round(val / 25000) : val);
+    const usd = val > 1000 ? parseFloat((val / 25000).toFixed(2)) : val;
+    return parseFloat((sum + usd).toFixed(2));
   }, 0);
 
   // Real Weekly Earnings by Day of Week
@@ -307,8 +309,8 @@ export default function HelperDashboard() {
       if (!isNaN(dt.getTime())) {
         const dayIdx = (dt.getDay() + 6) % 7; // Monday = 0
         const val = Number(tour.price || tour.totalPrice) || 0;
-        const usd = val > 1000 ? Math.round(val / 25000) : val;
-        weeklyEarnings[dayIdx] += usd;
+        const usd = val > 1000 ? parseFloat((val / 25000).toFixed(2)) : val;
+        weeklyEarnings[dayIdx] = parseFloat((weeklyEarnings[dayIdx] + usd).toFixed(2));
       }
     }
   });
@@ -406,7 +408,7 @@ export default function HelperDashboard() {
             <div className="flex flex-col items-center bg-white p-3.5 px-5 rounded-2xl border border-slate-200/80 shadow-2xs min-w-[120px]">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">TOTAL EARNINGS</span>
               <span className="text-2xl font-extrabold text-teal-700">
-                ${realTotalEarnings.toLocaleString()}
+                ${Number(realTotalEarnings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
               </span>
               <span className="text-[10px] text-slate-400 font-semibold mt-0.5">
                 {confirmedTours.length} confirmed tours
@@ -802,12 +804,13 @@ export default function HelperDashboard() {
                     <span className="absolute left-4 font-bold text-xl text-teal-700">$</span>
                     <input
                       type="number"
-                      min="1"
+                      step="any"
+                      min="0.1"
                       max="1000"
                       value={inputRate}
                       onChange={(e) => setInputRate(e.target.value)}
                       className="w-full pl-9 pr-16 py-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-teal-600 focus:ring-2 focus:ring-teal-100 text-xl font-bold text-slate-900 outline-none transition-all"
-                      placeholder="15"
+                      placeholder="2.5"
                       autoFocus
                     />
                     <span className="absolute right-4 font-bold text-sm text-slate-400">/ hour</span>
@@ -818,7 +821,7 @@ export default function HelperDashboard() {
                 <div>
                   <span className="block text-[11px] font-bold uppercase text-slate-400 mb-2">QUICK PRESETS</span>
                   <div className="grid grid-cols-5 gap-2">
-                    {[10, 12, 15, 20, 25].map((preset) => (
+                    {[2.5, 5, 10, 15, 20].map((preset) => (
                       <button
                         key={preset}
                         type="button"

@@ -35,9 +35,28 @@ const toHelperMap = async (user, profile) => {
   }));
 
   const rate = profile.hourlyRate != null ? profile.hourlyRate : 10.0;
-  const displayPrice = rate > 1000 ? Math.round(rate / 25000.0) : rate;
+  const displayPrice = rate > 1000 ? parseFloat((rate / 25000.0).toFixed(2)) : rate;
 
   const avatar = user.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150';
+
+  // Calculate completed bookings and total revenue for this helper
+  const helperBookings = await Booking.find({
+    $or: [{ helperId: userIdStr }, { helperId: profileIdStr }, { helperId: user.email }],
+  }).lean();
+
+  const completedToursCount = helperBookings.filter(
+    (b) => b.status && b.status.toUpperCase() === 'COMPLETED'
+  ).length;
+
+  const totalRevenue = helperBookings
+    .filter(
+      (b) => b.status && (b.status.toUpperCase() === 'COMPLETED' || b.status.toUpperCase() === 'ACCEPTED')
+    )
+    .reduce((sum, b) => {
+      const p = b.totalPrice || 0;
+      const usd = p > 1000 ? parseFloat((p / 25000.0).toFixed(2)) : p;
+      return parseFloat((sum + usd).toFixed(2));
+    }, 0);
 
   return {
     id: userIdStr,
@@ -65,9 +84,12 @@ const toHelperMap = async (user, profile) => {
     priceRaw: rate,
     img: avatar,
     avatar: avatar,
-    verified: profile.verified !== undefined ? profile.verified : true,
+    verified: profile.verified === true,
     availabilityDays: profile.availabilityDays,
     availabilityStatus: profile.availabilityStatus || 'AVAILABLE',
+    completedToursCount,
+    totalRevenue,
+    revenue: totalRevenue,
   };
 };
 
@@ -237,6 +259,29 @@ router.patch('/:id/status', async (req, res) => {
   }
 });
 
+// PATCH /api/v1/helpers/:id/verify
+router.patch('/:id/verify', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { verified } = req.body;
+    let profile = await HelperProfile.findOne({ userId: id });
+    if (!profile) profile = await HelperProfile.findById(id).catch(() => null);
+    if (!profile) {
+      const user = await User.findOne({ email: new RegExp('^' + id, 'i') });
+      if (user) profile = await HelperProfile.findOne({ userId: user._id.toString() });
+    }
+
+    if (!profile) return res.status(404).json({ message: 'Helper profile not found' });
+
+    profile.verified = verified !== undefined ? Boolean(verified) : true;
+    await profile.save();
+
+    return res.json({ message: 'Verification status updated successfully', verified: profile.verified });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
 // PATCH or PUT /api/v1/helpers/:id/price
 const handleUpdatePrice = async (req, res) => {
   try {
@@ -246,9 +291,9 @@ const handleUpdatePrice = async (req, res) => {
       return res.status(400).json({ message: 'hourlyRate or price is required' });
     }
 
-    const newRate = parseFloat(rateObj);
+    const newRate = parseFloat(String(rateObj).replace(',', '.'));
     if (isNaN(newRate) || newRate <= 0 || newRate > 1000) {
-      return res.status(400).json({ message: 'Hourly rate must be between $1 and $1,000/hr' });
+      return res.status(400).json({ message: 'Hourly rate must be between $0.1 and $1,000/hr' });
     }
 
     let profile = await HelperProfile.findOne({ userId: id });
@@ -317,10 +362,10 @@ router.post('/', async (req, res) => {
       userId: user._id.toString(),
       title: title || 'Local Guide & Explorer',
       bio: bio || 'Experienced local guide ready to share authentic local culture.',
-      city: city || 'Đà Nẵng',
-      languages: Array.isArray(languages) ? languages : ['Tiếng Việt', 'Tiếng Anh'],
+      city: city || 'Da Nang',
+      languages: Array.isArray(languages) ? languages : ['English', 'Vietnamese'],
       skills: Array.isArray(skills) ? skills : ['Food Tour', 'Culture'],
-      hourlyRate: hourlyRate ? parseFloat(hourlyRate) : 12.0,
+      hourlyRate: hourlyRate ? parseFloat(String(hourlyRate).replace(',', '.')) : 12.0,
       rating: 5.0,
       reviewCount: 0,
       verified: true,
@@ -374,7 +419,7 @@ router.put('/:id', async (req, res) => {
     if (title !== undefined) profile.title = title;
     if (bio !== undefined) profile.bio = bio;
     if (availabilityStatus !== undefined) profile.availabilityStatus = availabilityStatus.toUpperCase();
-    if (hourlyRate !== undefined) profile.hourlyRate = parseFloat(hourlyRate);
+    if (hourlyRate !== undefined) profile.hourlyRate = parseFloat(String(hourlyRate).replace(',', '.'));
     if (languages !== undefined && Array.isArray(languages)) profile.languages = languages;
 
     await user.save();

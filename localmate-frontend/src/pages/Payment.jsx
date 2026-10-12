@@ -47,12 +47,20 @@ export default function Payment() {
   };
 
   // Form State
-  const [fullName, setFullName] = useState(currentUser?.fullName || 'My Duyen');
-  const [email, setEmail] = useState(currentUser?.email || 'myduyen@localmate.com');
-  const [phone, setPhone] = useState(currentUser?.phone || '+84 988 776 655');
-  const [meetingLocation, setMeetingLocation] = useState('Novotel Danang Premier Han River (Main Lobby)');
-  const [specialRequests, setSpecialRequests] = useState('Group of 2, interested in authentic street food and watching Dragon Bridge fire performance.');
+  const [fullName, setFullName] = useState(currentUser?.fullName || '');
+  const [email, setEmail] = useState(currentUser?.email || '');
+  const [phone, setPhone] = useState(currentUser?.phone || '');
+  const [meetingLocation, setMeetingLocation] = useState('');
+  const [specialRequests, setSpecialRequests] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('payos'); // 'payos' | 'momo' | 'card' | 'cash'
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.fullName) setFullName(currentUser.fullName);
+      if (currentUser.email) setEmail(currentUser.email);
+      if (currentUser.phone) setPhone(currentUser.phone);
+    }
+  }, [currentUser]);
 
   // Card details simulation
   const [cardNumber, setCardNumber] = useState('4111 2222 3333 4444');
@@ -91,7 +99,7 @@ export default function Payment() {
       durationHours: Number(bookingDetails.hours),
       meetLocation: meetingLocation.trim(),
       specialRequests: specialRequests.trim(),
-      totalPrice: Number(bookingDetails.totalCost) * 25000, // Stored in VND
+      totalPrice: Math.round(Number(bookingDetails.totalCost) * 25000), // Stored in VND
       status: 'PENDING',
       paymentStatus: (paymentMethod === 'cash' || paymentMethod === 'payos') ? 'UNPAID' : 'PAID'
     };
@@ -146,7 +154,7 @@ export default function Payment() {
 
       // If user selected PayOS VietQR
       if (paymentMethod === 'payos') {
-        const amountInVnd = Number(bookingDetails.totalCost) * 25000;
+        const amountInVnd = Math.round(Number(bookingDetails.totalCost) * 25000);
         const payosRes = await fetch(`${API_BASE_URL}/api/v1/payment/payos/create-payment`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -183,7 +191,7 @@ export default function Payment() {
     }
   };
 
-  const vndEquivalent = (bookingDetails.totalCost * 25000).toLocaleString('vi-VN');
+  const vndEquivalent = Math.round(Number(bookingDetails.totalCost) * 25000).toLocaleString('vi-VN');
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] py-10 selection:bg-cyan-700 selection:text-white">
@@ -572,13 +580,13 @@ export default function Payment() {
                 <div className="flex justify-between text-slate-600">
                   <span>Base Rate (${bookingDetails.pricePerHour}/hr x {bookingDetails.hours}h x {bookingDetails.people}p)</span>
                   <span className="font-semibold text-slate-900">
-                    ${bookingDetails.pricePerHour * bookingDetails.hours * bookingDetails.people}
+                    ${Number((bookingDetails.pricePerHour * bookingDetails.hours * bookingDetails.people).toFixed(2))}
                   </span>
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>LocalMate Shield Protection (10%)</span>
                   <span className="font-semibold text-slate-900">
-                    ${Math.round(bookingDetails.pricePerHour * bookingDetails.hours * bookingDetails.people * 0.1)}
+                    ${Number((bookingDetails.pricePerHour * bookingDetails.hours * bookingDetails.people * 0.1).toFixed(2))}
                   </span>
                 </div>
                 <div className="pt-3 border-t border-dashed border-slate-200 flex justify-between items-baseline">

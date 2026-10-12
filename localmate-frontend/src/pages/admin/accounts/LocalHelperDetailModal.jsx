@@ -10,8 +10,8 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
   const email = helper.email || 'N/A';
   const phone = helper.phone || '+84 912 849 201';
   const location = helper.city || helper.location || 'Da Nang & Hoi An';
-  const rating = helper.rating ? Number(helper.rating).toFixed(2) : '4.95';
-  const reviewCount = helper.reviewsCount || helper.reviewCount || 142;
+  const rating = helper.rating ? Number(helper.rating).toFixed(1) : '5.0';
+  const reviewCount = helper.reviewsCount ?? helper.reviewCount ?? 0;
   const rate = helper.hourlyRate || helper.price || 12;
   const languages = Array.isArray(helper.languages) ? helper.languages : ['English', 'Vietnamese'];
   const skills = Array.isArray(helper.skills) ? helper.skills : ['Food Tour', 'Culture Explorer', 'Photography'];
@@ -108,7 +108,17 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
           </div>
 
           {/* Quick Metrics */}
-          <div className="grid grid-cols-3 gap-2.5 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
+                Total Revenue
+              </span>
+              <p className="text-base font-bold text-emerald-600 font-mono">
+                ${Number(helper.totalRevenue || helper.revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+              </p>
+              <span className="text-[10px] text-gray-400">({helper.completedToursCount || 0} tours)</span>
+            </div>
+
             <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
                 Rating
@@ -124,7 +134,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
                 Hourly Rate
               </span>
-              <p className="text-base font-bold text-gray-900">${rate}/hr</p>
+              <p className="text-base font-bold text-gray-900">${Number(rate).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}/hr</p>
               <span className="text-[10px] text-gray-400">Standard rate</span>
             </div>
 

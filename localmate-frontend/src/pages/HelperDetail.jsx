@@ -2,87 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../config/api';
 
-const MOCK_GUIDES_DETAILS = {
-  linh: {
-    name: "Linh Nguyen",
-    city: "Hue, Da Nang",
-    country: "Vietnam",
-    title: "Local Culinary & Architectural Specialist",
-    rating: 4.9,
-    reviewsCount: 128,
-    hostedHours: "500+",
-    languages: "English, Japanese",
-    price: 12,
-    expertises: ["HIKING", "FOODIE", "HISTORY"],
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDlHOAy4qPmwMMy6WbW741tOMbZbMwSoENJhOs5pp-zFO8_Lbb2yc9Hzpasvivg7OcsJjbqJbDVuClk6PYdJLPp5KwXuc3meIxiX6iTtp5IlvL2uxKO3yefk4xLBpyH9doDtXImY0IemaO4OLVSWv7oxlmNDd-ao_2wntUo0RQOn3GWCr4r4Rlya6PdnmPbjDjlkEOt2IJ1-m5OFjHp16WAsUry3BOzv2jg5sqLssMyoLe9xXB2ujP3Q1WMZkxNDOhIBXcRQilwt70hRw",
-    bio: "Born and raised in Hue, I am fluent in both English and Japanese. I specialize in helping travelers discover authentic local culture, hidden gems, traditional cuisine, and unique experiences that most tourists never get to see.",
-    experiences: [
-      {
-        title: "Architectural Tour Specialist",
-        desc: "Lead specialized Imperial Citadel and royal tombs walking tours for over 5 years, focusing on structural innovation and historical context."
-      },
-      {
-        title: "Local Culinary Guide",
-        desc: "Curated 'Taste of Hue' street food tours, partnering with family-owned noodle shops and traditional sweet soup vendors."
-      }
-    ],
-    reviews: [
-      {
-        author: "James Wilson",
-        rating: 5,
-        date: "2 weeks ago",
-        text: "Linh was incredible! She took us to a tiny food stall inside the Dong Ba market that served the best Bun Bo Hue we ever had. Her knowledge of Hue's history was mind-blowing.",
-        reply: "Thanks James! It was a pleasure showing you around the market. Hope you come back to Vietnam soon!"
-      },
-      {
-        author: "Yuki Tanaka",
-        rating: 5,
-        date: "1 month ago",
-        text: "リンさんは日本語がとても上手で、説明も丁寧でした。歴史的な背景まで詳しく教えていただき、素晴らしい時間を過ごせました。おすすめです！",
-        reply: "田中様、嬉しいお言葉ありがとうございます！またベトナムにいらした際はぜひ声をかけてください。"
-      }
-    ]
-  },
-  khang: {
-    name: "Tuan Tran",
-    city: "Da Nang",
-    country: "Vietnam",
-    title: "Nature Hike & Linguistic Translator Specialist",
-    rating: 4.7,
-    reviewsCount: 82,
-    hostedHours: "350+",
-    languages: "English, French",
-    price: 10,
-    expertises: ["HIKING", "TRANSLATION", "ADVENTURE"],
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuACEkTfhQ0z-qk-5cA4Se3xjwcqfvUcvE5_D9IVVi9AA5xErnPwONyVSZjPH22AN_FUarmTEAv5puUyvk1TWorMjbzF7mN3_-7X0ELZB4V95NElMaPP6h0WiJeXDeXv7Zzcy6RJzEwNEl_BbCsWG6Wluvp8SN-s7iv29LDWv3dfDXO5ohXEl3nrBo44sB8DeOBU94Eca8kEuysATBnc3bgKA8Vl6E2aLcyDXNMd-saAnqWQ1st8yootEedGdPfb_N2BfJ07UKgZB2ZMRQ",
-    bio: "Hi, I am Khang! I have been hosting visitors in Da Nang for over 5 years. I love showing visitors around the Marble Mountains, Son Tra Peninsula, and local culinary hotspots. Fluent in French and English.",
-    experiences: [
-      {
-        title: "Son Tra Peninsula Trekking Guide",
-        desc: "Organized nature hikes to spot rare Red-shanked Douc Langurs and visit hidden coastlines."
-      },
-      {
-        title: "Linguistic Interpreter",
-        desc: "Assisted foreign investors and expats with housing searches and local market negotiations."
-      }
-    ],
-    reviews: [
-      {
-        author: "Jean-Pierre",
-        rating: 5,
-        date: "3 weeks ago",
-        text: "Khang parle un excellent français. Sa visite des montagnes de marbre était passionnante et pleine d'anecdotes historiques. Je recommande vivement !",
-        reply: "Merci Jean-Pierre ! C'était un plaisir de faire cette visite avec vous."
-      }
-    ]
-  }
-};
-
 export default function HelperDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [guide, setGuide] = useState(MOCK_GUIDES_DETAILS[id] || MOCK_GUIDES_DETAILS.linh);
+  const [guide, setGuide] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -92,18 +16,31 @@ export default function HelperDetail() {
         const res = await fetch(`${API_BASE_URL}/api/v1/helpers/${id}`);
         if (res.ok) {
           const data = await res.json();
-          const fallback = MOCK_GUIDES_DETAILS[id] || MOCK_GUIDES_DETAILS.linh;
           setGuide({
-            ...fallback,
             ...data,
-            languages: Array.isArray(data.languages) ? data.languages.join(', ') : data.languages || fallback.languages,
-            experiences: data.experiences || fallback.experiences,
-            reviews: data.reviews || fallback.reviews,
-            hostedHours: data.hostedHours || `${(data.reviewsCount || 40) * 4}+`,
+            name: data.fullName || data.name || 'Local Helper',
+            fullName: data.fullName || data.name || 'Local Helper',
+            email: data.email || '',
+            city: data.city || data.location || 'Vietnam',
+            country: data.country || 'Vietnam',
+            title: data.title || 'Local Guide & Explorer',
+            rating: data.rating || 5.0,
+            reviewsCount: data.reviewsCount || 0,
+            hostedHours: data.hostedHours || `${(data.reviewsCount || 1) * 4}+`,
+            languages: Array.isArray(data.languages) ? data.languages.join(', ') : (data.languages || 'English, Vietnamese'),
+            price: data.price !== undefined ? parseFloat(data.price) : (data.hourlyRate !== undefined ? parseFloat(data.hourlyRate) : 12),
+            expertises: Array.isArray(data.expertises) ? data.expertises : (data.skills || ['LOCAL EXPERT']),
+            img: data.img || data.avatar || data.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+            bio: data.bio || 'Experienced local guide ready to share authentic local culture.',
+            experiences: data.experiences || [],
+            reviews: Array.isArray(data.reviews) ? data.reviews : [],
           });
+        } else {
+          setGuide(null);
         }
       } catch (err) {
         console.error('Error fetching helper detail:', err);
+        setGuide(null);
       } finally {
         setLoading(false);
       }
@@ -313,10 +250,10 @@ export default function HelperDetail() {
 
   const isHelperOffline = (guide?.availabilityStatus || 'AVAILABLE') === 'OFFLINE';
   
-  const hourlyRate = guide?.price || 10;
-  const baseCost = hourlyRate * hours * people;
-  const serviceFee = Math.round(baseCost * 0.1);
-  const totalCost = baseCost + serviceFee;
+  const hourlyRate = guide?.price !== undefined ? parseFloat(guide.price) : 10;
+  const baseCost = parseFloat((hourlyRate * hours * people).toFixed(2));
+  const serviceFee = parseFloat((baseCost * 0.1).toFixed(2));
+  const totalCost = parseFloat((baseCost + serviceFee).toFixed(2));
 
   const resolveGuideEmail = () => {
     if (guide.email) return guide.email;
@@ -401,9 +338,65 @@ export default function HelperDetail() {
       navigate('/login');
       return;
     }
+    let currentUserObj = null;
+    try {
+      currentUserObj = JSON.parse(storedUser);
+    } catch {
+      currentUserObj = null;
+    }
+
     const gEmail = resolveGuideEmail();
-    navigate(`/chat?target=${encodeURIComponent(gEmail)}`);
+    if (currentUserObj?.email && currentUserObj.email.toLowerCase().trim() === gEmail.toLowerCase().trim()) {
+      alert("This is your own helper profile! You cannot send messages to yourself.");
+      return;
+    }
+
+    const gName = guide?.fullName || guide?.name || 'Local Guide';
+    const gAvatar = guide?.avatar || guide?.avatarUrl || guide?.img || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150';
+    navigate(`/chat?target=${encodeURIComponent(gEmail)}`, {
+      state: {
+        guideEmail: gEmail,
+        guideName: gName,
+        guideAvatar: gAvatar,
+        tourName: guide?.title || `${gName}'s Guided Experience`,
+        city: guide?.city || 'Vietnam',
+        date,
+        startTime,
+        endTime: formattedEndTime,
+        hours,
+        people,
+        totalCost,
+        pricePerHour: hourlyRate
+      }
+    });
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 md:px-10 py-20 flex justify-center items-center min-h-[50vh]">
+        <div className="flex items-center gap-3 text-teal-700 font-bold text-sm">
+          <span className="material-symbols-outlined animate-spin text-2xl">progress_activity</span>
+          Loading Local Helper details...
+        </div>
+      </div>
+    );
+  }
+
+  if (!guide) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 md:px-10 py-20 text-center min-h-[50vh] flex flex-col items-center justify-center">
+        <span className="material-symbols-outlined text-5xl text-gray-400 mb-3">person_off</span>
+        <h2 className="text-xl font-bold text-gray-800">Local Helper Not Found</h2>
+        <p className="text-xs text-gray-500 mt-2 max-w-md">The requested local helper profile could not be found in the database.</p>
+        <button
+          onClick={() => navigate('/search')}
+          className="mt-5 px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+        >
+          Browse All Helpers
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-10 py-10">
@@ -1036,7 +1029,7 @@ export default function HelperDetail() {
               className="w-full flex items-center justify-center gap-2 bg-surface hover:bg-surface-container border border-border-subtle hover:border-primary text-on-surface hover:text-primary py-3.5 rounded-xl font-label-bold text-label-bold text-center transition-all"
             >
               <span className="material-symbols-outlined text-[20px] text-primary">chat</span>
-              Message {guide.name ? guide.name.split(' ')[0] : 'Helper'}
+              Message {guide?.fullName || guide?.name || 'Helper'}
             </button>
           </form>
         </div>

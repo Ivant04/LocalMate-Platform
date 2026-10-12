@@ -5,11 +5,11 @@ import API_BASE_URL from '../config/api';
 export default function Authentication() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   // Set tab based on URL param
   const [isSignUp, setIsSignUp] = useState(false);
   const [role, setRole] = useState('traveler');
-  
+
   // Inputs
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,8 +42,8 @@ export default function Authentication() {
 
     // Pre-warm backend immediately when visiting auth page to eliminate cold start wait
     try {
-      fetch(`${API_BASE_URL}/health`, { method: 'GET', keepalive: true }).catch(() => {});
-    } catch {}
+      fetch(`${API_BASE_URL}/health`, { method: 'GET', keepalive: true }).catch(() => { });
+    } catch { }
   }, [searchParams]);
 
   // Helper to parse network, deployment, and CORS errors
@@ -257,7 +257,7 @@ export default function Authentication() {
           const payloadBase64 = userData.token.split('.')[1];
           const payloadJson = JSON.parse(atob(payloadBase64));
           userData.email = userData.email || payloadJson.sub;
-          
+
           if (userData.email?.includes('admin')) {
             userData.roles = ['ROLE_ADMIN'];
             userData.fullName = userData.fullName || 'Admin Manager';
@@ -344,9 +344,9 @@ export default function Authentication() {
         userData = JSON.parse(responseText);
       } catch {
         const rawToken = responseText.replace(/^"|"$/g, '').trim();
-        userData = { 
-          token: rawToken, 
-          email: email.trim(), 
+        userData = {
+          token: rawToken,
+          email: email.trim(),
           fullName: fullName.trim(),
           phone: phoneNumber.trim(),
           roles: [role === 'guide' ? 'ROLE_HELPER' : 'ROLE_TRAVELER']
@@ -377,55 +377,55 @@ export default function Authentication() {
         <div className="absolute top-1/4 -left-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
       </div>
-      
+
       <div className={`w-full ${isSignUp ? 'max-w-lg' : 'max-w-md'} relative z-10 my-auto transition-all duration-300`}>
         {!isSignUp ? (
           /* Login Card */
           <section className="glass-card p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 max-h-[90vh] overflow-y-auto">
             <div className="text-center mb-6">
               <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Welcome Back</h1>
-              <p className="font-body-md text-on-surface-variant text-gray-500">Đăng nhập bằng Email hoặc Số điện thoại của bạn</p>
+              <p className="font-body-md text-on-surface-variant text-gray-500">Access your local connerctions</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleLogin}>
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-2">Email hoặc Số điện thoại</label>
+                <label className="block font-medium text-sm text-gray-700 mb-2">Email or Phone Number</label>
                 <div className="relative">
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 h-[52px] rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 bg-surface outline-none transition-all font-medium text-gray-900" 
-                    placeholder="name@example.com hoặc 0901234567" 
+                    className="w-full pl-11 pr-4 py-3 h-[52px] rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 bg-surface outline-none transition-all font-medium text-gray-900"
+                    placeholder="name@example.com"
                   />
                   <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none flex items-center">
                     <span className="material-symbols-outlined text-lg">person</span>
                   </div>
                 </div>
               </div>
-              
+
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-2">Mật khẩu</label>
+                <label className="block font-medium text-sm text-gray-700 mb-2">Password</label>
                 <div className="relative">
-                  <input 
-                    type="password" 
+                  <input
+                    type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 h-[52px] rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 bg-surface outline-none transition-all font-medium text-gray-900" 
-                    placeholder="••••••••" 
+                    className="w-full pl-11 pr-4 py-3 h-[52px] rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 bg-surface outline-none transition-all font-medium text-gray-900"
+                    placeholder="••••••••"
                   />
                   <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none flex items-center">
                     <span className="material-symbols-outlined text-lg">lock</span>
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex justify-end">
-                <a className="text-sm text-emerald-600 hover:underline" href="#">Quên mật khẩu?</a>
+                <a className="text-sm text-emerald-600 hover:underline" href="#">Forgot password?</a>
               </div>
-              
+
               {errorMessage && (
                 <div className="p-3.5 bg-red-50/90 border border-red-200 text-red-700 rounded-xl text-xs space-y-2.5">
                   <div className="flex items-start gap-2">
@@ -455,27 +455,27 @@ export default function Authentication() {
                   )}
                 </div>
               )}
-              
-              <button 
-                type="submit" 
+
+              <button
+                type="submit"
                 disabled={loading}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-[52px] rounded-xl font-semibold shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                {loading ? 'Đang xử lý...' : 'Đăng nhập'}
+                {loading ? 'Processing...' : 'Sign In'}
               </button>
-              
+
               <div className="relative py-3">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-4 bg-white text-gray-500 text-xs rounded-full">Or continue with</span>
                 </div>
               </div>
-              
+
               {/* Google Sign In Area */}
               {googleClientId ? (
                 <div id="googleSignInBtn" ref={googleBtnRef} className="w-full flex justify-center min-h-[44px]"></div>
               ) : (
-                <button 
+                <button
                   type="button"
                   onClick={triggerGoogleSignIn}
                   className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 hover:border-gray-300 h-[52px] rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-all cursor-pointer shadow-sm"
@@ -489,15 +489,15 @@ export default function Authentication() {
                   Sign in with Google
                 </button>
               )}
-              
+
               <p className="text-center text-sm text-gray-600 mt-6">
-                Chưa có tài khoản?{' '}
-                <button 
-                  type="button" 
-                  onClick={() => setIsSignUp(true)} 
+                Don't have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => setIsSignUp(true)}
                   className="text-emerald-600 font-semibold hover:underline cursor-pointer"
                 >
-                  Đăng ký ngay
+                  Sign up
                 </button>
               </p>
             </form>
@@ -509,68 +509,68 @@ export default function Authentication() {
               <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Join LocalMate</h1>
               <p className="font-body-md text-on-surface-variant text-gray-500">Start your journey today</p>
             </div>
-            
+
             <form className="space-y-4" onSubmit={handleSignUp}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-medium text-sm text-gray-700 mb-1">Full Name</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all" 
-                    placeholder="Nguyen Van A" 
+                    className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
+                    placeholder="Nguyen Van A"
                   />
                 </div>
                 <div>
                   <label className="block font-medium text-sm text-gray-700 mb-1">Phone Number</label>
-                  <input 
-                    type="tel" 
+                  <input
+                    type="tel"
                     required
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all" 
-                    placeholder="+84 123456789" 
+                    className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
+                    placeholder="+84 123456789"
                   />
                 </div>
               </div>
-              
+
               <div>
                 <label className="block font-medium text-sm text-gray-700 mb-1">Email Address</label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all" 
-                  placeholder="name@example.com" 
+                  className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
+                  placeholder="name@example.com"
                 />
               </div>
-              
+
               <div>
                 <label className="block font-medium text-sm text-gray-700 mb-1">Password</label>
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all" 
-                  placeholder="••••••••" 
+                  className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
+                  placeholder="••••••••"
                 />
               </div>
-              
+
               <div>
                 <label className="block font-medium text-sm text-gray-700 mb-2">Join as</label>
                 <div className="flex gap-4">
                   <label className="flex-1 cursor-pointer">
-                    <input 
-                      type="radio" 
-                      name="role" 
+                    <input
+                      type="radio"
+                      name="role"
                       checked={role === 'traveler'}
                       onChange={() => setRole('traveler')}
-                      className="hidden peer" 
-                      value="traveler" 
+                      className="hidden peer"
+                      value="traveler"
                     />
                     <div className="p-3 text-center rounded-xl border-2 border-gray-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-all">
                       <span className="material-symbols-outlined block text-emerald-600 mb-1">person</span>
@@ -578,13 +578,13 @@ export default function Authentication() {
                     </div>
                   </label>
                   <label className="flex-1 cursor-pointer">
-                    <input 
-                      type="radio" 
-                      name="role" 
+                    <input
+                      type="radio"
+                      name="role"
                       checked={role === 'guide'}
                       onChange={() => setRole('guide')}
-                      className="hidden peer" 
-                      value="guide" 
+                      className="hidden peer"
+                      value="guide"
                     />
                     <div className="p-3 text-center rounded-xl border-2 border-gray-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-all">
                       <span className="material-symbols-outlined block text-emerald-600 mb-1">map</span>
@@ -593,21 +593,21 @@ export default function Authentication() {
                   </label>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3 py-1">
-                <input 
-                  type="checkbox" 
-                  id="terms" 
+                <input
+                  type="checkbox"
+                  id="terms"
                   required
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="mt-1 w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer" 
+                  className="mt-1 w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
                 />
                 <label className="text-xs text-gray-600 leading-tight select-none cursor-pointer" htmlFor="terms">
                   I agree to the <a className="text-emerald-600 hover:underline" href="#">Terms of Service</a> and <a className="text-emerald-600 hover:underline" href="#">Privacy Policy</a>
                 </label>
               </div>
-              
+
               {errorMessage && (
                 <div className="p-3.5 bg-red-50/90 border border-red-200 text-red-700 rounded-xl text-xs space-y-2.5">
                   <div className="flex items-start gap-2">
@@ -630,7 +630,7 @@ export default function Authentication() {
                 </div>
               )}
 
-              <button 
+              <button
                 type="submit"
                 disabled={loading}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-[50px] rounded-xl font-semibold shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
@@ -649,7 +649,7 @@ export default function Authentication() {
               {googleClientId ? (
                 <div id="googleSignUpBtn" ref={googleSignUpBtnRef} className="w-full flex justify-center min-h-[44px]"></div>
               ) : (
-                <button 
+                <button
                   type="button"
                   onClick={triggerGoogleSignIn}
                   className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 hover:border-gray-300 h-[48px] rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-all cursor-pointer shadow-sm text-sm"
@@ -663,12 +663,12 @@ export default function Authentication() {
                   Sign up with Google
                 </button>
               )}
-              
+
               <p className="text-center text-sm text-gray-600 mt-4">
                 Already have an account?{' '}
-                <button 
-                  type="button" 
-                  onClick={() => setIsSignUp(false)} 
+                <button
+                  type="button"
+                  onClick={() => setIsSignUp(false)}
                   className="text-emerald-600 font-semibold hover:underline cursor-pointer"
                 >
                   Log in
@@ -683,7 +683,7 @@ export default function Authentication() {
       {showGoogleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative border border-gray-100 my-auto">
-            <button 
+            <button
               onClick={() => setShowGoogleModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
             >
@@ -715,16 +715,16 @@ export default function Authentication() {
                 Enter your Google account email to automatically register or link your profile directly in the database:
               </p>
               <div className="space-y-2.5">
-                <input 
-                  type="text" 
-                  value={googleNameInput} 
+                <input
+                  type="text"
+                  value={googleNameInput}
                   onChange={(e) => setGoogleNameInput(e.target.value)}
                   placeholder="Full Name (e.g. John Doe)"
                   className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
-                <input 
-                  type="email" 
-                  value={googleEmailInput} 
+                <input
+                  type="email"
+                  value={googleEmailInput}
                   onChange={(e) => setGoogleEmailInput(e.target.value)}
                   placeholder="Google Email (e.g. user@gmail.com)"
                   className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"

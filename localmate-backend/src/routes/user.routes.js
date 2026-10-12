@@ -68,33 +68,28 @@ router.get('/', async (req, res) => {
         }
         recentTrip = {
           id: latest._id.toString(),
-          tourName: latest.tourName || 'Đà Nẵng & Hội An Local Tour',
+          tourName: latest.tourName || 'Local Guided Tour',
           guideName,
-          date: latest.bookingDate ? latest.bookingDate.toString() : '14/01/2024',
+          date: latest.bookingDate ? latest.bookingDate.toString() : 'Scheduled',
           status: latest.status,
         };
       } else {
-        recentTrip = {
-          tourName: 'Hà Nội Street Food Night',
-          guideName: 'Nguyen Thuy Linh',
-          date: '14/01/2024',
-          status: 'COMPLETED',
-        };
+        recentTrip = null;
       }
 
       result.push({
         id: userIdStr,
         email: user.email,
         fullName: user.fullName,
-        phone: user.phone || '+84 901 234 567',
+        phone: user.phone || '—',
         avatarUrl: user.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
         roles: user.roles,
         status: user.status || 'ACTIVE',
-        gender: user.gender || 'Nam',
-        location: user.location || 'Việt Nam',
+        gender: user.gender || 'Male',
+        location: user.location || 'Vietnam',
         createdAt: user.createdAt || new Date(),
-        completedToursCount: completedCount > 0 ? completedCount : (user.email.includes('myduyen') ? 8 : (user.email.includes('traveler') ? 5 : 2)),
-        totalSpent: totalSpent > 0 ? totalSpent : (user.email.includes('myduyen') ? 1420.0 : (user.email.includes('traveler') ? 750.0 : 280.0)),
+        completedToursCount: completedCount,
+        totalSpent: totalSpent,
         recentTrip,
       });
     }
@@ -197,8 +192,11 @@ router.put('/profile', async (req, res) => {
       if (bio !== undefined) helperProfile.bio = bio;
       if (address !== undefined) helperProfile.fullAddress = address;
       if (location !== undefined) helperProfile.city = location;
-      if (hourlyRate !== undefined && !isNaN(Number(hourlyRate))) {
-        helperProfile.hourlyRate = Number(hourlyRate);
+      if (hourlyRate !== undefined) {
+        const parsedRate = parseFloat(String(hourlyRate).replace(',', '.'));
+        if (!isNaN(parsedRate) && parsedRate > 0) {
+          helperProfile.hourlyRate = parsedRate;
+        }
       }
       helperProfile.updatedAt = new Date();
       await helperProfile.save();
@@ -220,10 +218,10 @@ router.put('/password', async (req, res) => {
   try {
     const { id, email, currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: 'Vui lòng cung cấp mật khẩu hiện tại và mật khẩu mới' });
+      return res.status(400).json({ message: 'Please provide both current password and new password' });
     }
     if (newPassword.length < 6) {
-      return res.status(400).json({ message: 'Mật khẩu mới phải có ít nhất 6 ký tự' });
+      return res.status(400).json({ message: 'New password must be at least 6 characters' });
     }
 
     let user = null;
@@ -238,14 +236,14 @@ router.put('/password', async (req, res) => {
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Mật khẩu hiện tại không chính xác' });
+      return res.status(400).json({ message: 'Current password is incorrect' });
     }
 
     user.password = await bcrypt.hash(newPassword, 10);
     user.updatedAt = new Date();
     await user.save();
 
-    return res.json({ message: 'Đổi mật khẩu thành công!' });
+    return res.json({ message: 'Password changed successfully!' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -304,8 +302,8 @@ router.post('/', async (req, res) => {
       password: hashedPassword,
       fullName: fullName || 'User',
       phone: phone || '+84 901 234 567',
-      gender: gender || 'Nam',
-      location: location || 'Việt Nam',
+      gender: gender || 'Male',
+      location: location || 'Vietnam',
       avatarUrl: avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
       roles: [userRole],
       status: (status || 'ACTIVE').toUpperCase(),

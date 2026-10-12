@@ -60,6 +60,7 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
 
     const payload = {
       ...formData,
+      hourlyRate: formData.hourlyRate ? parseFloat(String(formData.hourlyRate).replace(',', '.')) : 12,
       languages: type === 'helper' 
         ? formData.languages.split(',').map(s => s.trim()).filter(Boolean)
         : undefined,
@@ -154,7 +155,8 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
                 <label className="block text-xs font-semibold text-gray-700 mb-1.5">Hourly Rate ($/hr)</label>
                 <input
                   type="number"
-                  min="1"
+                  step="any"
+                  min="0.1"
                   max="1000"
                   value={formData.hourlyRate}
                   onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value })}

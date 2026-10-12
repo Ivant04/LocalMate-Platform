@@ -23,14 +23,14 @@ export default function HelperRequestForm() {
   const [nationality, setNationality] = useState('Vietnam');
   const [contactNumber, setContactNumber] = useState(currentUser?.phone || '');
   const [whatsapp, setWhatsapp] = useState('');
-  const [destination, setDestination] = useState('Da Nang, Vietnam');
-  const [areas, setAreas] = useState('Son Tra Peninsula, Marble Mountains');
-  const [arrival, setArrival] = useState('2026-10-03');
-  const [departure, setDeparture] = useState('2026-10-05');
+  const [destination, setDestination] = useState(location.state?.city || '');
+  const [areas, setAreas] = useState('');
+  const [arrival, setArrival] = useState('');
+  const [departure, setDeparture] = useState('');
   const [meetingTime, setMeetingTime] = useState('09:00');
-  const [meetingLocation, setMeetingLocation] = useState('Hotel Lobby');
-  const [travelersCount, setTravelersCount] = useState('2 People');
-  const [travelStyle, setTravelStyle] = useState('Active');
+  const [meetingLocation, setMeetingLocation] = useState('');
+  const [travelersCount, setTravelersCount] = useState('1 Person');
+  const [travelStyle, setTravelStyle] = useState('Cultural & Relaxed');
   
   const [requirements, setRequirements] = useState({
     translation: true,

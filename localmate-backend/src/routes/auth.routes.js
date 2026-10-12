@@ -18,8 +18,8 @@ const formatUserResponse = async (user, token) => {
     avatarUrl: user.avatarUrl,
     roles: user.roles,
     status: user.status,
-    gender: user.gender || 'Nam',
-    location: user.location || 'Việt Nam',
+    gender: user.gender || 'Male',
+    location: user.location || 'Vietnam',
     birthDate: user.birthDate || '',
     nationality: user.nationality || 'VN',
     address: user.address || (helperProfile ? helperProfile.fullAddress : ''),
@@ -66,8 +66,8 @@ router.post('/register', async (req, res) => {
       phone: phone || '+84 901 234 567',
       roles: [userRole],
       status: 'ACTIVE',
-      gender: 'Nam',
-      location: 'Việt Nam',
+      gender: 'Male',
+      location: 'Vietnam',
       avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
     });
 
@@ -115,7 +115,7 @@ router.post('/login', async (req, res) => {
     const identifier = (email || phone || '').trim();
 
     if (!identifier || !password) {
-      return res.status(401).json({ message: 'Vui lòng nhập Email / Số điện thoại và Mật khẩu!' });
+      return res.status(401).json({ message: 'Please enter your Email or Phone Number and Password!' });
     }
 
     let user = null;
@@ -142,19 +142,19 @@ router.post('/login', async (req, res) => {
     }
 
     if (!user) {
-      return res.status(401).json({ message: 'Tài khoản (Email hoặc Số điện thoại) hoặc mật khẩu không chính xác!' });
+      return res.status(401).json({ message: 'Invalid account (Email or Phone Number) or password!' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Tài khoản hoặc mật khẩu không chính xác!' });
+      return res.status(401).json({ message: 'Invalid credentials or password!' });
     }
 
     const token = generateToken(user.email);
     const responseData = await formatUserResponse(user, token);
     return res.json(responseData);
   } catch (error) {
-    return res.status(401).json({ message: 'Đăng nhập thất bại: ' + error.message });
+    return res.status(401).json({ message: 'Login failed: ' + error.message });
   }
 });
 
@@ -163,13 +163,13 @@ router.post('/phone/send-otp', async (req, res) => {
   try {
     const { phone } = req.body;
     if (!phone || !phone.trim()) {
-      return res.status(400).json({ message: 'Vui lòng cung cấp số điện thoại hợp lệ!' });
+      return res.status(400).json({ message: 'Please provide a valid phone number!' });
     }
 
     const rawPhone = phone.trim();
     const digits = extractPhoneDigits(rawPhone);
     if (digits.length < 9 || digits.length > 12) {
-      return res.status(400).json({ message: 'Số điện thoại không hợp lệ (cần từ 9 - 11 chữ số)!' });
+      return res.status(400).json({ message: 'Invalid phone number (must be 9 - 11 digits)!' });
     }
 
     // Generate 6-digit OTP code (for demo, random 6 digits)
@@ -182,13 +182,13 @@ router.post('/phone/send-otp', async (req, res) => {
 
     return res.json({
       success: true,
-      message: 'Mã OTP xác thực đã được gửi thành công!',
+      message: 'OTP verification code sent successfully!',
       phone: rawPhone,
       otp: otp, // Returned for effortless demo evaluation without requiring third-party SMS fee
       expiresInSeconds: 300,
     });
   } catch (error) {
-    return res.status(500).json({ message: 'Lỗi khi gửi mã OTP: ' + error.message });
+    return res.status(500).json({ message: 'Failed to send OTP: ' + error.message });
   }
 });
 
@@ -197,7 +197,7 @@ router.post('/phone/verify-otp', async (req, res) => {
   try {
     const { phone, otp, fullName } = req.body;
     if (!phone || !otp) {
-      return res.status(400).json({ message: 'Vui lòng cung cấp số điện thoại và mã OTP!' });
+      return res.status(400).json({ message: 'Please provide phone number and OTP code!' });
     }
 
     const rawPhone = phone.trim();
@@ -209,7 +209,7 @@ router.post('/phone/verify-otp', async (req, res) => {
     const isValid = (otpData && otpData.otp === enteredOtp && Date.now() <= otpData.expiresAt) || enteredOtp === '123456';
 
     if (!isValid) {
-      return res.status(400).json({ message: 'Mã OTP không chính xác hoặc đã hết hiệu lực!' });
+      return res.status(400).json({ message: 'Invalid or expired OTP code!' });
     }
 
     // Clean up used OTP
@@ -229,7 +229,7 @@ router.post('/phone/verify-otp', async (req, res) => {
       const randomPassword = await bcrypt.hash(Math.random().toString(36), 10);
       const standardPhone = rawPhone.startsWith('+84') ? '0' + rawPhone.slice(3) : rawPhone;
       const autoEmail = `${digits}@phone.localmate.vn`;
-      const displayName = (fullName && fullName.trim()) ? fullName.trim() : `Khách ${standardPhone.slice(-4)}`;
+      const displayName = (fullName && fullName.trim()) ? fullName.trim() : `Guest ${standardPhone.slice(-4)}`;
 
       user = new User({
         email: autoEmail,
@@ -238,12 +238,12 @@ router.post('/phone/verify-otp', async (req, res) => {
         password: randomPassword,
         roles: ['ROLE_TRAVELER'],
         status: 'ACTIVE',
-        gender: 'Nam',
-        location: 'Việt Nam',
+        gender: 'Male',
+        location: 'Vietnam',
         avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${digits}`,
       });
       await user.save();
-    } else if (fullName && fullName.trim() && user.fullName.startsWith('Khách ')) {
+    } else if (fullName && fullName.trim() && user.fullName.startsWith('Guest ')) {
       user.fullName = fullName.trim();
       await user.save();
     }
@@ -252,7 +252,7 @@ router.post('/phone/verify-otp', async (req, res) => {
     const responseData = await formatUserResponse(user, token);
     return res.json(responseData);
   } catch (error) {
-    return res.status(400).json({ message: 'Xác thực OTP thất bại: ' + error.message });
+    return res.status(400).json({ message: 'OTP verification failed: ' + error.message });
   }
 });
 
@@ -303,8 +303,8 @@ router.post('/google', async (req, res) => {
         avatarUrl: userPicture || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
         roles: ['ROLE_TRAVELER'],
         status: 'ACTIVE',
-        gender: 'Nam',
-        location: 'Việt Nam',
+        gender: 'Male',
+        location: 'Vietnam',
       });
       await user.save();
     } else {

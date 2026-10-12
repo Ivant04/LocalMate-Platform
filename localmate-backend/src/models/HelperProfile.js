@@ -17,7 +17,7 @@ const helperProfileSchema = new mongoose.Schema(
     },
     city: {
       type: String,
-      default: 'Đà Nẵng & Hội An',
+      default: 'Da Nang & Hoi An',
       index: true,
     },
     fullAddress: {
@@ -26,7 +26,7 @@ const helperProfileSchema = new mongoose.Schema(
     },
     languages: {
       type: [String],
-      default: ['Tiếng Việt', 'Tiếng Anh'],
+      default: ['English', 'Vietnamese'],
     },
     skills: {
       type: [String],

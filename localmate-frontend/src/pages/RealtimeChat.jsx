@@ -178,56 +178,53 @@ export default function RealtimeChat() {
       console.error('Error fetching bookings for chat:', err);
     }
 
-    // 3. If navigated with state from HelperDetail, Payment, or Dashboards
-    if (location.state && (location.state.guideEmail || location.state.travelerEmail)) {
-      const partnerEmail = (location.state.guideEmail || location.state.travelerEmail).toLowerCase().trim();
-      const convId = getConversationId(myEmail, partnerEmail);
-      const isGuide = Boolean(location.state.guideEmail);
-      if (!convMap.has(convId)) {
-        convMap.set(convId, {
-          id: convId,
-          name: location.state.guideName || location.state.travelerName || (isGuide ? 'Local Guide' : 'Traveler'),
-          roleTag: isGuide ? 'Local Guide' : 'Traveler Explorer',
-          receiverEmail: partnerEmail,
-          avatar: location.state.guideAvatar || location.state.travelerAvatar || (isGuide 
-            ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150' 
-            : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'),
-          online: true,
-          tourName: location.state.tourName || 'Guided Experience',
-          tourDate: location.state.date || location.state.tourDate || 'Upcoming',
-          tourPrice: location.state.totalCost ? `$${location.state.totalCost}` : '',
-          bookingStatus: 'PENDING',
-          lastMsg: 'Ready to chat',
-          time: '',
-          unread: false
-        });
-      }
-      setActiveId(convId);
-    }
-
-    // 4. If URL param ?target=email
+    // 3 & 4. Handle target navigation from HelperDetail or other pages
     const searchParams = new URLSearchParams(location.search);
     const targetParam = searchParams.get('target');
-    if (targetParam) {
-      const partnerEmail = targetParam.toLowerCase().trim();
+    const partnerEmailFromState = location.state?.guideEmail || location.state?.travelerEmail;
+    const partnerEmail = (targetParam || partnerEmailFromState || '').toLowerCase().trim();
+    let targetConvId = null;
+
+    if (partnerEmail) {
       const convId = getConversationId(myEmail, partnerEmail);
-      if (!convMap.has(convId)) {
-        convMap.set(convId, {
-          id: convId,
-          name: partnerEmail.split('@')[0],
-          roleTag: 'Local Contact',
-          receiverEmail: partnerEmail,
-          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-          online: true,
-          tourName: 'Direct Chat',
-          tourDate: 'Today',
-          bookingStatus: 'ACTIVE',
-          lastMsg: 'Ready to chat',
-          time: '',
-          unread: false
-        });
+      targetConvId = convId;
+      const isGuide = Boolean(location.state?.guideEmail || location.state?.guideName);
+
+      let partnerName = location.state?.guideName || location.state?.travelerName;
+      let partnerAvatar = location.state?.guideAvatar || location.state?.travelerAvatar;
+      let partnerRole = isGuide ? 'Local Helper' : 'Traveler Explorer';
+
+      if (!partnerName || !partnerAvatar) {
+        try {
+          const profileRes = await fetch(`${API_BASE_URL}/api/v1/users/profile?email=${encodeURIComponent(partnerEmail)}`);
+          if (profileRes.ok) {
+            const pData = await profileRes.json();
+            if (pData.fullName) partnerName = pData.fullName;
+            if (pData.avatarUrl) partnerAvatar = pData.avatarUrl;
+            if (pData.roles?.includes('ROLE_HELPER')) partnerRole = 'Local Helper';
+          }
+        } catch {
+          // ignore lookup error
+        }
       }
-      setActiveId(convId);
+
+      const existingConv = convMap.get(convId);
+      convMap.set(convId, {
+        id: convId,
+        name: partnerName || existingConv?.name || partnerEmail.split('@')[0],
+        roleTag: partnerRole || existingConv?.roleTag || 'Local Helper',
+        receiverEmail: partnerEmail,
+        avatar: partnerAvatar || existingConv?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+        online: true,
+        tourName: location.state?.tourName || existingConv?.tourName || 'Direct Chat',
+        tourDate: location.state?.date || location.state?.tourDate || existingConv?.tourDate || 'Upcoming',
+        tourPrice: location.state?.totalCost ? `$${location.state.totalCost}` : (existingConv?.tourPrice || ''),
+        bookingStatus: existingConv?.bookingStatus || 'ACTIVE',
+        lastMsg: existingConv?.lastMsg || 'Ready to chat',
+        time: existingConv?.time || '',
+        unread: false,
+        bookingId: existingConv?.bookingId
+      });
     }
 
     const convList = Array.from(convMap.values());
@@ -252,7 +249,9 @@ export default function RealtimeChat() {
     setConversations(convList);
     setLoadingConversations(false);
 
-    if (convList.length > 0) {
+    if (targetConvId) {
+      setActiveId(targetConvId);
+    } else if (convList.length > 0) {
       setActiveId(prev => (prev && convList.some(c => c.id === prev)) ? prev : convList[0].id);
     } else {
       setActiveId(null);
@@ -912,9 +911,25 @@ export default function RealtimeChat() {
                 <div className="p-8 text-center flex flex-col items-center justify-center text-slate-400 bg-white/60 rounded-3xl border border-dashed border-slate-200 my-8">
                   <span className="material-symbols-outlined text-[36px] text-primary/60 mb-2">waving_hand</span>
                   <p className="font-bold text-slate-700 text-sm mb-1">Start chatting with {activeConv.name}!</p>
-                  <p className="text-xs text-slate-500 max-w-sm">
+                  <p className="text-xs text-slate-500 max-w-sm mb-4">
                     Say hello to coordinate details, meeting spot, or ask any questions about your tour.
                   </p>
+                  <div className="flex flex-wrap gap-2 justify-center max-w-md">
+                    {[
+                      `Hi ${activeConv.name}, I'd like to ask about your tour schedule!`,
+                      `Hello! Can we customize our itinerary together?`,
+                      `Hi, are you available for a tour this week?`
+                    ].map((prompt, pIdx) => (
+                      <button
+                        key={pIdx}
+                        type="button"
+                        onClick={() => setInputMsg(prompt)}
+                        className="px-3.5 py-1.5 rounded-full bg-cyan-50 hover:bg-cyan-100 text-cyan-800 text-xs font-semibold border border-cyan-200 transition-all hover:scale-[1.02] active:scale-95 text-left cursor-pointer shadow-2xs"
+                      >
+                        💬 "{prompt}"
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 messages.map((msg, idx) => {

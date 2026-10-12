@@ -37,11 +37,11 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      default: 'Nam',
+      default: 'Male',
     },
     location: {
       type: String,
-      default: 'Việt Nam',
+      default: 'Vietnam',
     },
     birthDate: {
       type: String,

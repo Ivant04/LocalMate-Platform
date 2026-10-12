@@ -27,19 +27,27 @@ export default function AdminLayout({ children }) {
     }
   }, [navigate]);
 
+  const handleLogout = () => {
+    localStorage.removeItem('localmate_user');
+    localStorage.removeItem('localmate_token');
+    window.dispatchEvent(new Event('storage'));
+    navigate('/login');
+  };
+
   const isCustomersActive = location.pathname === '/admin/accounts/customers';
   const isHelpersActive = location.pathname === '/admin/accounts/local-helpers';
   const isAccountMgmtActive = isCustomersActive || isHelpersActive;
 
-  const displayName = currentUser?.fullName || "System Admin";
+  const rawName = currentUser?.fullName || "System Admin";
+  const displayName = rawName.includes('Quản trị viên') ? 'LocalMate Administrator' : rawName;
   const displayAvatar = currentUser?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150";
 
   return (
-    <div className="flex min-h-screen w-full max-w-full bg-[#F8FAFC] text-slate-800 antialiased font-sans overflow-x-hidden selection:bg-cyan-700 selection:text-white">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 shrink-0 bg-white border-r border-slate-200/80 flex flex-col justify-between sticky top-0 h-screen z-20 overflow-y-auto select-none">
+    <div className="flex h-screen w-full max-w-full bg-[#F8FAFC] text-slate-800 antialiased font-sans overflow-hidden selection:bg-cyan-700 selection:text-white">
+      {/* Sidebar Navigation - Fixed in place */}
+      <aside className="w-64 shrink-0 h-full bg-white border-r border-slate-200/80 flex flex-col justify-between z-20 select-none overflow-y-auto">
         <div>
-          {/* User Profile Card - Consistent with App Header & Sidebar */}
+          {/* User Profile Card */}
           <div className="p-4 border-b border-slate-100 mb-2">
             <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
               <img 
@@ -140,37 +148,13 @@ export default function AdminLayout({ children }) {
               )}
             </div>
 
-            {/* Other System Menus */}
+            {/* Helper Approval */}
             <NavLink
               to="/admin"
               className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
             >
               <span className="material-symbols-outlined text-slate-400 text-[20px]">verified_user</span>
               <span>Helper Approval</span>
-            </NavLink>
-
-            <NavLink
-              to="/traveler"
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
-            >
-              <span className="material-symbols-outlined text-slate-400 text-[20px]">calendar_month</span>
-              <span>Booking Mgmt</span>
-            </NavLink>
-
-            <NavLink
-              to="/reviews"
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
-            >
-              <span className="material-symbols-outlined text-slate-400 text-[20px]">star</span>
-              <span>Reviews</span>
-            </NavLink>
-
-            <NavLink
-              to="/chat"
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
-            >
-              <span className="material-symbols-outlined text-slate-400 text-[20px]">chat_bubble</span>
-              <span>Messages</span>
             </NavLink>
           </nav>
         </div>
@@ -185,18 +169,19 @@ export default function AdminLayout({ children }) {
             <span>Settings</span>
           </NavLink>
 
-          <NavLink
-            to="/"
-            className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer text-left"
           >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">help_outline</span>
-            <span>Help</span>
-          </NavLink>
+            <span className="material-symbols-outlined text-rose-500 text-[20px]">logout</span>
+            <span>Log Out</span>
+          </button>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 min-w-0 flex flex-col bg-[#F8FAFC] overflow-x-hidden">
+      {/* Main Content Area - Only this side scrolls! */}
+      <main className="flex-1 h-full min-w-0 flex flex-col bg-[#F8FAFC] overflow-y-auto overflow-x-hidden">
         {children}
       </main>
     </div>

@@ -199,7 +199,7 @@ export default function ProfileEdit() {
       address,
       bio,
       location: address || currentUser?.location || 'Vietnam',
-      hourlyRate: Number(hourlyRate) || 15,
+      hourlyRate: parseFloat(String(hourlyRate).replace(',', '.')) > 0 ? parseFloat(String(hourlyRate).replace(',', '.')) : 15,
       prefLang,
       prefCurrency,
       notifBookings,
@@ -832,7 +832,8 @@ export default function ProfileEdit() {
                               <span className="absolute left-3.5 top-3 font-bold text-lg text-[#0E7490]">$</span>
                               <input
                                 type="number"
-                                min="1"
+                                step="any"
+                                min="0.1"
                                 max="1000"
                                 value={hourlyRate}
                                 onChange={(e) => setHourlyRate(e.target.value)}
@@ -841,7 +842,7 @@ export default function ProfileEdit() {
                               <span className="absolute right-3.5 top-3.5 text-xs font-semibold text-slate-400">/ hour</span>
                             </div>
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              {[10, 12, 15, 20, 25].map((preset) => (
+                              {[2.5, 5, 10, 15, 20].map((preset) => (
                                 <button
                                   key={preset}
                                   type="button"

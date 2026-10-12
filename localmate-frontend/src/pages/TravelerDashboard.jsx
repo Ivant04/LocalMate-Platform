@@ -95,7 +95,7 @@ export default function TravelerDashboard() {
           const formatted = data.map((b) => ({
             id: b.id,
             title: b.tourName || 'Local Guided Tour',
-            price: b.totalPrice ? `$${b.totalPrice > 1000 ? Math.round(b.totalPrice / 25000) : b.totalPrice}` : '$95',
+            price: b.totalPrice ? `$${b.totalPrice > 1000 ? parseFloat((b.totalPrice / 25000).toFixed(2)) : b.totalPrice}` : '$95',
             date: b.bookingDate || 'Scheduled Soon',
             time: (b.startTime && b.endTime) ? `${b.startTime} - ${b.endTime} (${b.durationHours || 4}h)` : (b.durationHours ? `${b.durationHours} Hours` : 'Flexible Duration'),
             startTime: b.startTime,
