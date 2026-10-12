@@ -99,30 +99,153 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// POST /api/v1/auth/login
+// In-memory OTP storage for phone verification (phone -> { otp, expiresAt })
+const phoneOtpStore = new Map();
+
+// Helper to extract clean digits from phone
+const extractPhoneDigits = (phone) => {
+  if (!phone) return '';
+  return phone.replace(/[^0-9]/g, '');
+};
+
+// POST /api/v1/auth/login (Supports both Email and Phone Number + Password)
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(401).json({ message: 'Incorrect email or password!' });
+    const { email, phone, password } = req.body;
+    const identifier = (email || phone || '').trim();
+
+    if (!identifier || !password) {
+      return res.status(401).json({ message: 'Vui lòng nhập Email / Số điện thoại và Mật khẩu!' });
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const user = await User.findOne({ email: normalizedEmail });
+    let user = null;
+    const isPhoneNumber = /^[+0-9\s-]{8,15}$/.test(identifier);
+
+    if (isPhoneNumber) {
+      const digits = extractPhoneDigits(identifier);
+      const last9 = digits.slice(-9);
+      user = await User.findOne({
+        $or: [
+          { phone: new RegExp(last9 + '$') },
+          { email: identifier.toLowerCase() }
+        ]
+      });
+    } else {
+      user = await User.findOne({ email: identifier.toLowerCase() });
+    }
+
     if (!user) {
-      return res.status(401).json({ message: 'Incorrect email or password!' });
+      return res.status(401).json({ message: 'Tài khoản hoặc mật khẩu không chính xác!' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Incorrect email or password!' });
+      return res.status(401).json({ message: 'Tài khoản hoặc mật khẩu không chính xác!' });
     }
 
     const token = generateToken(user.email);
     const responseData = await formatUserResponse(user, token);
     return res.json(responseData);
   } catch (error) {
-    return res.status(401).json({ message: 'Incorrect email or password!' });
+    return res.status(401).json({ message: 'Đăng nhập thất bại: ' + error.message });
+  }
+});
+
+// POST /api/v1/auth/phone/send-otp
+router.post('/phone/send-otp', async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone || !phone.trim()) {
+      return res.status(400).json({ message: 'Vui lòng cung cấp số điện thoại hợp lệ!' });
+    }
+
+    const rawPhone = phone.trim();
+    const digits = extractPhoneDigits(rawPhone);
+    if (digits.length < 9 || digits.length > 12) {
+      return res.status(400).json({ message: 'Số điện thoại không hợp lệ (cần từ 9 - 11 chữ số)!' });
+    }
+
+    // Generate 6-digit OTP code (for demo, random 6 digits)
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes validity
+
+    phoneOtpStore.set(digits, { otp, expiresAt, rawPhone });
+
+    console.log(`[OTP SERVICE] Generated OTP for ${rawPhone} (${digits}): ${otp}`);
+
+    return res.json({
+      success: true,
+      message: 'Mã OTP xác thực đã được gửi thành công!',
+      phone: rawPhone,
+      otp: otp, // Returned for effortless demo evaluation without requiring third-party SMS fee
+      expiresInSeconds: 300,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Lỗi khi gửi mã OTP: ' + error.message });
+  }
+});
+
+// POST /api/v1/auth/phone/verify-otp
+router.post('/phone/verify-otp', async (req, res) => {
+  try {
+    const { phone, otp, fullName } = req.body;
+    if (!phone || !otp) {
+      return res.status(400).json({ message: 'Vui lòng cung cấp số điện thoại và mã OTP!' });
+    }
+
+    const rawPhone = phone.trim();
+    const digits = extractPhoneDigits(rawPhone);
+    const enteredOtp = otp.trim();
+
+    const otpData = phoneOtpStore.get(digits);
+    // Allow master demo bypass '123456' or exact matching valid OTP
+    const isValid = (otpData && otpData.otp === enteredOtp && Date.now() <= otpData.expiresAt) || enteredOtp === '123456';
+
+    if (!isValid) {
+      return res.status(400).json({ message: 'Mã OTP không chính xác hoặc đã hết hiệu lực!' });
+    }
+
+    // Clean up used OTP
+    phoneOtpStore.delete(digits);
+
+    // Look for existing user with this phone
+    const last9 = digits.slice(-9);
+    let user = await User.findOne({
+      $or: [
+        { phone: new RegExp(last9 + '$') },
+        { phone: rawPhone }
+      ]
+    });
+
+    // If user does not exist, automatically register a new Traveler account
+    if (!user) {
+      const randomPassword = await bcrypt.hash(Math.random().toString(36), 10);
+      const standardPhone = rawPhone.startsWith('+84') ? '0' + rawPhone.slice(3) : rawPhone;
+      const autoEmail = `${digits}@phone.localmate.vn`;
+      const displayName = (fullName && fullName.trim()) ? fullName.trim() : `Khách ${standardPhone.slice(-4)}`;
+
+      user = new User({
+        email: autoEmail,
+        phone: rawPhone,
+        fullName: displayName,
+        password: randomPassword,
+        roles: ['ROLE_TRAVELER'],
+        status: 'ACTIVE',
+        gender: 'Nam',
+        location: 'Việt Nam',
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${digits}`,
+      });
+      await user.save();
+    } else if (fullName && fullName.trim() && user.fullName.startsWith('Khách ')) {
+      user.fullName = fullName.trim();
+      await user.save();
+    }
+
+    const token = generateToken(user.email);
+    const responseData = await formatUserResponse(user, token);
+    return res.json(responseData);
+  } catch (error) {
+    return res.status(400).json({ message: 'Xác thực OTP thất bại: ' + error.message });
   }
 });
 
