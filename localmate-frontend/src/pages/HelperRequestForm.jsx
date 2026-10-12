@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 export default function HelperRequestForm() {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ export default function HelperRequestForm() {
     };
 
     try {
-      await fetch(`http://localhost:8080/api/v1/bookings?travelerEmail=${encodeURIComponent(travelerEmail)}&helperEmail=${encodeURIComponent(guideEmail)}`, {
+      await fetch(`${API_BASE_URL}/api/v1/bookings?travelerEmail=${encodeURIComponent(travelerEmail)}&helperEmail=${encodeURIComponent(guideEmail)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookingPayload)

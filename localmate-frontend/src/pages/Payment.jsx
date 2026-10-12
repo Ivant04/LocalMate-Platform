@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getConversationId } from '../utils/chatUtils';
+import { API_BASE_URL } from '../config/api';
 
 export default function Payment() {
   const location = useLocation();
@@ -100,7 +101,7 @@ export default function Payment() {
       if (email) queryParams.append('travelerEmail', email.trim());
       if (bookingDetails.guideEmail) queryParams.append('helperEmail', bookingDetails.guideEmail.trim());
 
-      const res = await fetch(`http://localhost:8080/api/v1/bookings?${queryParams.toString()}`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/bookings?${queryParams.toString()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookingPayload)
@@ -128,7 +129,7 @@ export default function Payment() {
         const convId = getConversationId(senderEmailClean, guideEmailClean);
         const msgText = `Hello ${bookingDetails.guideName}! I have submitted a booking request for "${bookingDetails.tourName}" on ${bookingDetails.date} from ${bookingPayload.startTime} to ${bookingPayload.endTime}. Please accept within 15 minutes!`;
         
-        await fetch('http://localhost:8080/api/v1/messages', {
+        await fetch(`${API_BASE_URL}/api/v1/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -146,7 +147,7 @@ export default function Payment() {
       // If user selected PayOS VietQR
       if (paymentMethod === 'payos') {
         const amountInVnd = Number(bookingDetails.totalCost) * 25000;
-        const payosRes = await fetch('http://localhost:8080/api/v1/payment/payos/create-payment', {
+        const payosRes = await fetch(`${API_BASE_URL}/api/v1/payment/payos/create-payment`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getConversationId } from '../utils/chatUtils';
+import API_BASE_URL from '../config/api';
 
 // Format Time Helper
 const formatTime = (isoString) => {
@@ -76,7 +77,7 @@ export default function RealtimeChat() {
 
       if (user?.email) {
         try {
-          const res = await fetch(`http://localhost:8080/api/v1/users/profile?email=${encodeURIComponent(user.email)}`);
+          const res = await fetch(`${API_BASE_URL}/api/v1/users/profile?email=${encodeURIComponent(user.email)}`);
           if (res.ok) {
             const freshUser = await res.json();
             user = { ...user, ...freshUser };
@@ -104,7 +105,7 @@ export default function RealtimeChat() {
 
     try {
       // 1. Fetch user's bookings as Traveler
-      const travelerRes = await fetch(`http://localhost:8080/api/v1/bookings/my-bookings?email=${encodeURIComponent(myEmail)}`);
+      const travelerRes = await fetch(`${API_BASE_URL}/api/v1/bookings/my-bookings?email=${encodeURIComponent(myEmail)}`);
       if (travelerRes.ok) {
         const bookings = await travelerRes.json();
         if (Array.isArray(bookings)) {
@@ -135,7 +136,7 @@ export default function RealtimeChat() {
       }
 
       // 2. Fetch requests as Helper (if user has helper requests)
-      const helperRes = await fetch(`http://localhost:8080/api/v1/bookings/helper-requests?email=${encodeURIComponent(myEmail)}`);
+      const helperRes = await fetch(`${API_BASE_URL}/api/v1/bookings/helper-requests?email=${encodeURIComponent(myEmail)}`);
       if (helperRes.ok) {
         const requests = await helperRes.json();
         if (Array.isArray(requests)) {
@@ -234,7 +235,7 @@ export default function RealtimeChat() {
     // 5. Update latest message snippets from MongoDB
     for (const c of convList) {
       try {
-        const msgRes = await fetch(`http://localhost:8080/api/v1/messages/${c.id}`);
+        const msgRes = await fetch(`${API_BASE_URL}/api/v1/messages/${c.id}`);
         if (msgRes.ok) {
           const msgs = await msgRes.json();
           if (msgs && msgs.length > 0) {
@@ -295,7 +296,7 @@ export default function RealtimeChat() {
     }
     if (showLoading) setLoadingMessages(true);
     try {
-      const res = await fetch(`http://localhost:8080/api/v1/messages/${convId}`);
+      const res = await fetch(`${API_BASE_URL}/api/v1/messages/${convId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data || []);
@@ -382,7 +383,7 @@ export default function RealtimeChat() {
     ));
 
     try {
-      await fetch('http://localhost:8080/api/v1/messages', {
+      await fetch(`${API_BASE_URL}/api/v1/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newMsgPayload)
@@ -475,7 +476,7 @@ export default function RealtimeChat() {
           ));
 
           // Persist message to backend
-          await fetch('http://localhost:8080/api/v1/messages', {
+          await fetch(`${API_BASE_URL}/api/v1/messages`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(locationMsgPayload)
@@ -521,7 +522,7 @@ export default function RealtimeChat() {
     if (!bookingId || acceptingChatBooking) return;
     setAcceptingChatBooking(true);
     try {
-      const res = await fetch(`http://localhost:8080/api/v1/bookings/${bookingId}/accept`, { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/v1/bookings/${bookingId}/accept`, { method: 'POST' });
       if (res.ok) {
         // Update active conversation status
         setConversations(prev => prev.map(c => 
@@ -550,7 +551,7 @@ export default function RealtimeChat() {
     if (!bookingId) return;
     if (!window.confirm(`Are you sure you want to decline this booking request from ${travelerName}?`)) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/v1/bookings/${bookingId}/decline`, { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/v1/bookings/${bookingId}/decline`, { method: 'POST' });
       if (res.ok) {
         setConversations(prev => prev.map(c => 
           (c.bookingId === bookingId || c.id === activeId) ? { ...c, bookingStatus: 'DECLINED' } : c

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import API_BASE_URL from '../config/api';
 
 export default function TravelerDashboard() {
   const location = useLocation();
@@ -44,7 +45,7 @@ export default function TravelerDashboard() {
 
       if (user?.email) {
         try {
-          const res = await fetch(`http://localhost:8080/api/v1/users/profile?email=${encodeURIComponent(user.email)}`);
+          const res = await fetch(`${API_BASE_URL}/api/v1/users/profile?email=${encodeURIComponent(user.email)}`);
           if (res.ok) {
             const freshUser = await res.json();
             user = { ...user, ...freshUser };
@@ -88,7 +89,7 @@ export default function TravelerDashboard() {
         const email = currentUser?.email || 'myduyen@localmate.com';
         queryParams.append('email', email);
 
-        const res = await fetch(`http://localhost:8080/api/v1/bookings/my-bookings?${queryParams.toString()}`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/bookings/my-bookings?${queryParams.toString()}`);
         if (res.ok) {
           const data = await res.json();
           const formatted = data.map((b) => ({
@@ -153,7 +154,7 @@ export default function TravelerDashboard() {
   const handleCompleteBooking = async (bookingId) => {
     if (!window.confirm("Has this experience completed? Click OK to mark it as Completed and review your Local Helper.")) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/v1/bookings/${bookingId}/complete`, { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/v1/bookings/${bookingId}/complete`, { method: 'POST' });
       if (res.ok) {
         setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: 'COMPLETED' } : b));
         alert("Booking marked as COMPLETED! You can now write a review for your guide.");
@@ -185,7 +186,7 @@ export default function TravelerDashboard() {
         comment: comment.trim()
       };
 
-      const res = await fetch('http://localhost:8080/api/v1/reviews', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -223,7 +224,7 @@ export default function TravelerDashboard() {
     }
 
     try {
-      await fetch(`http://localhost:8080/api/v1/bookings/${id}/cancel`, {
+      await fetch(`${API_BASE_URL}/api/v1/bookings/${id}/cancel`, {
         method: 'POST'
       });
     } catch (err) {

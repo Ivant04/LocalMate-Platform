@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PlacesAutocompleteInput from '../components/PlacesAutocompleteInput';
 import GoogleMapsExplore from '../components/GoogleMapsExplore';
+import { API_BASE_URL } from '../config/api';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -22,8 +23,7 @@ export default function LandingPage() {
     const fetchGuides = async () => {
       setLoadingGuides(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-        const res = await fetch(`${apiUrl}/api/v1/helpers`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/helpers`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {

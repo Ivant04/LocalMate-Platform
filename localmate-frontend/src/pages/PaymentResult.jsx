@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 export default function PaymentResult() {
   const location = useLocation();
@@ -31,7 +32,7 @@ export default function PaymentResult() {
         }
 
         // Call backend PayOS verify endpoint
-        const res = await fetch(`http://localhost:8080/api/v1/payment/payos/verify/${orderCode}`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/payment/payos/verify/${orderCode}`);
         if (res.ok) {
           const data = await res.json();
           setResult({

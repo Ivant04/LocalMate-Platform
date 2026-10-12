@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './admin/AdminLayout';
+import { API_BASE_URL } from '../config/api';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -34,9 +35,9 @@ export default function AdminDashboard() {
       try {
         // Fetch users, helpers, and bookings in parallel
         const [usersRes, helpersRes, bookingsRes] = await Promise.all([
-          fetch('http://localhost:8080/api/v1/users').catch(() => null),
-          fetch('http://localhost:8080/api/v1/helpers').catch(() => null),
-          fetch('http://localhost:8080/api/v1/bookings/helper-requests').catch(() => null)
+          fetch(`${API_BASE_URL}/api/v1/users`).catch(() => null),
+          fetch(`${API_BASE_URL}/api/v1/helpers`).catch(() => null),
+          fetch(`${API_BASE_URL}/api/v1/bookings/helper-requests`).catch(() => null)
         ]);
 
         let usersCount = 12;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import API_BASE_URL from '../config/api';
 
 export default function HelperDashboard() {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ export default function HelperDashboard() {
       // Fetch current helper status and price
       const fetchStatus = async () => {
         try {
-          const res = await fetch(`http://localhost:8080/api/v1/helpers/${u.id || u.email}`);
+          const res = await fetch(`${API_BASE_URL}/api/v1/helpers/${u.id || u.email}`);
           if (res.ok) {
             const data = await res.json();
             if (data.availabilityStatus) {
@@ -86,7 +87,7 @@ export default function HelperDashboard() {
     setSavingPrice(true);
     try {
       const targetId = currentUser?.id || currentUser?.email || 'minh.danang@localmate.com';
-      const res = await fetch(`http://localhost:8080/api/v1/helpers/${targetId}/price`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/helpers/${targetId}/price`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ hourlyRate: rateToSave })
@@ -117,7 +118,7 @@ export default function HelperDashboard() {
     setUpdatingStatus(true);
     try {
       const targetId = currentUser?.id || currentUser?.email || 'minh.danang@localmate.com';
-      const res = await fetch(`http://localhost:8080/api/v1/helpers/${targetId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/helpers/${targetId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -151,7 +152,7 @@ export default function HelperDashboard() {
       setLoadingRequests(true);
       try {
         const email = currentUser?.email || 'minh.danang@localmate.com';
-        const res = await fetch(`http://localhost:8080/api/v1/bookings/helper-requests?email=${encodeURIComponent(email)}`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/bookings/helper-requests?email=${encodeURIComponent(email)}`);
         if (res.ok) {
           const data = await res.json();
           // Filter for pending requests (unexpired)
@@ -171,7 +172,7 @@ export default function HelperDashboard() {
       try {
         const target = currentUser?.id || currentUser?._id || currentUser?.email;
         if (!target) return;
-        const res = await fetch(`http://localhost:8080/api/v1/reviews/helper/${encodeURIComponent(target)}`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/reviews/helper/${encodeURIComponent(target)}`);
         if (res.ok) {
           const data = await res.json();
           setReviewStats({
@@ -252,7 +253,7 @@ export default function HelperDashboard() {
     setProcessingBookingId(id);
 
     try {
-      const res = await fetch(`http://localhost:8080/api/v1/bookings/${id}/accept`, { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/v1/bookings/${id}/accept`, { method: 'POST' });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         alert(err.message || "Could not accept booking request. Please refresh and try again.");
@@ -280,7 +281,7 @@ export default function HelperDashboard() {
   const handleDecline = async (id, travelerName) => {
     if (window.confirm(`Are you sure you want to decline the request from ${travelerName}?`)) {
       try {
-        await fetch(`http://localhost:8080/api/v1/bookings/${id}/decline`, { method: 'POST' });
+        await fetch(`${API_BASE_URL}/api/v1/bookings/${id}/decline`, { method: 'POST' });
       } catch (err) {
         console.error(err);
       }

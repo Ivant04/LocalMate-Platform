@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../config/api';
 
 const MOCK_GUIDES_DETAILS = {
   linh: {
@@ -88,7 +89,7 @@ export default function HelperDetail() {
     const fetchGuide = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:8080/api/v1/helpers/${id}`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/helpers/${id}`);
         if (res.ok) {
           const data = await res.json();
           const fallback = MOCK_GUIDES_DETAILS[id] || MOCK_GUIDES_DETAILS.linh;
@@ -132,7 +133,7 @@ export default function HelperDetail() {
       if (!guide?.id && !id) return;
       const targetId = guide?.userId || guide?.id || id;
       try {
-        const res = await fetch(`http://localhost:8080/api/v1/helpers/${targetId}/schedule`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/helpers/${targetId}/schedule`);
         if (res.ok) {
           const data = await res.json();
           setAllBusySlots(data.busySlots || []);
@@ -151,7 +152,7 @@ export default function HelperDetail() {
       const targetId = guide?.userId || guide?.id || id;
       setLoadingSchedule(true);
       try {
-        const res = await fetch(`http://localhost:8080/api/v1/helpers/${targetId}/schedule?date=${date}`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/helpers/${targetId}/schedule?date=${date}`);
         if (res.ok) {
           const data = await res.json();
           setBusySlots(data.busySlots || []);

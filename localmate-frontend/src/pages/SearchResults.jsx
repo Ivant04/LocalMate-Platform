@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../config/api';
 
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,7 +13,7 @@ export default function SearchResults() {
   // Filter States
   const [city, setCity] = useState('');
   const [selectedExpertise, setSelectedExpertise] = useState([]);
-  const [priceMax, setPriceMax] = useState(5);
+  const [priceMax, setPriceMax] = useState(50);
   const [minRating, setMinRating] = useState(4.0);
   const [language, setLanguage] = useState('English');
   const [favorites, setFavorites] = useState([]);
@@ -22,7 +23,7 @@ export default function SearchResults() {
     const fetchGuides = async () => {
       setLoading(true);
       try {
-        const res = await fetch('http://localhost:8080/api/v1/helpers');
+        const res = await fetch(`${API_BASE_URL}/api/v1/helpers`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
@@ -58,7 +59,7 @@ export default function SearchResults() {
   const handleReset = () => {
     setCity('');
     setSelectedExpertise([]);
-    setPriceMax(5);
+    setPriceMax(50);
     setMinRating(4.0);
     setLanguage('English');
     setSearchParams({});
@@ -80,18 +81,26 @@ export default function SearchResults() {
     }
   };
 
+  const normalize = (s = '') => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').trim();
+
   // Filter Logic
   const filteredGuides = guides.filter(guide => {
-    // City filter (case insensitive, partial match)
-    if (city && !guide.city?.toLowerCase().includes(city.toLowerCase()) && !guide.country?.toLowerCase().includes(city.toLowerCase())) {
-      return false;
+    // City filter (case & accent insensitive, partial match)
+    if (city) {
+      const q = normalize(city);
+      const gCity = normalize(guide.city || '');
+      const gCountry = normalize(guide.country || '');
+      const gLoc = normalize(guide.location || '');
+      if (!gCity.includes(q) && !gCountry.includes(q) && !gLoc.includes(q)) {
+        return false;
+      }
     }
     // Price filter
-    if (guide.price > priceMax) {
+    if (guide.price != null && guide.price > priceMax) {
       return false;
     }
     // Rating filter
-    if (guide.rating < minRating) {
+    if ((guide.rating || 5) < minRating) {
       return false;
     }
     // Language filter
@@ -174,7 +183,7 @@ export default function SearchResults() {
                 <input
                   type="range"
                   min="1"
-                  max="5"
+                  max="100"
                   value={priceMax}
                   onChange={(e) => setPriceMax(Number(e.target.value))}
                   className="w-full h-1.5 bg-outline-variant rounded-full appearance-none cursor-pointer accent-primary"
