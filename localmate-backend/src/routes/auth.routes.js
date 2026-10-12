@@ -119,14 +119,21 @@ router.post('/login', async (req, res) => {
     }
 
     let user = null;
-    const isPhoneNumber = /^[+0-9\s-]{8,15}$/.test(identifier);
+    const isPhoneNumber = /^[+0-9\s\-\.]{8,20}$/.test(identifier);
 
     if (isPhoneNumber) {
       const digits = extractPhoneDigits(identifier);
       const last9 = digits.slice(-9);
+      // Create flexible regex to match digits regardless of spaces, dots, dashes
+      // e.g. for '901234567', matches '9[\\s\\-\\.]*0[\\s\\-\\.]*1...'
+      const phonePattern = last9.split('').join('[\\s\\-\\.]*');
+      const phoneRegex = new RegExp(phonePattern + '$');
+
       user = await User.findOne({
         $or: [
-          { phone: new RegExp(last9 + '$') },
+          { phone: phoneRegex },
+          { phone: identifier },
+          { phone: digits },
           { email: identifier.toLowerCase() }
         ]
       });
@@ -135,7 +142,7 @@ router.post('/login', async (req, res) => {
     }
 
     if (!user) {
-      return res.status(401).json({ message: 'Tài khoản hoặc mật khẩu không chính xác!' });
+      return res.status(401).json({ message: 'Tài khoản (Email hoặc Số điện thoại) hoặc mật khẩu không chính xác!' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
