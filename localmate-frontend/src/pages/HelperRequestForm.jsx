@@ -13,14 +13,14 @@ export default function HelperRequestForm() {
 
   useEffect(() => {
     if (!currentUser) {
-      alert("Please sign in to send a trip request!");
+      alert("Vui lòng đăng nhập để gửi yêu cầu tour!");
       navigate('/login');
     }
   }, [currentUser, navigate]);
 
   // Form State
   const [fullName, setFullName] = useState(currentUser?.fullName || '');
-  const [nationality, setNationality] = useState('Vietnam');
+  const [nationality, setNationality] = useState('Việt Nam');
   const [contactNumber, setContactNumber] = useState(currentUser?.phone || '');
   const [whatsapp, setWhatsapp] = useState('');
   const [destination, setDestination] = useState(location.state?.city || '');
@@ -29,8 +29,8 @@ export default function HelperRequestForm() {
   const [departure, setDeparture] = useState('');
   const [meetingTime, setMeetingTime] = useState('09:00');
   const [meetingLocation, setMeetingLocation] = useState('');
-  const [travelersCount, setTravelersCount] = useState('1 Person');
-  const [travelStyle, setTravelStyle] = useState('Cultural & Relaxed');
+  const [travelersCount, setTravelersCount] = useState('1 Người');
+  const [travelStyle, setTravelStyle] = useState('Thư giãn');
   
   const [requirements, setRequirements] = useState({
     translation: true,
@@ -52,7 +52,7 @@ export default function HelperRequestForm() {
     e.preventDefault();
     const guideEmail = location.state?.guideEmail || 'minh.danang@localmate.com';
     const travelerEmail = currentUser?.email || 'myduyen@localmate.com';
-    const tourTitle = `Custom Experience: ${destination} (${areas})`;
+    const tourTitle = `Tour Tùy Chỉnh: ${destination} (${areas})`;
 
     const bookingPayload = {
       travelerId: currentUser?.id || null,
@@ -61,7 +61,7 @@ export default function HelperRequestForm() {
       bookingDate: arrival,
       durationHours: 6,
       meetLocation: meetingLocation,
-      specialRequests: `Guests: ${travelersCount}. Style: ${travelStyle}. Needs: ${Object.keys(requirements).filter(k => requirements[k]).join(', ')}. Note: ${otherReqs}`,
+      specialRequests: `Số khách: ${travelersCount}. Phong cách: ${travelStyle}. Nhu cầu: ${Object.keys(requirements).filter(k => requirements[k]).join(', ')}. Ghi chú: ${otherReqs}`,
       totalPrice: 1500000,
       status: 'PENDING',
       paymentStatus: 'UNPAID'
@@ -77,7 +77,7 @@ export default function HelperRequestForm() {
       console.error('Error saving custom request:', err);
     }
 
-    alert(`Your custom request has been sent to ${guideName}! They will review it and message you shortly.`);
+    alert(`Yêu cầu của bạn đã được gửi tới ${guideName}! Helper sẽ kiểm tra lịch trình và sớm nhắn tin cho bạn.`);
     navigate('/traveler');
   };
 
@@ -91,7 +91,7 @@ export default function HelperRequestForm() {
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold mb-2">
               <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
             </div>
-            <span className="font-label-bold text-label-bold text-primary">Select Helper</span>
+            <span className="font-label-bold text-label-bold text-primary">Chọn Helper</span>
           </div>
           <div className="absolute top-5 left-0 w-full h-[2px] bg-outline-variant -z-10"></div>
           <div className="absolute top-5 left-0 w-[33%] h-[2px] bg-primary -z-10"></div>
@@ -100,18 +100,18 @@ export default function HelperRequestForm() {
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold mb-2">
               <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
             </div>
-            <span className="font-label-bold text-label-bold text-primary">Booking</span>
+            <span className="font-label-bold text-label-bold text-primary">Đặt lịch</span>
           </div>
           <div className="absolute top-5 left-0 w-[66%] h-[2px] bg-primary -z-10"></div>
           
           <div className="flex flex-col items-center z-10">
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-2 border-primary text-primary font-bold mb-2">3</div>
-            <span className="font-label-bold text-label-bold text-primary font-bold">Request Details</span>
+            <span className="font-label-bold text-label-bold text-primary font-bold">Chi tiết yêu cầu</span>
           </div>
           
           <div className="flex flex-col items-center z-10">
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-2 border-outline-variant text-outline-variant font-bold mb-2">4</div>
-            <span className="font-label-bold text-label-bold text-on-surface-variant">Confirmation</span>
+            <span className="font-label-bold text-label-bold text-on-surface-variant">Xác nhận</span>
           </div>
         </div>
       </div>
@@ -125,50 +125,50 @@ export default function HelperRequestForm() {
             <div className="bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-primary p-2 bg-primary-container/10 rounded-lg">person</span>
-                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Basic Information</h2>
+                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Thông tin cơ bản</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Full Name</label>
+                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Họ và tên</label>
                   <input 
                     type="text" 
                     required 
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    placeholder="e.g. Sarah Jenkins" 
+                    placeholder="Ví dụ: Nguyễn Văn A" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Nationality</label>
+                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Quốc tịch</label>
                   <input 
                     type="text" 
                     required 
                     value={nationality}
                     onChange={(e) => setNationality(e.target.value)}
                     className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    placeholder="e.g. United Kingdom" 
+                    placeholder="Ví dụ: Việt Nam" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Contact Number</label>
+                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Số điện thoại liên hệ</label>
                   <input 
                     type="tel" 
                     required 
                     value={contactNumber}
                     onChange={(e) => setContactNumber(e.target.value)}
                     className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    placeholder="+44 20 7946 0958" 
+                    placeholder="0912 345 678" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">WhatsApp/Telegram (Optional)</label>
+                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Zalo / Telegram / WhatsApp (Tùy chọn)</label>
                   <input 
                     type="text" 
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
                     className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    placeholder="@sarah_j" 
+                    placeholder="Số Zalo hoặc @username" 
                   />
                 </div>
               </div>
@@ -178,33 +178,33 @@ export default function HelperRequestForm() {
             <div className="bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-primary p-2 bg-primary-container/10 rounded-lg">map</span>
-                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Trip Information</h2>
+                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Thông tin chuyến đi</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Destination City</label>
+                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Điểm đến (Thành phố)</label>
                   <input 
                     type="text" 
                     required 
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
                     className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    placeholder="e.g. Da Nang, Vietnam" 
+                    placeholder="Ví dụ: Đà Nẵng, Việt Nam" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Areas to Visit</label>
+                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Khu vực muốn tham quan</label>
                   <input 
                     type="text" 
                     value={areas}
                     onChange={(e) => setAreas(e.target.value)}
                     className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    placeholder="e.g. Son Tra Peninsula, Marble Mountains" 
+                    placeholder="Ví dụ: Bán đảo Sơn Trà, Ngũ Hành Sơn" 
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Arrival</label>
+                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Ngày đến</label>
                     <input 
                       type="date" 
                       required 
@@ -214,7 +214,7 @@ export default function HelperRequestForm() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Departure</label>
+                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Ngày về</label>
                     <input 
                       type="date" 
                       required 
@@ -226,7 +226,7 @@ export default function HelperRequestForm() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Meeting Time</label>
+                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Giờ hẹn gặp</label>
                     <input 
                       type="time" 
                       required 
@@ -236,14 +236,14 @@ export default function HelperRequestForm() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Meeting Location</label>
+                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Địa điểm gặp mặt</label>
                     <input 
                       type="text" 
                       required 
                       value={meetingLocation}
                       onChange={(e) => setMeetingLocation(e.target.value)}
                       className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                      placeholder="Hotel Lobby, Cafe, etc." 
+                      placeholder="Sảnh khách sạn, Quán cafe, v.v." 
                     />
                   </div>
                 </div>
@@ -254,18 +254,18 @@ export default function HelperRequestForm() {
             <div className="bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-primary p-2 bg-primary-container/10 rounded-lg">handyman</span>
-                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Service Requirements</h2>
+                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Nhu cầu &amp; Hỗ trợ</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6">
                 {[
-                  { key: 'translation', label: 'Translation' },
-                  { key: 'recommendations', label: 'Recommendations' },
-                  { key: 'food', label: 'Food & Drink' },
-                  { key: 'transport', label: 'Transport' },
-                  { key: 'shopping', label: 'Shopping Guide' },
-                  { key: 'culture', label: 'Culture Tour' },
-                  { key: 'nightlife', label: 'Nightlife' },
-                  { key: 'emergency', label: 'Emergency Aid' },
+                  { key: 'translation', label: 'Phiên dịch & Hướng dẫn' },
+                  { key: 'recommendations', label: 'Gợi ý điểm đến / ăn uống' },
+                  { key: 'food', label: 'Ẩm thực bản địa' },
+                  { key: 'transport', label: 'Phương tiện đi lại' },
+                  { key: 'shopping', label: 'Hướng dẫn mua sắm' },
+                  { key: 'culture', label: 'Trải nghiệm văn hóa' },
+                  { key: 'nightlife', label: 'Đời sống đêm' },
+                  { key: 'emergency', label: 'Hỗ trợ khẩn cấp' },
                 ].map(req => (
                   <label key={req.key} className="flex items-center gap-3 cursor-pointer group select-none">
                     <input 
@@ -284,7 +284,7 @@ export default function HelperRequestForm() {
                     value={otherReqs}
                     onChange={(e) => setOtherReqs(e.target.value)}
                     className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    placeholder="Other specific requirements..." 
+                    placeholder="Yêu cầu cụ thể khác của bạn..." 
                   />
                 </div>
               </div>
@@ -294,38 +294,43 @@ export default function HelperRequestForm() {
             <div className="bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-primary p-2 bg-primary-container/10 rounded-lg">luggage</span>
-                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Trip Details</h2>
+                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Chi tiết nhóm đi</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Number of Travelers</label>
+                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Số lượng thành viên</label>
                   <select 
                     value={travelersCount}
                     onChange={(e) => setTravelersCount(e.target.value)}
                     className="w-full h-12 px-4 border border-outline-variant rounded-xl bg-surface text-on-surface outline-none cursor-pointer"
                   >
-                    <option>1 Person</option>
-                    <option>2 People</option>
-                    <option>3-4 People</option>
-                    <option>5+ People (Group)</option>
+                    <option>1 Người</option>
+                    <option>2 Người</option>
+                    <option>3 - 4 Người</option>
+                    <option>5+ Người (Đoàn)</option>
                   </select>
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Travel Style</label>
+                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Phong cách du lịch</label>
                   <div className="flex gap-2 p-1 bg-surface-container rounded-xl">
-                    {['Relaxed', 'Active', 'Budget', 'Luxury'].map(style => (
+                    {[
+                      { key: 'Relaxed', label: 'Thư giãn' },
+                      { key: 'Active', label: 'Năng động' },
+                      { key: 'Budget', label: 'Tiết kiệm' },
+                      { key: 'Luxury', label: 'Cao cấp' }
+                    ].map(style => (
                       <button 
-                        key={style}
+                        key={style.key}
                         type="button"
-                        onClick={() => setTravelStyle(style)}
+                        onClick={() => setTravelStyle(style.label)}
                         className={`flex-1 py-2 text-body-sm font-label-bold rounded-lg transition-all ${
-                          travelStyle === style 
+                          travelStyle === style.label 
                             ? 'bg-white dark:bg-surface-dark text-primary shadow-sm' 
                             : 'text-on-surface-variant hover:text-on-surface'
                         }`}
                       >
-                        {style}
+                        {style.label}
                       </button>
                     ))}
                   </div>
@@ -337,24 +342,24 @@ export default function HelperRequestForm() {
               type="submit" 
               className="w-full bg-primary-container text-on-primary-container hover:bg-primary py-4 rounded-xl font-label-bold text-label-bold text-center block shadow-md transition-all active:scale-[0.98]"
             >
-              Submit Request to {guideName}
+              Gửi yêu cầu tới {guideName}
             </button>
           </form>
         </div>
 
         {/* Right Side Info Widget */}
         <aside className="lg:col-span-4 bg-white dark:bg-surface-dark p-6 rounded-3xl border border-border-subtle shadow-sm min-w-0 break-words">
-          <h3 className="font-headline-md text-headline-md font-bold mb-4 text-on-surface">Request Guide</h3>
+          <h3 className="font-headline-md text-headline-md font-bold mb-4 text-on-surface">Hướng dẫn gửi yêu cầu</h3>
           <p className="font-body-md text-on-surface-variant mb-6">
-            You are submitting a customized request to **{guideName}**. They will review your trip details and build a tailored itinerary for you.
+            Bạn đang gửi yêu cầu thiết kế tour riêng tới **{guideName}**. Helper sẽ nghiên cứu lịch trình và phản hồi kế hoạch chi tiết cho bạn.
           </p>
           <div className="flex gap-4 items-center border-t border-border-subtle pt-6">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
               <span className="material-symbols-outlined">support_agent</span>
             </div>
             <div>
-              <h4 className="font-label-bold text-label-bold text-on-surface">Need Help?</h4>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Our support team is online 24/7 to assist with your tour planning.</p>
+              <h4 className="font-label-bold text-label-bold text-on-surface">Cần trợ giúp?</h4>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">Đội ngũ hỗ trợ LocalMate luôn sẵn sàng 24/7 để đồng hành cùng bạn.</p>
             </div>
           </div>
         </aside>

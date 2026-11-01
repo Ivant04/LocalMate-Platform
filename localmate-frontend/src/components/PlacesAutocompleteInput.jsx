@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const POPULAR_DESTINATIONS = [
-  { city: 'Da Nang', province: 'Central Vietnam', country: 'Vietnam', tag: 'Trending' },
-  { city: 'Hoi An', province: 'Quang Nam', country: 'Vietnam', tag: 'Heritage' },
-  { city: 'Hue', province: 'Thua Thien Hue', country: 'Vietnam', tag: 'Imperial City' },
+  { city: 'Đà Nẵng', province: 'Miền Trung', country: 'Việt Nam', tag: 'Thịnh hành' },
+  { city: 'Hội An', province: 'Quảng Nam', country: 'Việt Nam', tag: 'Di sản' },
+  { city: 'Huế', province: 'Thừa Thiên Huế', country: 'Việt Nam', tag: 'Cố đô' },
 ];
 
 export default function PlacesAutocompleteInput({
   value,
   onChange,
   onSelectPlace,
-  placeholder = 'Where are you going?',
+  placeholder = 'Bạn muốn đi đâu?',
   className = '',
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -95,10 +95,10 @@ export default function PlacesAutocompleteInput({
       {isOpen && !window.google?.maps?.places && (
         <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 max-h-72 overflow-y-auto py-2 text-left animate-in fade-in zoom-in-95 duration-150">
           <div className="px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
-            <span>Popular Destinations</span>
+            <span>Điểm đến nổi bật</span>
             <span className="flex items-center gap-1 text-cyan-700">
               <span className="material-symbols-outlined text-xs">pin_drop</span>
-              <span>Vietnam</span>
+              <span>Việt Nam</span>
             </span>
           </div>
           {filtered.length > 0 ? (
@@ -129,7 +129,7 @@ export default function PlacesAutocompleteInput({
             ))
           ) : (
             <div className="px-4 py-3 text-xs text-slate-400 text-center">
-              No matching cities found. Press enter to search freely.
+              Không tìm thấy địa điểm khớp. Nhấn Enter để tìm kiếm tự do.
             </div>
           )}
         </div>

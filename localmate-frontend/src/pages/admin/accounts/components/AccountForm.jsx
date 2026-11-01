@@ -7,32 +7,35 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
     fullName: '',
     email: '',
     phone: '',
-    gender: 'Male',
-    location: 'Hanoi, Vietnam',
+    gender: 'Nam',
+    location: 'Hà Nội, Việt Nam',
     status: 'ACTIVE',
     // Helper specific fields
-    title: 'Local Guide & Explorer',
+    title: 'Local Helper & Hướng dẫn viên địa phương',
     bio: '',
-    hourlyRate: 12,
-    city: 'Da Nang',
-    languages: 'English, Vietnamese',
+    hourlyRate: 100000,
+    city: 'Đà Nẵng',
+    languages: 'Tiếng Anh, Tiếng Việt',
     availabilityStatus: 'AVAILABLE',
   });
 
   useEffect(() => {
     if (account) {
+      const rawRate = Number(account.hourlyRate || account.price) || 100000;
+      const rateVND = rawRate < 1000 ? rawRate * 25000 : rawRate;
+
       setFormData({
         fullName: account.fullName || account.name || '',
         email: account.email || '',
         phone: account.phone || '',
-        gender: account.gender || 'Male',
-        location: account.location || account.city || 'Vietnam',
+        gender: account.gender || 'Nam',
+        location: account.location || account.city || 'Việt Nam',
         status: (account.status || 'ACTIVE').toUpperCase(),
-        title: account.title || 'Local Guide & Explorer',
+        title: account.title || 'Local Helper & Hướng dẫn viên địa phương',
         bio: account.bio || '',
-        hourlyRate: account.hourlyRate || account.price || 12,
-        city: account.city || account.location || 'Da Nang',
-        languages: Array.isArray(account.languages) ? account.languages.join(', ') : (account.languages || 'English, Vietnamese'),
+        hourlyRate: rateVND,
+        city: account.city || account.location || 'Đà Nẵng',
+        languages: Array.isArray(account.languages) ? account.languages.join(', ') : (account.languages || 'Tiếng Anh, Tiếng Việt'),
         availabilityStatus: (account.availabilityStatus || 'AVAILABLE').toUpperCase(),
       });
     } else {
@@ -40,14 +43,14 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
         fullName: '',
         email: '',
         phone: '+84 ',
-        gender: 'Male',
-        location: type === 'customer' ? 'Hanoi, Vietnam' : 'Da Nang & Hoi An',
+        gender: 'Nam',
+        location: type === 'customer' ? 'Hà Nội, Việt Nam' : 'Đà Nẵng & Hội An',
         status: 'ACTIVE',
-        title: 'Local Culinary Specialist & Culture Explorer',
-        bio: 'Passionate local guide with deep knowledge of authentic culture and local cuisine.',
-        hourlyRate: 12,
-        city: 'Da Nang & Hoi An',
-        languages: 'English, Vietnamese',
+        title: 'Chuyên gia văn hóa & ẩm thực bản địa',
+        bio: 'Hướng dẫn viên địa phương nhiệt tình với tình yêu văn hóa và ẩm thực bản địa sâu sắc.',
+        hourlyRate: 100000,
+        city: 'Đà Nẵng & Hội An',
+        languages: 'Tiếng Anh, Tiếng Việt',
         availabilityStatus: 'AVAILABLE',
       });
     }
@@ -58,9 +61,12 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const rawRate = Number(formData.hourlyRate);
+    const finalRate = rawRate < 1000 ? rawRate * 25000 : rawRate;
+
     const payload = {
       ...formData,
-      hourlyRate: formData.hourlyRate ? parseFloat(String(formData.hourlyRate).replace(',', '.')) : 12,
+      hourlyRate: finalRate > 0 ? finalRate : 100000,
       languages: type === 'helper' 
         ? formData.languages.split(',').map(s => s.trim()).filter(Boolean)
         : undefined,
@@ -81,17 +87,17 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
             </div>
             <div>
               <h3 className="text-base font-bold text-gray-900">
-                {isEdit ? `Edit ${type === 'customer' ? 'Customer' : 'Local Helper'}` : `Add New ${type === 'customer' ? 'Customer' : 'Local Helper'}`}
+                {isEdit ? `Chỉnh sửa ${type === 'customer' ? 'Khách hàng' : 'Local Helper'}` : `Thêm mới ${type === 'customer' ? 'Khách hàng' : 'Local Helper'}`}
               </h3>
               <p className="text-xs text-gray-500">
-                {isEdit ? `Update profile details for #${account?.id?.slice(-4) || 'ID'}` : 'Fill in the account details below'}
+                {isEdit ? `Cập nhật thông tin cho tài khoản #${account?.id?.slice(-4) || 'ID'}` : 'Điền đầy đủ thông tin bên dưới'}
               </p>
             </div>
           </div>
           <button 
             type="button" 
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+            className="text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
@@ -100,18 +106,18 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
         <form id="accountForm" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4 text-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">Full Name *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">Họ và tên *</label>
               <input
                 type="text"
                 required
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                placeholder="John Doe"
+                placeholder="Nguyễn Văn A"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">Phone Number *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">Số điện thoại *</label>
               <input
                 type="text"
                 required
@@ -124,7 +130,7 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Email Address *</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Địa chỉ Email *</label>
             <input
               type="email"
               required
@@ -139,25 +145,25 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {type === 'customer' ? (
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Gender</label>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Giới tính</label>
                 <select
                   value={formData.gender}
                   onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all bg-white"
                 >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                  <option value="Khác">Khác</option>
                 </select>
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Hourly Rate ($/hr)</label>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Mức giá mỗi giờ (VNĐ/giờ)</label>
                 <input
                   type="number"
-                  step="any"
-                  min="0.1"
-                  max="1000"
+                  step="10000"
+                  min="10000"
+                  max="50000000"
                   value={formData.hourlyRate}
                   onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
@@ -167,7 +173,7 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                {type === 'customer' ? 'Location / Nationality' : 'Operating Base / City'}
+                {type === 'customer' ? 'Địa điểm / Quốc tịch' : 'Khu vực hoạt động / Thành phố'}
               </label>
               <input
                 type="text"
@@ -177,7 +183,7 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
                   location: e.target.value,
                   city: e.target.value 
                 })}
-                placeholder={type === 'customer' ? "New York, United States" : "Da Nang & Hoi An"}
+                placeholder={type === 'customer' ? "Hà Nội, Việt Nam" : "Đà Nẵng & Hội An"}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
               />
             </div>
@@ -186,34 +192,34 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
           {type === 'helper' && (
             <>
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Languages Spoken (comma separated)</label>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Ngôn ngữ giao tiếp (cách nhau bằng dấu phẩy)</label>
                 <input
                   type="text"
                   value={formData.languages}
                   onChange={(e) => setFormData({ ...formData, languages: e.target.value })}
-                  placeholder="English, Vietnamese, Korean"
+                  placeholder="Tiếng Anh, Tiếng Việt, Tiếng Hàn"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Profile Title / Headline</label>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Tiêu đề hồ sơ / Chuyên môn</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Local Foodie & Culture Explorer"
+                  placeholder="Khám phá ẩm thực & văn hóa bản địa"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Short Bio</label>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Giới thiệu ngắn</label>
                 <textarea
                   rows="2"
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                  placeholder="Tour guiding experience, local passion, message to travelers..."
+                  placeholder="Kinh nghiệm dẫn tour, đam mê văn hóa, lời nhắn gửi du khách..."
                   className="w-full px-3.5 py-2 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all resize-none"
                 />
               </div>
@@ -222,29 +228,29 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">Account Status</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">Trạng thái tài khoản</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all bg-white"
               >
-                <option value="ACTIVE">● Active</option>
-                <option value="INACTIVE">● Inactive</option>
-                <option value="BLOCKED">● Blocked</option>
+                <option value="ACTIVE">● Hoạt động</option>
+                <option value="INACTIVE">● Không hoạt động</option>
+                <option value="BLOCKED">● Bị khóa</option>
               </select>
             </div>
 
             {type === 'helper' && (
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Availability Status</label>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Trạng thái sẵn sàng</label>
                 <select
                   value={formData.availabilityStatus}
                   onChange={(e) => setFormData({ ...formData, availabilityStatus: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all bg-white font-medium"
                 >
-                  <option value="AVAILABLE">🟢 Available</option>
-                  <option value="BUSY">🟡 Busy</option>
-                  <option value="OFFLINE">⚪ Offline</option>
+                  <option value="AVAILABLE">🟢 Sẵn sàng</option>
+                  <option value="BUSY">🟡 Đang bận</option>
+                  <option value="OFFLINE">⚪ Ngoại tuyến</option>
                 </select>
               </div>
             )}
@@ -258,7 +264,7 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
             onClick={onClose}
             className="px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-100 transition-colors disabled:opacity-50 cursor-pointer"
           >
-            Cancel
+            Hủy bỏ
           </button>
           <button
             type="submit"
@@ -269,12 +275,12 @@ export default function AccountForm({ isOpen, onClose, onSave, account, type = '
             {loading ? (
               <>
                 <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                <span>Saving...</span>
+                <span>Đang lưu...</span>
               </>
             ) : (
               <>
                 <span className="material-symbols-outlined text-base">check</span>
-                <span>{isEdit ? 'Save Changes' : 'Create Account'}</span>
+                <span>{isEdit ? 'Lưu thay đổi' : 'Tạo tài khoản'}</span>
               </>
             )}
           </button>

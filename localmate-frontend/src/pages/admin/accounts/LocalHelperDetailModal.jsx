@@ -1,6 +1,7 @@
 import React from 'react';
 import AvailabilityBadge from './components/AvailabilityBadge';
 import AccountStatusBadge from './components/AccountStatusBadge';
+import { formatVND, formatRateVND } from '../../../utils/formatCurrency';
 
 export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit, onUpdateAvailability }) {
   if (!isOpen || !helper) return null;
@@ -9,12 +10,20 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
   const name = helper.fullName || helper.name || 'Local Helper';
   const email = helper.email || 'N/A';
   const phone = helper.phone || '+84 912 849 201';
-  const location = helper.city || helper.location || 'Da Nang & Hoi An';
+  const location = helper.city || helper.location || 'Đà Nẵng & Hội An';
   const rating = helper.rating ? Number(helper.rating).toFixed(1) : '5.0';
   const reviewCount = helper.reviewsCount ?? helper.reviewCount ?? 0;
-  const rate = helper.hourlyRate || helper.price || 12;
-  const languages = Array.isArray(helper.languages) ? helper.languages : ['English', 'Vietnamese'];
-  const skills = Array.isArray(helper.skills) ? helper.skills : ['Food Tour', 'Culture Explorer', 'Photography'];
+  
+  const rawRate = Number(helper.hourlyRate || helper.price) || 0;
+  const rateVND = rawRate < 1000 && rawRate > 0 ? rawRate * 25000 : rawRate || 75000;
+  const displayRate = formatRateVND(rateVND);
+
+  const rawRev = Number(helper.totalRevenue || helper.revenue) || 0;
+  const revVND = rawRev < 1000 && rawRev > 0 ? rawRev * 25000 : rawRev;
+  const displayRevenue = formatVND(revVND);
+
+  const languages = Array.isArray(helper.languages) ? helper.languages : ['Tiếng Việt', 'Tiếng Anh'];
+  const skills = Array.isArray(helper.skills) ? helper.skills : ['Food Tour', 'Khám phá văn hóa', 'Chụp ảnh du lịch'];
   const availability = (helper.availabilityStatus || 'AVAILABLE').toUpperCase();
   const verified = helper.verified !== false;
 
@@ -28,7 +37,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
         <div className="p-6 border-b border-gray-100 flex items-center justify-between shrink-0">
           <div>
             <span className="text-[11px] font-bold tracking-wider text-teal-600 uppercase block mb-1">
-              Local Helper Profile (Pro Guide)
+              Hồ sơ Local Helper (Hướng dẫn viên)
             </span>
             <h2 className="text-xl font-bold text-gray-900">{name}</h2>
           </div>
@@ -55,7 +64,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
                   availability === 'AVAILABLE' ? 'bg-emerald-500' :
                   availability === 'BUSY' ? 'bg-amber-500' : 'bg-gray-400'
                 }`}
-                title={`Status: ${availability}`}
+                title={`Trạng thái: ${availability === 'AVAILABLE' ? 'Sẵn sàng' : availability === 'BUSY' ? 'Đang bận' : 'Ngoại tuyến'}`}
               ></span>
             </div>
             <div>
@@ -65,11 +74,11 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
                 </span>
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
                   <span className="material-symbols-outlined text-xs fill-1">star</span>
-                  Top Rated
+                  Đánh giá cao
                 </span>
                 <AccountStatusBadge status={helper.status} />
               </div>
-              <p className="text-xs text-gray-500 line-clamp-1">{helper.title || 'Local Guide & Explorer'}</p>
+              <p className="text-xs text-gray-500 line-clamp-1">{helper.title || 'Hướng dẫn viên bản địa & Khám phá văn hóa'}</p>
             </div>
           </div>
 
@@ -78,18 +87,18 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-teal-900 flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-base text-teal-600">tune</span>
-                Availability Engine
+                Bộ điều phối trạng thái
               </span>
               <AvailabilityBadge status={availability} />
             </div>
             <p className="text-xs text-teal-700 mb-3 leading-relaxed">
-              Directly control this guide's visibility and booking availability on the tour discovery map.
+              Trực tiếp điều chỉnh mức độ hiển thị và khả năng nhận đặt lịch của hướng dẫn viên trên bản đồ khám phá.
             </p>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { key: 'AVAILABLE', label: '🟢 Available', bg: 'hover:bg-emerald-100 text-emerald-800' },
-                { key: 'BUSY', label: '🟡 Busy', bg: 'hover:bg-amber-100 text-amber-800' },
-                { key: 'OFFLINE', label: '⚪ Offline', bg: 'hover:bg-gray-200 text-gray-700' },
+                { key: 'AVAILABLE', label: '🟢 Sẵn sàng', bg: 'hover:bg-emerald-100 text-emerald-800' },
+                { key: 'BUSY', label: '🟡 Đang bận', bg: 'hover:bg-amber-100 text-amber-800' },
+                { key: 'OFFLINE', label: '⚪ Ngoại tuyến', bg: 'hover:bg-gray-200 text-gray-700' },
               ].map((opt) => (
                 <button
                   key={opt.key}
@@ -111,36 +120,36 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
             <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Total Revenue
+                Tổng doanh thu
               </span>
-              <p className="text-base font-bold text-emerald-600 font-mono">
-                ${Number(helper.totalRevenue || helper.revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+              <p className="text-sm font-bold text-emerald-600 font-mono">
+                {displayRevenue}
               </p>
-              <span className="text-[10px] text-gray-400">({helper.completedToursCount || 0} tours)</span>
+              <span className="text-[10px] text-gray-400">({helper.completedToursCount || 0} chuyến)</span>
             </div>
 
             <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Rating
+                Đánh giá
               </span>
               <p className="text-base font-bold text-amber-600 flex items-center justify-center gap-0.5">
                 <span className="material-symbols-outlined text-sm fill-1">star</span>
                 {rating}
               </p>
-              <span className="text-[10px] text-gray-400">({reviewCount} reviews)</span>
+              <span className="text-[10px] text-gray-400">({reviewCount} nhận xét)</span>
             </div>
 
             <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Hourly Rate
+                Giá theo giờ
               </span>
-              <p className="text-base font-bold text-gray-900">${Number(rate).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}/hr</p>
-              <span className="text-[10px] text-gray-400">Standard rate</span>
+              <p className="text-sm font-bold text-gray-900">{displayRate}</p>
+              <span className="text-[10px] text-gray-400">Giá tiêu chuẩn</span>
             </div>
 
             <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                KYC Verification
+                Xác thực KYC
               </span>
               <span className={`inline-flex items-center gap-1 text-[11px] font-bold mt-1 ${
                 verified ? 'text-emerald-600' : 'text-amber-600'
@@ -148,7 +157,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
                 <span className="material-symbols-outlined text-sm">
                   {verified ? 'verified' : 'pending'}
                 </span>
-                {verified ? 'Verified' : 'Pending'}
+                {verified ? 'Đã xác thực' : 'Chờ duyệt'}
               </span>
             </div>
           </div>
@@ -156,7 +165,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
           {/* Languages */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-2">
-              Languages Spoken
+              Ngôn ngữ giao tiếp
             </h4>
             <div className="flex flex-wrap gap-1.5">
               {languages.map((lang, idx) => (
@@ -173,7 +182,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
           {/* Skills / Specialization */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-2">
-              Expertise & Services
+              Chuyên môn & Dịch vụ
             </h4>
             <div className="flex flex-wrap gap-1.5">
               {skills.map((skill, idx) => (
@@ -190,17 +199,17 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
           {/* Bio */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-2">
-              Guide Bio
+              Giới thiệu bản thân
             </h4>
             <div className="p-3.5 rounded-xl border border-gray-100 bg-gray-50/70 text-xs text-gray-600 leading-relaxed italic">
-              "{helper.bio || 'Hello! I am a passionate local insider eager to share hidden gems, regional delicacies, and rich cultural traditions with travelers.'}"
+              "{helper.bio || 'Xin chào! Tôi là người con bản xứ nhiệt tình, luôn sẵn sàng dẫn bạn khám phá những góc phố đặc biệt, món ăn ngon và nét đẹp văn hóa truyền thống.'}"
             </div>
           </div>
 
           {/* Contact Details */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-2">
-              Contact & Base Location
+              Liên hệ & Khu vực hoạt động
             </h4>
             <div className="space-y-2 bg-white rounded-xl border border-gray-100 p-3.5 text-xs text-gray-700 shadow-2xs">
               <div className="flex items-center gap-2">
@@ -225,7 +234,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
             href={`mailto:${email}`}
             className="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 transition-colors text-center cursor-pointer"
           >
-            Send Email
+            Gửi Email
           </a>
           <button
             onClick={() => {
@@ -234,7 +243,7 @@ export default function LocalHelperDetailModal({ isOpen, onClose, helper, onEdit
             }}
             className="flex-1 py-2.5 px-4 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold shadow-xs hover:shadow transition-all text-center cursor-pointer"
           >
-            Edit Profile
+            Chỉnh sửa hồ sơ
           </button>
         </div>
       </div>

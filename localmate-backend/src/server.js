@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); // Reloaded PayOS
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -14,6 +14,7 @@ const bookingRoutes = require('./routes/booking.routes');
 const reviewRoutes = require('./routes/review.routes');
 const messageRoutes = require('./routes/message.routes');
 const paymentRoutes = require('./routes/payment.routes');
+const { router: walletRoutes } = require('./routes/wallet.routes');
 const Booking = require('./models/Booking');
 
 const app = express();
@@ -49,6 +50,7 @@ app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/reviews', reviewRoutes); // Alias
 app.use('/api/v1/messages', messageRoutes);
 app.use('/api/v1/payment', paymentRoutes);
+app.use('/api/v1/wallet', walletRoutes);
 
 // Health check endpoint
 app.get('/', (req, res) => {

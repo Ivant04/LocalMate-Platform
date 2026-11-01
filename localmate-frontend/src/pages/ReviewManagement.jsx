@@ -74,7 +74,7 @@ export default function ReviewManagement() {
   // Save reply
   const handleSaveReply = async (revId) => {
     if (!replyText.trim()) {
-      alert("Please enter a reply message!");
+      alert("Vui lòng nhập nội dung phản hồi!");
       return;
     }
     setSubmittingReply(true);
@@ -90,17 +90,17 @@ export default function ReviewManagement() {
         setReviews(prev => prev.map(r => (r.id === revId || r._id === revId) ? { ...r, response: replyText.trim() } : r));
         setEditingId(null);
         setReplyText('');
-        showToast("Reply saved successfully!");
+        showToast("Đã lưu phản hồi thành công!");
       } else {
         // Fallback optimistic update
         setReviews(prev => prev.map(r => (r.id === revId || r._id === revId) ? { ...r, response: replyText.trim() } : r));
         setEditingId(null);
-        showToast("Reply saved successfully!");
+        showToast("Đã lưu phản hồi thành công!");
       }
     } catch {
       setReviews(prev => prev.map(r => (r.id === revId || r._id === revId) ? { ...r, response: replyText.trim() } : r));
       setEditingId(null);
-      showToast("Reply saved successfully!");
+      showToast("Đã lưu phản hồi thành công!");
     } finally {
       setSubmittingReply(false);
     }
@@ -161,20 +161,20 @@ export default function ReviewManagement() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
-              <span>Helper Portal</span>
+              <span>Cổng Helper</span>
               <span>›</span>
-              <span className="text-teal-600 font-bold">Reviews & Ratings</span>
+              <span className="text-teal-600 font-bold">Đánh giá &amp; Nhận xét</span>
             </div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-                Review Management
+                Quản lý Đánh giá
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-teal-100 text-teal-800 tracking-wider">
-                TOP RATED
+                ĐÁNH GIÁ CAO
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
-              Monitor authentic traveler feedback, reply with thank-you notes, and build your local helper reputation.
+              Theo dõi nhận xét từ du khách, gửi phản hồi cảm ơn và xây dựng uy tín cá nhân của bạn trên LocalMate.
             </p>
           </div>
 
@@ -184,14 +184,14 @@ export default function ReviewManagement() {
               className="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-base">visibility</span>
-              <span>View Public Profile</span>
+              <span>Xem hồ sơ công khai</span>
             </button>
             <button
               onClick={() => navigate(currentUser?.roles?.includes('ROLE_HELPER') ? '/helper-dashboard' : '/traveler')}
               className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:shadow transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-base">dashboard</span>
-              <span>Back to Dashboard</span>
+              <span>Về Bảng điều khiển</span>
             </button>
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function ReviewManagement() {
           {/* Card 1: Score & Satisfaction */}
           <div className="lg:col-span-4 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex flex-col items-center justify-center text-center">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-              AVERAGE RATING SCORE
+              ĐIỂM ĐÁNH GIÁ TRUNG BÌNH
             </span>
             <div className="text-5xl font-extrabold text-slate-900 tracking-tight leading-none mb-3">
               {avgRating}
@@ -221,7 +221,7 @@ export default function ReviewManagement() {
             </div>
 
             <p className="text-xs text-slate-500 font-medium">
-              Based on <strong className="text-slate-800">{totalReviews} completed reviews</strong>
+              Dựa trên <strong className="text-slate-800">{totalReviews} lượt đánh giá thực tế</strong>
             </p>
 
             <div className="mt-5 pt-5 border-t border-slate-100 w-full flex items-center justify-around">
@@ -229,12 +229,12 @@ export default function ReviewManagement() {
                 <p className="text-lg font-bold text-teal-600">
                   {totalReviews > 0 ? `${Math.round((reviews.filter(r => (r.rating || 5) >= 4).length / totalReviews) * 100)}%` : '100%'}
                 </p>
-                <p className="text-[10px] font-semibold text-slate-400 uppercase">SATISFACTION</p>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase">HÀI LÒNG</p>
               </div>
               <div className="w-px h-8 bg-slate-200"></div>
               <div>
-                <p className="text-lg font-bold text-emerald-600">{totalReviews > 0 ? '100%' : '100%'}</p>
-                <p className="text-[10px] font-semibold text-slate-400 uppercase">VERIFIED</p>
+                <p className="text-lg font-bold text-emerald-600">100%</p>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase">ĐÃ XÁC MINH</p>
               </div>
             </div>
           </div>
@@ -244,16 +244,16 @@ export default function ReviewManagement() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <span className="material-symbols-outlined text-teal-600 text-lg">bar_chart</span>
-                <span>Rating Breakdown</span>
+                <span>Phân bổ đánh giá theo sao</span>
               </h3>
-              <span className="text-xs font-semibold text-slate-400">Real-time statistics</span>
+              <span className="text-xs font-semibold text-slate-400">Thống kê thời gian thực</span>
             </div>
 
             <div className="space-y-3">
               {starCounts.map(({ star, count, pct }) => (
                 <div key={star} className="flex items-center gap-3 text-xs">
-                  <div className="w-14 flex items-center gap-1 font-semibold text-slate-600">
-                    <span>{star} stars</span>
+                  <div className="w-16 flex items-center gap-1 font-semibold text-slate-600">
+                    <span>{star} sao</span>
                     <span className="material-symbols-outlined text-amber-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                   </div>
                   <div className="flex-1 h-3 rounded-full bg-slate-100 overflow-hidden">
@@ -272,8 +272,8 @@ export default function ReviewManagement() {
             </div>
 
             <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span>Travelers frequently praise local knowledge, friendliness, and tour flexibility.</span>
-              <span className="font-semibold text-teal-600 cursor-pointer hover:underline" onClick={() => setFilterRating('all')}>View all</span>
+              <span>Du khách thường khen ngợi sự am hiểu địa phương, thân thiện và linh hoạt trong tour.</span>
+              <span className="font-semibold text-teal-600 cursor-pointer hover:underline" onClick={() => setFilterRating('all')}>Xem tất cả</span>
             </div>
           </div>
         </div>
@@ -289,7 +289,7 @@ export default function ReviewManagement() {
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
               }`}
             >
-              All ({totalReviews})
+              Tất cả ({totalReviews})
             </button>
             <button
               onClick={() => setFilterRating('5')}
@@ -299,7 +299,7 @@ export default function ReviewManagement() {
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
               }`}
             >
-              5 Stars ({starCounts.find(s => s.star === 5)?.count || 0})
+              5 sao ({starCounts.find(s => s.star === 5)?.count || 0})
             </button>
             <button
               onClick={() => setFilterRating('no_reply')}
@@ -309,20 +309,20 @@ export default function ReviewManagement() {
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
               }`}
             >
-              Awaiting Reply ({reviews.filter(r => !r.response).length})
+              Chờ phản hồi ({reviews.filter(r => !r.response).length})
             </button>
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-slate-400 font-semibold whitespace-nowrap">Sort by:</span>
+            <span className="text-slate-400 font-semibold whitespace-nowrap">Sắp xếp:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold outline-none cursor-pointer focus:border-teal-500"
             >
-              <option value="recent">Most Recent</option>
-              <option value="highest">Highest Rating</option>
-              <option value="lowest">Lowest Rating</option>
+              <option value="recent">Mới nhất</option>
+              <option value="highest">Đánh giá cao nhất</option>
+              <option value="lowest">Đánh giá thấp nhất</option>
             </select>
           </div>
         </div>
@@ -330,7 +330,6 @@ export default function ReviewManagement() {
         {/* Reviews List */}
         <div className="space-y-4">
           {loading ? (
-            // Skeletons
             Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="p-6 rounded-2xl bg-white border border-slate-200/80 animate-pulse space-y-3">
                 <div className="flex items-center gap-3">
@@ -346,18 +345,18 @@ export default function ReviewManagement() {
           ) : filteredReviews.length === 0 ? (
             <div className="p-12 rounded-2xl bg-white border border-slate-200/80 text-center space-y-3">
               <span className="material-symbols-outlined text-4xl text-slate-300">reviews</span>
-              <p className="text-sm font-bold text-slate-700">No reviews found matching this filter</p>
-              <p className="text-xs text-slate-400">Complete more guided tours with travelers to earn positive verified reviews!</p>
+              <p className="text-sm font-bold text-slate-700">Chưa tìm thấy đánh giá nào phù hợp với bộ lọc</p>
+              <p className="text-xs text-slate-400">Hoàn thành thêm nhiều chuyến đi cùng du khách để nhận được các đánh giá xác thực nhé!</p>
             </div>
           ) : (
             filteredReviews.map((rev) => {
               const revId = rev.id || rev._id;
               const isReplying = editingId === revId;
-              const authorName = rev.travelerName || rev.author || 'Anonymous Traveler';
+              const authorName = rev.travelerName || rev.author || 'Du khách ẩn danh';
               const authorAvatar = rev.travelerAvatar || rev.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150';
               const createdDate = rev.createdAt
-                ? new Date(rev.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
-                : 'Recently';
+                ? new Date(rev.createdAt).toLocaleDateString('vi-VN', { day: 'numeric', month: 'numeric', year: 'numeric' })
+                : 'Gần đây';
 
               return (
                 <div 
@@ -376,14 +375,14 @@ export default function ReviewManagement() {
                         <div className="flex items-center gap-2">
                           <h4 className="text-sm font-bold text-slate-900">{authorName}</h4>
                           <span className="px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                            Verified Tour
+                            Tour đã xác thực
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <div className="flex items-center text-amber-400">
                             {[...Array(5)].map((_, i) => (
                               <span 
-                                key={i}
+                                key={i} 
                                 className={`material-symbols-outlined text-base ${i < (rev.rating || 5) ? 'fill-1' : 'text-slate-200'}`}
                                 style={{ fontVariationSettings: "'FILL' 1" }}
                               >
@@ -409,12 +408,12 @@ export default function ReviewManagement() {
                       <div className="space-y-3 bg-cyan-50/50 p-4 rounded-xl border border-cyan-100">
                         <label className="text-xs font-bold text-cyan-900 flex items-center gap-1.5">
                           <span className="material-symbols-outlined text-sm">reply</span>
-                          <span>Your reply to {authorName}:</span>
+                          <span>Phản hồi của bạn cho {authorName}:</span>
                         </label>
                         <textarea
                           value={replyText}
                           onChange={(e) => setReplyText(e.target.value)}
-                          placeholder="Type your thank-you note or answer..."
+                          placeholder="Nhập lời cảm ơn hoặc giải đáp của bạn..."
                           rows="3"
                           className="w-full p-3 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                         />
@@ -425,7 +424,7 @@ export default function ReviewManagement() {
                             disabled={submittingReply}
                             className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
                           >
-                            Cancel
+                            Hủy
                           </button>
                           <button
                             type="button"
@@ -434,7 +433,7 @@ export default function ReviewManagement() {
                             className="px-4 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1"
                           >
                             <span className="material-symbols-outlined text-sm">send</span>
-                            <span>{submittingReply ? 'Sending...' : 'Send Reply'}</span>
+                            <span>{submittingReply ? 'Đang gửi...' : 'Gửi phản hồi'}</span>
                           </button>
                         </div>
                       </div>
@@ -443,7 +442,7 @@ export default function ReviewManagement() {
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-teal-800 flex items-center gap-1.5">
                             <span className="material-symbols-outlined text-sm">forum</span>
-                            <span>Your Reply:</span>
+                            <span>Phản hồi của bạn:</span>
                           </span>
                           <button
                             type="button"
@@ -451,7 +450,7 @@ export default function ReviewManagement() {
                             className="text-slate-400 hover:text-teal-600 text-xs font-semibold flex items-center gap-1 cursor-pointer"
                           >
                             <span className="material-symbols-outlined text-sm">edit</span>
-                            <span>Edit</span>
+                            <span>Sửa</span>
                           </button>
                         </div>
                         <p className="text-xs text-slate-600 leading-relaxed">
@@ -465,7 +464,7 @@ export default function ReviewManagement() {
                         className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer py-1"
                       >
                         <span className="material-symbols-outlined text-sm">reply</span>
-                        <span>Reply to this review</span>
+                        <span>Phản hồi đánh giá này</span>
                       </button>
                     )}
                   </div>

@@ -31,12 +31,16 @@ export default function AppRoutes() {
         <Route path="request/:id" element={<HelperRequestForm />} />
         <Route path="payment" element={<Payment />} />
         <Route path="payment-result" element={<PaymentResult />} />
+        <Route path="payment-success" element={<PaymentResult />} />
+        <Route path="payment-cancel" element={<PaymentResult />} />
         <Route path="profile" element={<ProfileEdit />} />
         
         {/* Dashboards and Chat */}
         <Route path="chat" element={<RealtimeChat />} />
         <Route path="traveler" element={<TravelerDashboard />} />
+        <Route path="dashboard" element={<TravelerDashboard />} />
         <Route path="helper-dashboard" element={<HelperDashboard />} />
+        <Route path="helper/dashboard" element={<HelperDashboard />} />
         <Route path="reviews" element={<ReviewManagement />} />
         
         {/* Admin Portal Routes */}

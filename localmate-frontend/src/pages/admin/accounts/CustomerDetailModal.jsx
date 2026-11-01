@@ -1,25 +1,29 @@
 import React from 'react';
 import AccountStatusBadge from './components/AccountStatusBadge';
+import { formatVND } from '../../../utils/formatCurrency';
 
 export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit }) {
   if (!isOpen || !customer) return null;
 
   const idCode = customer.id ? `#CUS-${customer.id.slice(-4).toUpperCase()}` : '#CUS-8821';
-  const name = customer.fullName || customer.name || 'Customer';
+  const name = customer.fullName || customer.name || 'Khách hàng';
   const email = customer.email || 'N/A';
   const phone = customer.phone || '+84 901 234 567';
-  const gender = customer.gender || 'Male';
-  const location = customer.location || customer.city || 'Vietnam';
+  const isFemale = customer.gender === 'Female' || customer.gender === 'Nữ';
+  const isMale = customer.gender === 'Male' || customer.gender === 'Nam';
+  const displayGender = isFemale ? 'Nữ' : isMale ? 'Nam' : (customer.gender || 'Khác');
+  const location = customer.location || customer.city || 'Việt Nam';
   const toursCount = customer.completedToursCount || 8;
-  const spent = customer.totalSpent ? `$${Number(customer.totalSpent).toLocaleString()}` : '$1,420';
+  const rawSpent = Number(customer.totalSpent) || 0;
+  const spent = formatVND(rawSpent < 1000 && rawSpent > 0 ? rawSpent * 25000 : rawSpent || 1420 * 25000);
   const createdAtFormatted = customer.createdAt 
-    ? new Date(customer.createdAt).toLocaleDateString('en-US') 
-    : '01/14/2024';
+    ? new Date(customer.createdAt).toLocaleDateString('vi-VN') 
+    : '14/01/2024';
 
   const recentTrip = customer.recentTrip || {
-    tourName: 'Hanoi Street Food Night',
-    guideName: 'Kevin Nguyen',
-    date: '04/12/2024',
+    tourName: 'Food tour ẩm thực đêm phố cổ Hà Nội',
+    guideName: 'Kevin Nguyễn',
+    date: '12/04/2024',
     status: 'COMPLETED',
   };
 
@@ -33,7 +37,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
         <div className="p-6 border-b border-gray-100 flex items-center justify-between shrink-0">
           <div>
             <span className="text-[11px] font-bold tracking-wider text-gray-400 uppercase block mb-1">
-              Customer Profile Details
+              Chi tiết hồ sơ khách hàng
             </span>
             <h2 className="text-xl font-bold text-gray-900">{name}</h2>
           </div>
@@ -61,10 +65,10 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
                 </span>
                 <AccountStatusBadge status={customer.status} />
                 <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-100">
-                  {gender}
+                  {displayGender}
                 </span>
               </div>
-              <p className="text-xs text-gray-500">LocalMate Travel Explorer</p>
+              <p className="text-xs text-gray-500">Du khách khám phá LocalMate</p>
             </div>
           </div>
 
@@ -72,13 +76,13 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
           <div className="grid grid-cols-2 gap-3">
             <div className="p-4 rounded-xl bg-gray-50/80 border border-gray-100 text-center">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Completed Tours
+                Chuyến đi hoàn thành
               </span>
-              <p className="text-xl font-bold text-gray-900">{toursCount} tours</p>
+              <p className="text-xl font-bold text-gray-900">{toursCount} chuyến</p>
             </div>
             <div className="p-4 rounded-xl bg-teal-50/60 border border-teal-100/60 text-center">
               <span className="text-[10px] font-bold text-teal-600 uppercase tracking-wider block mb-1">
-                Total Spent
+                Tổng chi tiêu
               </span>
               <p className="text-xl font-bold text-teal-700">{spent}</p>
             </div>
@@ -87,13 +91,13 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
           {/* Contact & Location Info */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-3">
-              Contact & Location
+              Thông tin liên hệ & Vị trí
             </h4>
             <div className="space-y-3 bg-white rounded-xl border border-gray-100 p-4 shadow-2xs">
               <div className="flex items-start gap-3">
                 <span className="material-symbols-outlined text-gray-400 text-lg mt-0.5">mail</span>
                 <div>
-                  <span className="text-xs text-gray-500 block">Email Address</span>
+                  <span className="text-xs text-gray-500 block">Địa chỉ Email</span>
                   <a href={`mailto:${email}`} className="font-medium text-gray-800 hover:text-teal-600 text-sm">
                     {email}
                   </a>
@@ -103,7 +107,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
               <div className="flex items-start gap-3 pt-2 border-t border-gray-50">
                 <span className="material-symbols-outlined text-gray-400 text-lg mt-0.5">call</span>
                 <div>
-                  <span className="text-xs text-gray-500 block">Phone Number</span>
+                  <span className="text-xs text-gray-500 block">Số điện thoại</span>
                   <span className="font-medium text-gray-800 text-sm">{phone}</span>
                 </div>
               </div>
@@ -111,7 +115,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
               <div className="flex items-start gap-3 pt-2 border-t border-gray-50">
                 <span className="material-symbols-outlined text-gray-400 text-lg mt-0.5">location_on</span>
                 <div>
-                  <span className="text-xs text-gray-500 block">Location / Country</span>
+                  <span className="text-xs text-gray-500 block">Vị trí / Quốc gia</span>
                   <span className="font-medium text-gray-800 text-sm">{location}</span>
                 </div>
               </div>
@@ -119,7 +123,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
               <div className="flex items-start gap-3 pt-2 border-t border-gray-50">
                 <span className="material-symbols-outlined text-gray-400 text-lg mt-0.5">calendar_month</span>
                 <div>
-                  <span className="text-xs text-gray-500 block">Member Since</span>
+                  <span className="text-xs text-gray-500 block">Ngày tham gia</span>
                   <span className="font-medium text-gray-800 text-sm">{createdAtFormatted}</span>
                 </div>
               </div>
@@ -129,7 +133,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
           {/* Recent Trip */}
           <div>
             <h4 className="text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-3">
-              Latest Booking
+              Chuyến đi gần nhất
             </h4>
             <div className="p-3.5 rounded-xl border border-gray-100 bg-gray-50/60 flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors">
               <div className="flex items-center gap-3">
@@ -141,12 +145,12 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
                     {recentTrip.tourName}
                   </h5>
                   <p className="text-xs text-gray-500">
-                    Guide: {recentTrip.guideName} • {recentTrip.date}
+                    Hướng dẫn viên: {recentTrip.guideName} • {recentTrip.date}
                   </p>
                 </div>
               </div>
               <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                Completed
+                Hoàn thành
               </span>
             </div>
           </div>
@@ -158,7 +162,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
             href={`mailto:${email}`}
             className="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:bg-gray-50 transition-colors text-center cursor-pointer"
           >
-            Send Email
+            Gửi Email
           </a>
           <button
             onClick={() => {
@@ -167,7 +171,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, onEdit 
             }}
             className="flex-1 py-2.5 px-4 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold shadow-xs hover:shadow transition-all text-center cursor-pointer"
           >
-            Edit Profile
+            Chỉnh sửa hồ sơ
           </button>
         </div>
       </div>

@@ -8,21 +8,21 @@ export default function Footer() {
         <div className="md:col-span-2">
           <div className="font-headline-md text-headline-md font-bold text-primary mb-4">LocalMate</div>
           <p className="font-body-sm text-body-sm text-on-surface-variant max-w-sm">
-            © 2026 LocalMate. Connecting worlds, one guide at a time. Join our community of explorers and local experts.
+            © 2026 LocalMate. Kết nối bạn với những người bạn đồng hành địa phương đáng tin cậy. Trải nghiệm du lịch bản địa trọn vẹn nhất.
           </p>
         </div>
         <div>
-          <h4 className="font-label-bold text-label-bold text-on-surface mb-4">Platform</h4>
+          <h4 className="font-label-bold text-label-bold text-on-surface mb-4">Nền tảng</h4>
           <ul className="space-y-2">
-            <li><a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Guide Guidelines</a></li>
-            <li><a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Safety Center</a></li>
+            <li><a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Quy chuẩn Local Helper</a></li>
+            <li><a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Trung tâm An toàn</a></li>
           </ul>
         </div>
         <div>
-          <h4 className="font-label-bold text-label-bold text-on-surface mb-4">Legal</h4>
+          <h4 className="font-label-bold text-label-bold text-on-surface mb-4">Pháp lý</h4>
           <ul className="space-y-2">
-            <li><a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
-            <li><a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+            <li><a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Chính sách Bảo mật</a></li>
+            <li><a className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Điều khoản Dịch vụ</a></li>
           </ul>
         </div>
       </div>

@@ -6,6 +6,7 @@ import LocalHelperDetailModal from './LocalHelperDetailModal';
 import AccountForm from './components/AccountForm';
 import DeleteAccountDialog from './components/DeleteAccountDialog';
 import API_BASE_URL from '../../../config/api';
+import { formatVND, formatRateVND } from '../../../utils/formatCurrency';
 
 export default function LocalHelpers() {
   const [helpers, setHelpers] = useState([]);
@@ -55,7 +56,7 @@ export default function LocalHelpers() {
           availabilityStatus: (h.availabilityStatus || 'AVAILABLE').toUpperCase(),
           status: (h.status || 'ACTIVE').toUpperCase(),
           isTopRated: (h.rating || 0) >= 4.85,
-          badgeTitle: (h.rating || 0) >= 4.85 ? 'Super Guide' : 'Local Guide',
+          badgeTitle: (h.rating || 0) >= 4.85 ? 'Hướng dẫn viên xuất sắc' : 'Hướng dẫn viên bản địa',
         }));
         setHelpers(merged);
       } else {
@@ -124,6 +125,7 @@ export default function LocalHelpers() {
 
   // Update Availability Status (Availability Engine)
   const handleUpdateAvailability = async (helperId, newStatus) => {
+    const statusText = newStatus === 'AVAILABLE' ? 'Sẵn sàng' : newStatus === 'BUSY' ? 'Đang bận' : 'Ngoại tuyến';
     try {
       await fetch(`${API_BASE_URL}/api/v1/helpers/${helperId}/status`, {
         method: 'PATCH',
@@ -137,12 +139,12 @@ export default function LocalHelpers() {
       if (selectedHelper && selectedHelper.id === helperId) {
         setSelectedHelper((prev) => ({ ...prev, availabilityStatus: newStatus }));
       }
-      showToast(`Updated availability status: ${newStatus}`);
+      showToast(`Đã cập nhật trạng thái: ${statusText}`);
     } catch (_err) {
       setHelpers((prev) =>
         prev.map((h) => (h.id === helperId ? { ...h, availabilityStatus: newStatus } : h))
       );
-      showToast(`Switched availability status to: ${newStatus}`);
+      showToast(`Đã chuyển trạng thái: ${statusText}`);
     }
   };
 
@@ -167,7 +169,7 @@ export default function LocalHelpers() {
             prev.map((h) => (h.id === editingHelper.id ? { ...h, ...formData } : h))
           );
         }
-        showToast('Local Helper profile updated successfully!');
+        showToast('Cập nhật thông tin Local Helper thành công!');
       } else {
         const res = await fetch(`${API_BASE_URL}/api/v1/helpers`, {
           method: 'POST',
@@ -189,13 +191,13 @@ export default function LocalHelpers() {
           };
           setHelpers((prev) => [newMock, ...prev]);
         }
-        showToast('New Local Helper added successfully!');
+        showToast('Thêm Local Helper mới thành công!');
       }
 
       setIsFormOpen(false);
       setEditingHelper(null);
     } catch (_err) {
-      showToast('Action completed!');
+      showToast('Thao tác thành công!');
       setIsFormOpen(false);
     } finally {
       setActionLoading(false);
@@ -211,12 +213,12 @@ export default function LocalHelpers() {
         method: 'DELETE',
       });
       setHelpers((prev) => prev.filter((h) => h.id !== deletingHelper.id));
-      showToast(`Deleted Local Helper ${deletingHelper.fullName || deletingHelper.name}`);
+      showToast(`Đã xóa Local Helper ${deletingHelper.fullName || deletingHelper.name}`);
       setIsDeleteOpen(false);
       setDeletingHelper(null);
     } catch (_err) {
       setHelpers((prev) => prev.filter((h) => h.id !== deletingHelper.id));
-      showToast('Deleted successfully');
+      showToast('Đã xóa thành công');
       setIsDeleteOpen(false);
       setDeletingHelper(null);
     } finally {
@@ -226,10 +228,15 @@ export default function LocalHelpers() {
 
   // Export CSV
   const handleExportCSV = () => {
-    const headers = ['Helper ID,Full Name,Email,Phone,City / Base,Languages,Rating,Reviews Count,Hourly Rate ($/hr),Total Revenue ($),Completed Tours,Availability,Account Status'];
-    const rows = filteredHelpers.map((h) =>
-      `"${h.id}","${h.fullName || h.name}","${h.email}","${h.phone}","${h.city || h.location}","${Array.isArray(h.languages) ? h.languages.join('; ') : ''}","${h.rating || 5.0}","${h.reviewsCount || 0}","${h.hourlyRate || h.price || 12}","${h.totalRevenue || h.revenue || 0}","${h.completedToursCount || 0}","${h.availabilityStatus || 'AVAILABLE'}","${h.status || 'ACTIVE'}"`
-    );
+    const headers = ['Mã Helper,Họ và tên,Email,Số điện thoại,Khu vực,Ngôn ngữ,Đánh giá,Số nhận xét,Giá theo giờ,Tổng doanh thu,Chuyến đi hoàn thành,Trạng thái hoạt động,Trạng thái tài khoản'];
+    const rows = filteredHelpers.map((h) => {
+      const rawRate = Number(h.hourlyRate || h.price || 12);
+      const rateVND = rawRate < 1000 && rawRate > 0 ? rawRate * 25000 : rawRate;
+      const rawRev = Number(h.totalRevenue || h.revenue || 0);
+      const revVND = rawRev < 1000 && rawRev > 0 ? rawRev * 25000 : rawRev;
+
+      return `"${h.id}","${h.fullName || h.name}","${h.email}","${h.phone}","${h.city || h.location}","${Array.isArray(h.languages) ? h.languages.join('; ') : ''}","${h.rating || 5.0}","${h.reviewsCount || 0}","${rateVND}","${revVND}","${h.completedToursCount || 0}","${h.availabilityStatus || 'AVAILABLE'}","${h.status || 'ACTIVE'}"`;
+    });
     const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers, ...rows].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
@@ -238,7 +245,7 @@ export default function LocalHelpers() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Exported Local Helpers CSV file successfully!');
+    showToast('Xuất danh sách Local Helper ra CSV thành công!');
   };
 
   const totalHelpersCount = helpers.length;
@@ -268,22 +275,22 @@ export default function LocalHelpers() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-              <span>Admin Dashboard</span>
+              <span>Bảng điều khiển Admin</span>
               <span>/</span>
-              <span>Account Management</span>
+              <span>Quản lý tài khoản</span>
               <span>/</span>
-              <span className="text-teal-600 font-bold">Local Helpers</span>
+              <span className="text-teal-600 font-bold">Local Helper</span>
             </div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                Local Helpers Management
+                Quản lý Local Helper
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-sky-100 text-sky-800 tracking-wider">
-                PRO GUIDES
+                HƯỚNG DẪN VIÊN
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-1 max-w-2xl leading-relaxed">
-              Monitor the local guide network, allocate tours, review KYC certifications, and adjust real-time booking availability.
+              Giám sát mạng lưới hướng dẫn viên bản địa, phân bổ chuyến đi, xét duyệt chứng nhận KYC và điều chỉnh trạng thái đặt lịch thời gian thực.
             </p>
           </div>
 
@@ -291,21 +298,21 @@ export default function LocalHelpers() {
             {/* Live Indicator Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-600 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="font-bold text-gray-800">ONLINE NETWORK: {onlineCount} GUIDES</span>
+              <span className="font-bold text-gray-800">MẠNG LƯỚI TRỰC TUYẾN: {onlineCount} HƯỚNG DẪN VIÊN</span>
               <span className="text-gray-300">|</span>
-              <span className="text-[11px] text-gray-400">Real-time</span>
+              <span className="text-[11px] text-gray-400">Thời gian thực</span>
             </div>
 
             <div className="flex items-center gap-2">
               {/* KYC Review button */}
               <button
                 type="button"
-                onClick={() => showToast('Navigating to KYC review submissions')}
+                onClick={() => showToast('Đang chuyển hướng tới danh sách xét duyệt KYC')}
                 className="px-3 py-2 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined text-base text-amber-600">verified</span>
-                <span>Review KYC Submissions</span>
-                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px]">{unverifiedCount} pending</span>
+                <span>Duyệt hồ sơ KYC</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px]">{unverifiedCount} chờ duyệt</span>
               </button>
 
               {/* Add Helper button */}
@@ -317,7 +324,7 @@ export default function LocalHelpers() {
                 className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:shadow transition-all cursor-pointer"
               >
                 <span className="material-symbols-outlined text-base">person_add</span>
-                <span>+ Add New Local Helper</span>
+                <span>+ Thêm Local Helper mới</span>
               </button>
             </div>
           </div>
@@ -330,7 +337,7 @@ export default function LocalHelpers() {
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Total Local Helpers
+                  Tổng số Local Helper
                 </span>
                 <p className="text-2xl font-extrabold text-gray-900 mt-1">{totalHelpersCount.toLocaleString()}</p>
               </div>
@@ -340,7 +347,7 @@ export default function LocalHelpers() {
             </div>
             <div className="flex items-center gap-1 text-[10px] font-semibold text-sky-600 mt-2">
               <span className="material-symbols-outlined text-xs">database</span>
-              <span>Live System Data</span>
+              <span>Dữ liệu thời gian thực</span>
             </div>
           </div>
 
@@ -349,7 +356,7 @@ export default function LocalHelpers() {
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Available Online
+                  Sẵn sàng nhận tour
                 </span>
                 <p className="text-2xl font-extrabold text-emerald-600 mt-1">{onlineCount.toLocaleString()}</p>
               </div>
@@ -359,7 +366,7 @@ export default function LocalHelpers() {
             </div>
             <div className="flex items-center justify-between text-[10px] mt-2">
               <span className="px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold">
-                Ready for Tours
+                Sẵn sàng đón khách
               </span>
               <span className="text-gray-400 font-semibold">{onlinePct}%</span>
             </div>
@@ -370,7 +377,7 @@ export default function LocalHelpers() {
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Currently on Tour
+                  Đang đi tour
                 </span>
                 <p className="text-2xl font-extrabold text-amber-600 mt-1">{busyCount.toLocaleString()}</p>
               </div>
@@ -380,7 +387,7 @@ export default function LocalHelpers() {
             </div>
             <div className="flex items-center justify-between text-[10px] mt-2">
               <span className="px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 font-bold">
-                Active Schedules
+                Đang có lịch trình
               </span>
               <span className="text-gray-400 font-semibold">{busyPct}%</span>
             </div>
@@ -391,7 +398,7 @@ export default function LocalHelpers() {
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Offline / On Break
+                  Ngoại tuyến / Tạm nghỉ
                 </span>
                 <p className="text-2xl font-extrabold text-gray-600 mt-1">{offlineCount.toLocaleString()}</p>
               </div>
@@ -401,7 +408,7 @@ export default function LocalHelpers() {
             </div>
             <div className="flex items-center justify-between text-[10px] mt-2">
               <span className="px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600 font-bold">
-                Paused Intake
+                Tạm dừng nhận khách
               </span>
               <span className="text-gray-400 font-semibold">{offlinePct}%</span>
             </div>
@@ -412,7 +419,7 @@ export default function LocalHelpers() {
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Top Rated Guides
+                  Được đánh giá cao
                 </span>
                 <p className="text-2xl font-extrabold text-amber-600 mt-1">{topRatedCount.toLocaleString()}</p>
               </div>
@@ -422,8 +429,8 @@ export default function LocalHelpers() {
             </div>
             <div className="flex items-center gap-1 text-[10px] text-gray-500 mt-2 font-medium">
               <span className="material-symbols-outlined text-amber-500 text-xs">star</span>
-              <span>Rating ≥ 4.8</span>
-              <span className="text-gray-400 font-semibold">(verified)</span>
+              <span>Đánh giá ≥ 4.8</span>
+              <span className="text-gray-400 font-semibold">(đã xác minh)</span>
             </div>
           </div>
         </div>
@@ -436,10 +443,10 @@ export default function LocalHelpers() {
             </div>
             <div>
               <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                Availability Engine
+                Bộ điều phối trạng thái
               </h3>
               <p className="text-xs text-gray-500 mt-0.5">
-                Directly governs guide visibility and immediate booking availability on the tour discovery map.
+                Trực tiếp điều chỉnh mức độ hiển thị của hướng dẫn viên và khả năng nhận đặt tour trên bản đồ.
               </p>
             </div>
           </div>
@@ -447,17 +454,17 @@ export default function LocalHelpers() {
           <div className="flex flex-wrap items-center gap-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Available: Ready for immediate tour bookings</span>
+              <span>Sẵn sàng: Nhận lịch hẹn và tour ngay lập tức</span>
             </div>
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span>Busy: On tour or scheduled appointments</span>
+              <span>Đang bận: Đang trong chuyến đi hoặc có lịch hẹn trước</span>
             </div>
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-gray-400"></span>
-              <span>Offline: On leave / Hidden from live map</span>
+              <span>Ngoại tuyến: Nghỉ phép / Ẩn khỏi bản đồ trực tiếp</span>
             </div>
           </div>
         </div>
@@ -477,7 +484,7 @@ export default function LocalHelpers() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                placeholder="Search by name, language, operating city..."
+                placeholder="Tìm theo họ tên, ngôn ngữ, thành phố hoạt động..."
                 className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
               />
             </div>
@@ -486,10 +493,10 @@ export default function LocalHelpers() {
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex rounded-xl bg-gray-100 p-1 border border-gray-200/60">
                 {[
-                  { key: 'ALL', label: `All (${totalHelpersCount})` },
-                  { key: 'AVAILABLE', label: `Available (${onlineCount})` },
-                  { key: 'BUSY', label: `Busy (${busyCount})` },
-                  { key: 'OFFLINE', label: `Offline (${offlineCount})` },
+                  { key: 'ALL', label: `Tất cả (${totalHelpersCount})` },
+                  { key: 'AVAILABLE', label: `Sẵn sàng (${onlineCount})` },
+                  { key: 'BUSY', label: `Đang bận (${busyCount})` },
+                  { key: 'OFFLINE', label: `Ngoại tuyến (${offlineCount})` },
                 ].map((tab) => (
                   <button
                     key={tab.key}
@@ -518,17 +525,17 @@ export default function LocalHelpers() {
                 }}
                 className="px-3 py-2 text-xs rounded-xl border border-gray-200 bg-white text-gray-700 focus:border-teal-500 outline-none transition-all cursor-pointer font-medium"
               >
-                <option value="ALL">Account Status: All</option>
-                <option value="ACTIVE">● Active</option>
-                <option value="INACTIVE">● Inactive</option>
-                <option value="BLOCKED">● Blocked</option>
+                <option value="ALL">Trạng thái: Tất cả</option>
+                <option value="ACTIVE">● Hoạt động</option>
+                <option value="INACTIVE">● Không hoạt động</option>
+                <option value="BLOCKED">● Bị khóa</option>
               </select>
 
               {/* Export Button */}
               <button
                 type="button"
                 onClick={handleExportCSV}
-                title="Export CSV list"
+                title="Xuất tệp CSV"
                 className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined text-lg">download</span>
@@ -552,13 +559,13 @@ export default function LocalHelpers() {
                     />
                   </th>
                   <th className="py-3.5 px-4">Local Helper</th>
-                  <th className="py-3.5 px-4">Contact</th>
-                  <th className="py-3.5 px-4">Languages</th>
-                  <th className="py-3.5 px-4">Operating Base</th>
-                  <th className="py-3.5 px-4">Rating & Reviews</th>
-                  <th className="py-3.5 px-4">Revenue</th>
-                  <th className="py-3.5 px-4 text-center">Availability Status</th>
-                  <th className="py-3.5 px-4 text-center">Actions</th>
+                  <th className="py-3.5 px-4">Thông tin liên hệ</th>
+                  <th className="py-3.5 px-4">Ngôn ngữ</th>
+                  <th className="py-3.5 px-4">Khu vực hoạt động</th>
+                  <th className="py-3.5 px-4">Đánh giá & Nhận xét</th>
+                  <th className="py-3.5 px-4">Doanh thu</th>
+                  <th className="py-3.5 px-4 text-center">Trạng thái hoạt động</th>
+                  <th className="py-3.5 px-4 text-center">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -590,8 +597,8 @@ export default function LocalHelpers() {
                       <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-3">
                         <span className="material-symbols-outlined text-2xl">search_off</span>
                       </div>
-                      <p className="text-sm font-semibold text-gray-700">No matching Local Helpers found</p>
-                      <p className="text-xs text-gray-400 mt-1">Try modifying your search or select another tab.</p>
+                      <p className="text-sm font-semibold text-gray-700">Không tìm thấy Local Helper phù hợp</p>
+                      <p className="text-xs text-gray-400 mt-1">Hãy thử đổi từ khóa tìm kiếm hoặc chọn danh mục khác.</p>
                     </td>
                   </tr>
                 ) : (
@@ -600,9 +607,12 @@ export default function LocalHelpers() {
                     const name = helper.fullName || helper.name || 'Local Helper';
                     const isSelected = selectedIds.includes(helper.id);
                     const availability = (helper.availabilityStatus || 'AVAILABLE').toUpperCase();
-                    const languages = Array.isArray(helper.languages) ? helper.languages : ['English', 'Vietnamese'];
+                    const languages = Array.isArray(helper.languages) ? helper.languages : ['Tiếng Việt', 'Tiếng Anh'];
                     const rating = helper.rating ? Number(helper.rating).toFixed(1) : '5.0';
                     const reviewCount = helper.reviewsCount ?? helper.reviewCount ?? 0;
+                    const rawRev = Number(helper.totalRevenue || helper.revenue || 0);
+                    const revVND = rawRev < 1000 && rawRev > 0 ? rawRev * 25000 : rawRev;
+                    const displayRev = formatVND(revVND);
 
                     return (
                       <tr
@@ -650,7 +660,7 @@ export default function LocalHelpers() {
                                   {name}
                                 </span>
                                 {helper.isTopRated && (
-                                  <span className="material-symbols-outlined text-amber-500 text-sm fill-1" title="Top Rated">
+                                  <span className="material-symbols-outlined text-amber-500 text-sm fill-1" title="Đánh giá cao">
                                     star
                                   </span>
                                 )}
@@ -697,9 +707,9 @@ export default function LocalHelpers() {
 
                         {/* Location */}
                         <td className="py-3.5 px-4 text-gray-700">
-                          <div className="flex items-center gap-1 truncate max-w-[140px]" title={helper.city || helper.location || 'Da Nang'}>
+                          <div className="flex items-center gap-1 truncate max-w-[140px]" title={helper.city || helper.location || 'Đà Nẵng'}>
                             <span className="material-symbols-outlined text-teal-600 text-sm shrink-0">location_on</span>
-                            <span className="truncate">{helper.city || helper.location || 'Da Nang & Hoi An'}</span>
+                            <span className="truncate">{helper.city || helper.location || 'Đà Nẵng & Hội An'}</span>
                           </div>
                         </td>
 
@@ -716,10 +726,10 @@ export default function LocalHelpers() {
                         <td className="py-3.5 px-4">
                           <div className="flex flex-col">
                             <span className="font-extrabold text-emerald-600 text-xs font-mono">
-                              ${Number(helper.totalRevenue || helper.revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                              {displayRev}
                             </span>
                             <span className="text-[10px] text-gray-400 font-medium">
-                              {(helper.completedToursCount || 0)} tours
+                              {(helper.completedToursCount || 0)} chuyến đi
                             </span>
                           </div>
                         </td>
@@ -743,7 +753,7 @@ export default function LocalHelpers() {
                                 setSelectedHelper(helper);
                                 setIsDetailOpen(true);
                               }}
-                              title="View helper profile"
+                              title="Xem hồ sơ hướng dẫn viên"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-teal-600 hover:bg-teal-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">visibility</span>
@@ -756,7 +766,7 @@ export default function LocalHelpers() {
                                 setEditingHelper(helper);
                                 setIsFormOpen(true);
                               }}
-                              title="Edit details"
+                              title="Chỉnh sửa thông tin"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">edit</span>
@@ -769,7 +779,7 @@ export default function LocalHelpers() {
                                 setDeletingHelper(helper);
                                 setIsDeleteOpen(true);
                               }}
-                              title="Delete Local Helper"
+                              title="Xóa Local Helper"
                               className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">delete</span>
@@ -787,7 +797,7 @@ export default function LocalHelpers() {
           {/* Pagination Footer */}
           <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
             <div>
-              Showing <span className="font-bold text-gray-800">{paginatedHelpers.length}</span> of <span className="font-bold text-gray-800">{filteredHelpers.length}</span> Local Helpers
+              Hiển thị <span className="font-bold text-gray-800">{paginatedHelpers.length}</span> trên tổng số <span className="font-bold text-gray-800">{filteredHelpers.length}</span> Local Helper
             </div>
 
             <div className="flex items-center gap-1">

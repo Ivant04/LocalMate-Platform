@@ -5,6 +5,7 @@ const User = require('../models/User');
 const HelperProfile = require('../models/HelperProfile');
 const Message = require('../models/Message');
 const Review = require('../models/Review');
+const { getOrSyncWallet } = require('./wallet.routes');
 
 const parseMinutes = (timeStr, defaultMinutes) => {
   if (!timeStr || !timeStr.includes(':')) return defaultMinutes;
@@ -37,22 +38,30 @@ const checkAndExpire = async (bookings) => {
 router.get('/my-bookings', async (req, res) => {
   try {
     const { travelerId, email } = req.query;
-    let targetTravelerId = travelerId;
+    let targetTravelerIds = [];
 
-    if ((!targetTravelerId || !targetTravelerId.trim()) && email && email.trim()) {
-      const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (travelerId && travelerId.trim()) {
+      targetTravelerIds.push(travelerId.trim());
+    }
+    if (email && email.trim()) {
+      const normalizedEmail = email.toLowerCase().trim();
+      targetTravelerIds.push(normalizedEmail);
+      const user = await User.findOne({ email: normalizedEmail });
       if (user) {
-        targetTravelerId = user._id.toString();
+        targetTravelerIds.push(user._id.toString());
       }
     }
 
-    if (!targetTravelerId || !targetTravelerId.trim()) {
-      return res.json([]);
+    let bookings = [];
+    if (targetTravelerIds.length > 0) {
+      bookings = await Booking.find({
+        $or: [{ travelerId: { $in: targetTravelerIds } }, { email: { $in: targetTravelerIds } }]
+      }).lean();
     }
 
-    const bookings = await Booking.find({
-      $or: [{ travelerId: targetTravelerId }, { travelerId: email }],
-    }).lean();
+    if (bookings.length === 0) {
+      bookings = await Booking.find().sort({ createdAt: -1 }).limit(5).lean();
+    }
 
     await checkAndExpire(bookings);
 
@@ -85,6 +94,14 @@ router.get('/my-bookings', async (req, res) => {
         totalPrice: b.totalPrice,
         status: b.status,
         paymentStatus: b.paymentStatus,
+        escrowStatus: b.escrowStatus || (b.paymentStatus === 'PAID' ? (b.status === 'COMPLETED' ? 'RELEASED' : 'HELD') : 'NOT_APPLICABLE'),
+        escrowAmount: b.escrowAmount || b.totalPrice || 0,
+        platformFee: b.platformFee || Math.round((b.totalPrice || 0) * 0.10),
+        helperPayoutAmount: b.helperPayoutAmount || ((b.totalPrice || 0) - Math.round((b.totalPrice || 0) * 0.10)),
+        escrowHeldAt: b.escrowHeldAt,
+        escrowReleasedAt: b.escrowReleasedAt,
+        confirmedByTraveler: !!b.confirmedByTraveler,
+        confirmedByHelper: !!b.confirmedByHelper,
         createdAt: b.createdAt,
         updatedAt: b.updatedAt,
         guideName: helper ? helper.fullName : 'Local Guide',
@@ -202,6 +219,16 @@ router.post('/', async (req, res) => {
     if (!bookingData.paymentStatus) {
       bookingData.paymentStatus = 'PAID';
     }
+
+    // Escrow Initialization (Quy trình Ký quỹ an toàn)
+    const price = Number(bookingData.totalPrice) || 0;
+    const isPaid = (bookingData.paymentStatus === 'PAID');
+    bookingData.escrowStatus = isPaid ? 'HELD' : 'NOT_APPLICABLE'; // Bước 2: Ký quỹ an toàn
+    bookingData.escrowAmount = isPaid ? price : 0;
+    bookingData.platformCommissionRate = 0.10; // 10% hoa hồng
+    bookingData.platformFee = isPaid ? Math.round(price * 0.10) : 0;
+    bookingData.helperPayoutAmount = isPaid ? (price - Math.round(price * 0.10)) : 0;
+    bookingData.escrowHeldAt = isPaid ? now : null;
     bookingData.createdAt = now;
 
     const newBooking = new Booking(bookingData);
@@ -217,18 +244,26 @@ router.post('/', async (req, res) => {
 router.get('/helper-requests', async (req, res) => {
   try {
     const { helperId, email } = req.query;
-    let targetHelperId = helperId;
+    let targetHelperIds = [];
 
-    if ((!targetHelperId || !targetHelperId.trim()) && email && email.trim()) {
-      const u = await User.findOne({ email: email.toLowerCase().trim() });
-      if (u) targetHelperId = u._id.toString();
+    if (helperId && helperId.trim()) {
+      targetHelperIds.push(helperId.trim());
+    }
+    if (email && email.trim()) {
+      const normalizedEmail = email.toLowerCase().trim();
+      targetHelperIds.push(normalizedEmail);
+      const u = await User.findOne({ email: normalizedEmail });
+      if (u) {
+        targetHelperIds.push(u._id.toString());
+      }
     }
 
-    let bookings;
-    if (targetHelperId && targetHelperId.trim()) {
-      bookings = await Booking.find({ helperId: targetHelperId }).lean();
-    } else {
-      bookings = await Booking.find().lean();
+    let bookings = [];
+    if (targetHelperIds.length > 0) {
+      bookings = await Booking.find({ helperId: { $in: targetHelperIds } }).lean();
+    }
+    if (bookings.length === 0) {
+      bookings = await Booking.find().sort({ createdAt: -1 }).limit(5).lean();
     }
 
     await checkAndExpire(bookings);
@@ -260,9 +295,16 @@ router.get('/helper-requests', async (req, res) => {
         sentAt: b.sentAt,
         expiresAt: b.expiresAt,
         location: b.meetLocation,
-        requests: b.specialRequests,
         price: b.totalPrice || 0,
         status: b.status,
+        paymentStatus: b.paymentStatus || 'UNPAID',
+        escrowStatus: b.escrowStatus || (b.paymentStatus === 'PAID' ? (b.status === 'COMPLETED' ? 'RELEASED' : 'HELD') : 'NOT_APPLICABLE'),
+        escrowAmount: b.escrowAmount || b.totalPrice || 0,
+        platformFee: b.platformFee || Math.round((b.totalPrice || 0) * 0.10),
+        helperPayoutAmount: b.helperPayoutAmount || ((b.totalPrice || 0) - Math.round((b.totalPrice || 0) * 0.10)),
+        escrowHeldAt: b.escrowHeldAt,
+        escrowReleasedAt: b.escrowReleasedAt,
+        confirmedByTraveler: !!b.confirmedByTraveler,
       });
     }
 
@@ -499,6 +541,200 @@ router.get('/travelers', async (req, res) => {
   try {
     const travelers = await User.find({ roles: 'ROLE_TRAVELER' });
     return res.json(travelers);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// ==========================================
+// ESCROW SYSTEM (QUỸ KÝ QUỸ TRUNG GIAN AN TOÀN)
+// ==========================================
+
+// 1. POST /api/v1/bookings/:id/escrow/confirm-complete
+// Bước 3 & Bước 4: Du khách xác nhận hoàn thành tour -> Giải ngân cho Helper
+router.post('/:id/escrow/confirm-complete', async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+    const now = new Date();
+    booking.confirmedByTraveler = true;
+    booking.status = 'COMPLETED';
+    booking.paymentStatus = 'PAID';
+    booking.escrowStatus = 'RELEASED'; // Đã giải ngân thành công
+    booking.escrowReleasedAt = now;
+    booking.updatedAt = now;
+
+    const price = Number(booking.totalPrice) || 0;
+    if (!booking.platformFee) booking.platformFee = Math.round(price * 0.10);
+    if (!booking.helperPayoutAmount) booking.helperPayoutAmount = price - booking.platformFee;
+
+    const saved = await booking.save();
+
+    // Tự động cộng tiền vào Ví Thu Nhập của Helper (90% giá trị tour)
+    try {
+      let helper = await User.findById(booking.helperId).catch(() => null);
+      if (!helper) helper = await User.findOne({ email: booking.helperId });
+      const helperEmail = helper ? helper.email : booking.helperId;
+      const helperUserId = helper ? helper._id.toString() : booking.helperId;
+      const wallet = await getOrSyncWallet(helperUserId, helperEmail);
+      const payout = Number(booking.helperPayoutAmount) || 0;
+      if (payout > 0) {
+        wallet.availableBalance += payout;
+        wallet.totalEarnings += payout;
+        wallet.pendingBalance = Math.max(0, (wallet.pendingBalance || 0) - payout);
+        wallet.transactions.unshift({
+          type: 'ESCROW_RELEASE',
+          amount: payout,
+          description: `Giải ngân ký quỹ từ ${booking.tourName || 'Tour trải nghiệm'} (90%)`,
+          status: 'SUCCESS',
+          bookingId: booking._id.toString(),
+          createdAt: now,
+        });
+        await wallet.save();
+      }
+    } catch (wErr) {
+      console.warn('Wallet credit error on escrow release:', wErr.message);
+    }
+
+    // Tự động gửi tin nhắn chúc mừng & báo giải ngân cho Helper trong chat
+    try {
+      let helper = await User.findById(booking.helperId).catch(() => null);
+      if (!helper) helper = await User.findOne({ email: booking.helperId });
+      let traveler = await User.findById(booking.travelerId).catch(() => null);
+      if (!traveler) traveler = await User.findOne({ email: booking.travelerId });
+
+      if (helper && traveler) {
+        const hEmail = helper.email.toLowerCase().trim();
+        const tEmail = traveler.email.toLowerCase().trim();
+        const convId = hEmail.localeCompare(tEmail) < 0 ? `${hEmail}_${tEmail}` : `${tEmail}_${hEmail}`;
+
+        const payoutStr = (booking.helperPayoutAmount).toLocaleString('vi-VN');
+        const content = `[Hệ thống Escrow LocalMate]: Du khách ${traveler.fullName || 'Traveler'} đã xác nhận hoàn thành tour "${booking.tourName}". Tiền ký quỹ đã được giải ngân thành công: ${payoutStr} VNĐ (đã khấu trừ 10% hoa hồng nền tảng). Cảm ơn bạn đã đem lại trải nghiệm tuyệt vời!`;
+
+        const msg = new Message({
+          conversationId: convId,
+          senderId: 'system@localmate.com',
+          receiverId: hEmail,
+          content,
+          isRead: false,
+          createdAt: now,
+        });
+        await msg.save();
+      }
+    } catch (err) {
+      console.warn('Auto message error on escrow release:', err.message);
+    }
+
+    return res.json({
+      message: 'Xác nhận hoàn tất và giải ngân ký quỹ thành công',
+      status: 'RELEASED',
+      booking: saved,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// 2. POST /api/v1/bookings/:id/escrow/release (Admin hoặc tự động giải ngân)
+router.post('/:id/escrow/release', async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+    const now = new Date();
+    booking.escrowStatus = 'RELEASED';
+    booking.status = 'COMPLETED';
+    booking.escrowReleasedAt = now;
+    booking.updatedAt = now;
+
+    const price = Number(booking.totalPrice) || 0;
+    if (!booking.platformFee) booking.platformFee = Math.round(price * 0.10);
+    if (!booking.helperPayoutAmount) booking.helperPayoutAmount = price - booking.platformFee;
+
+    const saved = await booking.save();
+
+    // Tự động cộng tiền vào Ví Thu Nhập của Helper
+    try {
+      let helper = await User.findById(booking.helperId).catch(() => null);
+      if (!helper) helper = await User.findOne({ email: booking.helperId });
+      const helperEmail = helper ? helper.email : booking.helperId;
+      const helperUserId = helper ? helper._id.toString() : booking.helperId;
+      const wallet = await getOrSyncWallet(helperUserId, helperEmail);
+      const payout = Number(booking.helperPayoutAmount) || 0;
+      if (payout > 0) {
+        wallet.availableBalance += payout;
+        wallet.totalEarnings += payout;
+        wallet.pendingBalance = Math.max(0, (wallet.pendingBalance || 0) - payout);
+        wallet.transactions.unshift({
+          type: 'ESCROW_RELEASE',
+          amount: payout,
+          description: `Admin giải ngân ký quỹ từ ${booking.tourName || 'Tour'} (90%)`,
+          status: 'SUCCESS',
+          bookingId: booking._id.toString(),
+          createdAt: now,
+        });
+        await wallet.save();
+      }
+    } catch (wErr) {
+      console.warn('Wallet credit error on admin release:', wErr.message);
+    }
+
+    return res.json({ message: 'Giải ngân ký quỹ thành công', booking: saved });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// 3. POST /api/v1/bookings/:id/escrow/refund (Hoàn tiền ký quỹ cho du khách)
+router.post('/:id/escrow/refund', async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+    const now = new Date();
+    booking.escrowStatus = 'REFUNDED';
+    booking.status = 'CANCELLED';
+    booking.paymentStatus = 'REFUNDED';
+    booking.updatedAt = now;
+
+    const saved = await booking.save();
+    return res.json({ message: 'Đã hoàn trả 100% tiền ký quỹ cho du khách', booking: saved });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// 4. GET /api/v1/bookings/escrow/summary (Thống kê Quỹ Ký Quỹ Escrow dành cho Admin)
+router.get('/escrow/summary', async (req, res) => {
+  try {
+    const allBookings = await Booking.find().lean();
+    let totalHeldInEscrow = 0;
+    let totalReleased = 0;
+    let totalPlatformFee = 0;
+    const activeEscrows = [];
+
+    for (const b of allBookings) {
+      const price = Number(b.totalPrice) || 0;
+      const status = b.escrowStatus || (b.paymentStatus === 'PAID' && b.status !== 'COMPLETED' ? 'HELD' : 'NOT_APPLICABLE');
+
+      if (status === 'HELD') {
+        totalHeldInEscrow += price;
+        activeEscrows.push(b);
+      } else if (status === 'RELEASED') {
+        const fee = b.platformFee || Math.round(price * 0.10);
+        totalReleased += (price - fee);
+        totalPlatformFee += fee;
+      }
+    }
+
+    return res.json({
+      totalHeldInEscrow,
+      totalReleased,
+      totalPlatformFee,
+      activeEscrowsCount: activeEscrows.length,
+      activeEscrows,
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

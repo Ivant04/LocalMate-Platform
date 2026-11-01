@@ -50,22 +50,19 @@ export default function Authentication() {
   const parseNetworkError = (err) => {
     if (err.name === 'AbortError') {
       if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && API_BASE_URL.includes('localhost')) {
-        return 'Deployment Error: The frontend is deployed online but VITE_API_URL is still pointing to http://localhost:8080. Please set VITE_API_URL in your hosting platform (Vercel/Netlify/Render) to your deployed backend URL.';
+        return 'Lỗi cấu hình triển khai: Frontend đang chạy online nhưng VITE_API_URL vẫn trỏ về http://localhost:8080. Vui lòng cập nhật biến môi trường trên nền tảng hosting.';
       }
-      return 'Server connection timed out (15s). If your backend is deployed on Render free tier, it may be waking up from sleep. Please wait 15 seconds and try again.';
+      return 'Kết nối máy chủ quá hạn (15s). Vui lòng thử lại sau vài giây.';
     }
 
     if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('Load failed'))) {
       if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && API_BASE_URL.includes('localhost')) {
-        return 'Deployment Configuration Error: The deployed frontend cannot reach http://localhost:8080. Please set VITE_API_URL in your hosting environment variables (e.g. Vercel / Netlify) to your backend domain.';
+        return 'Lỗi kết nối máy chủ: Không thể kết nối đến backend.';
       }
-      if (typeof window !== 'undefined' && window.location.protocol === 'https:' && API_BASE_URL.startsWith('http://') && !API_BASE_URL.includes('localhost')) {
-        return 'Mixed Content Error: HTTPS sites cannot call unencrypted HTTP backends. Please update your backend URL to use https://.';
-      }
-      return `Cannot connect to backend server at ${API_BASE_URL}. Please ensure your backend is deployed and running.`;
+      return `Không thể kết nối tới máy chủ backend tại ${API_BASE_URL}. Vui lòng kiểm tra trạng thái máy chủ.`;
     }
 
-    return err.message || 'Unable to connect to the server.';
+    return err.message || 'Không thể kết nối đến máy chủ.';
   };
 
   // Instant offline demo login bypass for live evaluations
@@ -75,7 +72,7 @@ export default function Authentication() {
       mockUser = {
         id: 'demo-admin-id',
         email: 'admin@localmate.com',
-        fullName: 'LocalMate Administrator',
+        fullName: 'Quản trị viên LocalMate',
         roles: ['ROLE_ADMIN'],
         token: 'mock-jwt-token-admin',
         status: 'ACTIVE',
@@ -85,7 +82,7 @@ export default function Authentication() {
       mockUser = {
         id: 'demo-helper-id',
         email: 'duc.tai@localmate.com',
-        fullName: 'Duc Tai',
+        fullName: 'Đức Tài',
         roles: ['ROLE_HELPER'],
         token: 'mock-jwt-token-helper',
         status: 'ACTIVE',
@@ -95,7 +92,7 @@ export default function Authentication() {
       mockUser = {
         id: 'demo-traveler-id',
         email: 'traveler@localmate.com',
-        fullName: 'Alex Johnson',
+        fullName: 'Nguyễn Mỹ Duyên',
         roles: ['ROLE_TRAVELER'],
         token: 'mock-jwt-token-traveler',
         status: 'ACTIVE',
@@ -148,7 +145,7 @@ export default function Authentication() {
 
       if (!response.ok) {
         const errJson = await response.json().catch(() => ({}));
-        throw new Error(errJson.message || 'Google authentication failed!');
+        throw new Error(errJson.message || 'Xác thực Google thất bại!');
       }
 
       const userData = await response.json();
@@ -160,6 +157,8 @@ export default function Authentication() {
       const roles = userData.roles || [];
       if (roles.includes('ROLE_ADMIN')) {
         navigate('/admin');
+      } else if (roles.includes('ROLE_HELPER')) {
+        navigate('/helper-dashboard');
       } else {
         navigate('/');
       }
@@ -171,39 +170,8 @@ export default function Authentication() {
     }
   };
 
-  // Initialize Google Identity Services if client ID is configured
-  useEffect(() => {
-    if (window.google?.accounts?.id && googleClientId) {
-      window.google.accounts.id.initialize({
-        client_id: googleClientId,
-        callback: (res) => handleGoogleSuccess(res),
-        auto_select: false,
-      });
-
-      if (googleBtnRef.current) {
-        window.google.accounts.id.renderButton(googleBtnRef.current, {
-          theme: 'outline',
-          size: 'large',
-          width: '100%',
-          text: 'signin_with',
-          shape: 'rectangular',
-        });
-      }
-
-      if (googleSignUpBtnRef.current) {
-        window.google.accounts.id.renderButton(googleSignUpBtnRef.current, {
-          theme: 'outline',
-          size: 'large',
-          width: '100%',
-          text: 'signup_with',
-          shape: 'rectangular',
-        });
-      }
-    }
-  }, [googleClientId, isSignUp]);
-
   const triggerGoogleSignIn = () => {
-    if (googleClientId && window.google?.accounts?.id) {
+    if (window.google?.accounts?.id && googleClientId) {
       window.google.accounts.id.prompt();
     } else {
       setShowGoogleModal(true);
@@ -224,27 +192,28 @@ export default function Authentication() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+        }),
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
+      const responseText = await response.text();
 
       if (!response.ok) {
-        let errorMsg = 'Incorrect email or password!';
+        let errorMsg = 'Sai thông tin đăng nhập!';
         try {
-          const errJson = await response.json();
-          errorMsg = errJson.message || errorMsg;
+          const errObj = JSON.parse(responseText);
+          if (errObj.message) errorMsg = errObj.message;
         } catch {
-          const rawText = await response.text();
-          if (rawText && !rawText.startsWith('<')) errorMsg = rawText;
+          if (responseText) errorMsg = responseText;
         }
         throw new Error(errorMsg);
       }
 
-      const responseText = await response.text();
       let userData = {};
-
       try {
         userData = JSON.parse(responseText);
       } catch {
@@ -260,13 +229,13 @@ export default function Authentication() {
 
           if (userData.email?.includes('admin')) {
             userData.roles = ['ROLE_ADMIN'];
-            userData.fullName = userData.fullName || 'Admin Manager';
+            userData.fullName = userData.fullName || 'Quản trị viên LocalMate';
           } else if (userData.email?.includes('minh') || userData.email?.includes('linh')) {
             userData.roles = ['ROLE_HELPER'];
-            userData.fullName = userData.fullName || (userData.email.includes('minh') ? 'Tran Minh' : 'Nguyen Thuy Linh');
+            userData.fullName = userData.fullName || (userData.email.includes('minh') ? 'Trần Minh' : 'Nguyễn Thùy Linh');
           } else {
             userData.roles = ['ROLE_TRAVELER'];
-            userData.fullName = userData.fullName || 'Alex Johnson';
+            userData.fullName = userData.fullName || 'Nguyễn Mỹ Duyên';
           }
         } catch (_decodeErr) {
           userData.roles = ['ROLE_TRAVELER'];
@@ -280,6 +249,8 @@ export default function Authentication() {
       const roles = userData.roles || [];
       if (roles.includes('ROLE_ADMIN')) {
         navigate('/admin');
+      } else if (roles.includes('ROLE_HELPER')) {
+        navigate('/helper-dashboard');
       } else {
         navigate('/');
       }
@@ -296,12 +267,12 @@ export default function Authentication() {
     setErrorMessage('');
 
     if (!agreeTerms) {
-      setErrorMessage('Please agree to the Terms of Service and Privacy Policy.');
+      setErrorMessage('Vui lòng đồng ý với Điều khoản dịch vụ và Chính sách bảo mật.');
       return;
     }
 
     if (password.length < 6) {
-      setErrorMessage('Password must be at least 6 characters long!');
+      setErrorMessage('Mật khẩu phải có ít nhất 6 ký tự!');
       return;
     }
 
@@ -329,7 +300,7 @@ export default function Authentication() {
       const responseText = await response.text();
 
       if (!response.ok) {
-        let errorMsg = 'Registration failed. Please try again!';
+        let errorMsg = 'Đăng ký không thành công. Vui lòng thử lại!';
         try {
           const errObj = JSON.parse(responseText);
           if (errObj.message) errorMsg = errObj.message;
@@ -361,7 +332,7 @@ export default function Authentication() {
       localStorage.setItem('localmate_token', userData.token);
       window.dispatchEvent(new Event('storage'));
 
-      navigate('/');
+      navigate(role === 'guide' ? '/helper-dashboard' : '/');
     } catch (err) {
       clearTimeout(timeoutId);
       setErrorMessage(parseNetworkError(err));
@@ -383,13 +354,13 @@ export default function Authentication() {
           /* Login Card */
           <section className="glass-card p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 max-h-[90vh] overflow-y-auto">
             <div className="text-center mb-6">
-              <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Welcome Back</h1>
-              <p className="font-body-md text-on-surface-variant text-gray-500">Access your local connerctions</p>
+              <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Chào mừng trở lại</h1>
+              <p className="font-body-md text-on-surface-variant text-gray-500">Đăng nhập để kết nối cùng Local Helper bản địa</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleLogin}>
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-2">Email or Phone Number</label>
+                <label className="block font-medium text-sm text-gray-700 mb-2">Email hoặc Số điện thoại</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -406,7 +377,7 @@ export default function Authentication() {
               </div>
 
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-2">Password</label>
+                <label className="block font-medium text-sm text-gray-700 mb-2">Mật khẩu</label>
                 <div className="relative">
                   <input
                     type="password"
@@ -423,7 +394,7 @@ export default function Authentication() {
               </div>
 
               <div className="flex justify-end">
-                <a className="text-sm text-emerald-600 hover:underline" href="#">Forgot password?</a>
+                <a className="text-sm text-emerald-600 hover:underline cursor-pointer" href="#">Quên mật khẩu?</a>
               </div>
 
               {errorMessage && (
@@ -433,23 +404,23 @@ export default function Authentication() {
                     <span className="leading-relaxed font-medium">{errorMessage}</span>
                   </div>
 
-                  {/* Instant Offline Demo Bypass when backend is down or waking up */}
-                  {(errorMessage.includes('Deployment') || errorMessage.includes('timed out') || errorMessage.includes('Cannot connect') || errorMessage.includes('Mixed Content')) && (
+                  {/* Instant Offline Demo Bypass */}
+                  {(errorMessage.includes('Lỗi') || errorMessage.includes('quá hạn') || errorMessage.includes('Không thể kết nối')) && (
                     <div className="pt-2 border-t border-red-200/80 flex flex-wrap gap-2 items-center">
-                      <span className="text-[11px] text-gray-500 font-medium">Quick Preview Access:</span>
+                      <span className="text-[11px] text-gray-500 font-medium">Truy cập thử nghiệm nhanh:</span>
                       <button
                         type="button"
                         onClick={() => handleOfflineDemoLogin('admin')}
                         className="text-[11px] font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-2xs"
                       >
-                        ⚡ Log in as Admin
+                        ⚡ Đăng nhập Quản trị viên
                       </button>
                       <button
                         type="button"
                         onClick={() => handleOfflineDemoLogin('helper')}
                         className="text-[11px] font-bold bg-white hover:bg-sky-50 text-sky-700 border border-sky-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-2xs"
                       >
-                        ⚡ Log in as Helper
+                        ⚡ Đăng nhập Local Helper
                       </button>
                     </div>
                   )}
@@ -461,13 +432,13 @@ export default function Authentication() {
                 disabled={loading}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-[52px] rounded-xl font-semibold shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                {loading ? 'Processing...' : 'Sign In'}
+                {loading ? 'Đang xử lý...' : 'Đăng nhập'}
               </button>
 
               <div className="relative py-3">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500 text-xs rounded-full">Or continue with</span>
+                  <span className="px-4 bg-white text-gray-500 text-xs rounded-full">Hoặc tiếp tục với</span>
                 </div>
               </div>
 
@@ -486,18 +457,18 @@ export default function Authentication() {
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
                   </svg>
-                  Sign in with Google
+                  Đăng nhập bằng Google
                 </button>
               )}
 
               <p className="text-center text-sm text-gray-600 mt-6">
-                Don't have an account?{' '}
+                Chưa có tài khoản?{' '}
                 <button
                   type="button"
                   onClick={() => setIsSignUp(true)}
                   className="text-emerald-600 font-semibold hover:underline cursor-pointer"
                 >
-                  Sign up
+                  Đăng ký ngay
                 </button>
               </p>
             </form>
@@ -506,38 +477,38 @@ export default function Authentication() {
           /* Signup Card */
           <section className="glass-card p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 max-h-[90vh] overflow-y-auto">
             <div className="text-center mb-6">
-              <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Join LocalMate</h1>
-              <p className="font-body-md text-on-surface-variant text-gray-500">Start your journey today</p>
+              <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Tham gia LocalMate</h1>
+              <p className="font-body-md text-on-surface-variant text-gray-500">Bắt đầu hành trình khám phá hôm nay</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleSignUp}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-medium text-sm text-gray-700 mb-1">Full Name</label>
+                  <label className="block font-medium text-sm text-gray-700 mb-1">Họ và tên</label>
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
-                    placeholder="Nguyen Van A"
+                    placeholder="Nguyễn Văn A"
                   />
                 </div>
                 <div>
-                  <label className="block font-medium text-sm text-gray-700 mb-1">Phone Number</label>
+                  <label className="block font-medium text-sm text-gray-700 mb-1">Số điện thoại</label>
                   <input
                     type="tel"
                     required
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
-                    placeholder="+84 123456789"
+                    placeholder="0988 123 456"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-1">Email Address</label>
+                <label className="block font-medium text-sm text-gray-700 mb-1">Địa chỉ Email</label>
                 <input
                   type="email"
                   required
@@ -549,7 +520,7 @@ export default function Authentication() {
               </div>
 
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-1">Password</label>
+                <label className="block font-medium text-sm text-gray-700 mb-1">Mật khẩu</label>
                 <input
                   type="password"
                   required
@@ -561,7 +532,7 @@ export default function Authentication() {
               </div>
 
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-2">Join as</label>
+                <label className="block font-medium text-sm text-gray-700 mb-2">Vai trò tham gia</label>
                 <div className="flex gap-4">
                   <label className="flex-1 cursor-pointer">
                     <input
@@ -574,7 +545,7 @@ export default function Authentication() {
                     />
                     <div className="p-3 text-center rounded-xl border-2 border-gray-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-all">
                       <span className="material-symbols-outlined block text-emerald-600 mb-1">person</span>
-                      <span className="font-semibold text-sm text-gray-800">Traveler</span>
+                      <span className="font-semibold text-sm text-gray-800">Du khách</span>
                     </div>
                   </label>
                   <label className="flex-1 cursor-pointer">
@@ -604,7 +575,7 @@ export default function Authentication() {
                   className="mt-1 w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
                 />
                 <label className="text-xs text-gray-600 leading-tight select-none cursor-pointer" htmlFor="terms">
-                  I agree to the <a className="text-emerald-600 hover:underline" href="#">Terms of Service</a> and <a className="text-emerald-600 hover:underline" href="#">Privacy Policy</a>
+                  Tôi đồng ý với <a className="text-emerald-600 hover:underline cursor-pointer" href="#">Điều khoản dịch vụ</a> và <a className="text-emerald-600 hover:underline cursor-pointer" href="#">Chính sách bảo mật</a>
                 </label>
               </div>
 
@@ -615,15 +586,15 @@ export default function Authentication() {
                     <span className="leading-relaxed font-medium">{errorMessage}</span>
                   </div>
 
-                  {(errorMessage.includes('Deployment') || errorMessage.includes('timed out') || errorMessage.includes('Cannot connect') || errorMessage.includes('Mixed Content')) && (
+                  {(errorMessage.includes('Lỗi') || errorMessage.includes('quá hạn') || errorMessage.includes('Không thể kết nối')) && (
                     <div className="pt-2 border-t border-red-200/80 flex flex-wrap gap-2 items-center">
-                      <span className="text-[11px] text-gray-500 font-medium">Quick Preview Access:</span>
+                      <span className="text-[11px] text-gray-500 font-medium">Truy cập thử nghiệm nhanh:</span>
                       <button
                         type="button"
                         onClick={() => handleOfflineDemoLogin('traveler')}
                         className="text-[11px] font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-2xs"
                       >
-                        ⚡ Continue as Traveler
+                        ⚡ Tiếp tục với vai trò Du khách
                       </button>
                     </div>
                   )}
@@ -635,13 +606,13 @@ export default function Authentication() {
                 disabled={loading}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-[50px] rounded-xl font-semibold shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                {loading ? 'Creating...' : 'Create Account'}
+                {loading ? 'Đang tạo...' : 'Tạo tài khoản'}
               </button>
 
               <div className="relative py-2">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500 text-xs rounded-full">Or sign up with</span>
+                  <span className="px-4 bg-white text-gray-500 text-xs rounded-full">Hoặc đăng ký bằng</span>
                 </div>
               </div>
 
@@ -660,18 +631,18 @@ export default function Authentication() {
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
                   </svg>
-                  Sign up with Google
+                  Đăng ký bằng Google
                 </button>
               )}
 
               <p className="text-center text-sm text-gray-600 mt-4">
-                Already have an account?{' '}
+                Đã có tài khoản?{' '}
                 <button
                   type="button"
                   onClick={() => setIsSignUp(false)}
                   className="text-emerald-600 font-semibold hover:underline cursor-pointer"
                 >
-                  Log in
+                  Đăng nhập
                 </button>
               </p>
             </form>
@@ -679,13 +650,13 @@ export default function Authentication() {
         )}
       </div>
 
-      {/* Google Login Options Modal (When Google Client ID is not yet defined in .env or for rapid testing) */}
+      {/* Google Login Options Modal */}
       {showGoogleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative border border-gray-100 my-auto">
             <button
               onClick={() => setShowGoogleModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-xl">close</span>
             </button>
@@ -700,33 +671,33 @@ export default function Authentication() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Google Authentication</h3>
-                <p className="text-xs text-gray-500">Fast sign-in & Account setup</p>
+                <h3 className="text-lg font-bold text-gray-900">Xác thực Google</h3>
+                <p className="text-xs text-gray-500">Đăng nhập nhanh &amp; Thiết lập tài khoản</p>
               </div>
             </div>
 
-            {/* Quick 1-Click Simulation with your Google Email */}
+            {/* Quick 1-Click Simulation */}
             <div className="bg-emerald-50/60 border border-emerald-100 rounded-xl p-4 mb-5">
               <h4 className="text-sm font-bold text-emerald-900 mb-1 flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-base text-emerald-600">bolt</span>
-                Instant Sign-In with Your Google Account
+                Đăng nhập nhanh với tài khoản Google
               </h4>
               <p className="text-xs text-emerald-700 mb-3">
-                Enter your Google account email to automatically register or link your profile directly in the database:
+                Nhập email Google của bạn để tự động đăng ký hoặc liên kết hồ sơ:
               </p>
               <div className="space-y-2.5">
                 <input
                   type="text"
                   value={googleNameInput}
                   onChange={(e) => setGoogleNameInput(e.target.value)}
-                  placeholder="Full Name (e.g. John Doe)"
+                  placeholder="Họ và tên (Ví dụ: Nguyễn Mỹ Duyên)"
                   className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <input
                   type="email"
                   value={googleEmailInput}
                   onChange={(e) => setGoogleEmailInput(e.target.value)}
-                  placeholder="Google Email (e.g. user@gmail.com)"
+                  placeholder="Email Google (Ví dụ: user@gmail.com)"
                   className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <button
@@ -743,35 +714,18 @@ export default function Authentication() {
                   className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-base">login</span>
-                  Continue with Google ({googleEmailInput.trim() || 'traveler@gmail.com'})
+                  Tiếp tục với Google ({googleEmailInput.trim() || 'traveler@gmail.com'})
                 </button>
               </div>
             </div>
 
-            {/* Step to configure official Google OAuth */}
-            <div className="border-t border-gray-100 pt-4">
-              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-1">
-                <span className="material-symbols-outlined text-sm text-gray-500">settings</span>
-                Official Production Google OAuth Setup
-              </h4>
-              <p className="text-xs text-gray-600 leading-relaxed mb-2">
-                To activate official Google Cloud sign-in popup:
-              </p>
-              <ol className="text-xs text-gray-500 space-y-1 list-decimal list-inside pl-1 mb-4">
-                <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" className="text-primary underline">Google Cloud Console Credentials</a>.</li>
-                <li>Create an <strong>OAuth 2.0 Client ID</strong> (Web application) and add your domain to Authorized JavaScript origins.</li>
-                <li>Paste the Client ID in <code className="bg-gray-100 px-1 py-0.5 rounded text-gray-800">localmate-frontend/.env</code>:
-                  <div className="bg-gray-800 text-emerald-400 p-2 rounded-md mt-1 font-mono text-[11px] overflow-x-auto">
-                    VITE_GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
-                  </div>
-                </li>
-              </ol>
+            <div className="border-t border-gray-100 pt-3">
               <button
                 type="button"
                 onClick={() => setShowGoogleModal(false)}
                 className="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg transition-colors cursor-pointer"
               >
-                Close
+                Đóng
               </button>
             </div>
           </div>

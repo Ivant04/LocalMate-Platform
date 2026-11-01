@@ -5,22 +5,22 @@ export default function AccountStatusBadge({ status, size = 'sm' }) {
 
   const config = {
     ACTIVE: {
-      label: 'Active',
+      label: 'Hoạt động',
       bg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
       dot: 'bg-emerald-500',
     },
     INACTIVE: {
-      label: 'Inactive',
+      label: 'Không hoạt động',
       bg: 'bg-amber-50 text-amber-700 border-amber-200',
       dot: 'bg-amber-500',
     },
     BLOCKED: {
-      label: 'Blocked',
+      label: 'Bị khóa',
       bg: 'bg-rose-50 text-rose-700 border-rose-200',
       dot: 'bg-rose-500',
     },
     PENDING: {
-      label: 'Pending',
+      label: 'Chờ duyệt',
       bg: 'bg-sky-50 text-sky-700 border-sky-200',
       dot: 'bg-sky-500',
     },

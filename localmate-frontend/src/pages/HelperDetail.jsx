@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../config/api';
+import { formatVND, formatRateVND } from '../utils/formatCurrency';
 
 export default function HelperDetail() {
   const { id } = useParams();
@@ -21,17 +22,17 @@ export default function HelperDetail() {
             name: data.fullName || data.name || 'Local Helper',
             fullName: data.fullName || data.name || 'Local Helper',
             email: data.email || '',
-            city: data.city || data.location || 'Vietnam',
-            country: data.country || 'Vietnam',
-            title: data.title || 'Local Guide & Explorer',
+            city: data.city || data.location || 'Việt Nam',
+            country: data.country || 'Việt Nam',
+            title: data.title || 'Người dẫn đường bản địa',
             rating: data.rating || 5.0,
             reviewsCount: data.reviewsCount || 0,
             hostedHours: data.hostedHours || `${(data.reviewsCount || 1) * 4}+`,
-            languages: Array.isArray(data.languages) ? data.languages.join(', ') : (data.languages || 'English, Vietnamese'),
-            price: data.price !== undefined ? parseFloat(data.price) : (data.hourlyRate !== undefined ? parseFloat(data.hourlyRate) : 12),
+            languages: Array.isArray(data.languages) ? data.languages.join(', ') : (data.languages || 'Tiếng Việt, Tiếng Anh'),
+            price: data.price !== undefined ? parseFloat(data.price) : (data.hourlyRate !== undefined ? parseFloat(data.hourlyRate) : 62500),
             expertises: Array.isArray(data.expertises) ? data.expertises : (data.skills || ['LOCAL EXPERT']),
             img: data.img || data.avatar || data.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-            bio: data.bio || 'Experienced local guide ready to share authentic local culture.',
+            bio: data.bio || 'Local Helper giàu kinh nghiệm, sẵn sàng đồng hành cùng bạn khám phá văn hóa bản địa đích thực.',
             experiences: data.experiences || [],
             reviews: Array.isArray(data.reviews) ? data.reviews : [],
           });
@@ -250,10 +251,11 @@ export default function HelperDetail() {
 
   const isHelperOffline = (guide?.availabilityStatus || 'AVAILABLE') === 'OFFLINE';
   
-  const hourlyRate = guide?.price !== undefined ? parseFloat(guide.price) : 10;
-  const baseCost = parseFloat((hourlyRate * hours * people).toFixed(2));
-  const serviceFee = parseFloat((baseCost * 0.1).toFixed(2));
-  const totalCost = parseFloat((baseCost + serviceFee).toFixed(2));
+  const rawRate = guide?.price !== undefined ? parseFloat(guide.price) : 62500;
+  const hourlyRate = (rawRate > 0 && rawRate < 1000) ? Math.round(rawRate * 25000) : Math.round(rawRate);
+  const baseCost = Math.round(hourlyRate * hours * people);
+  const serviceFee = Math.round(baseCost * 0.1);
+  const totalCost = baseCost + serviceFee;
 
   const resolveGuideEmail = () => {
     if (guide.email) return guide.email;
@@ -271,17 +273,17 @@ export default function HelperDetail() {
     e.preventDefault();
     const storedUser = localStorage.getItem('localmate_user');
     if (!storedUser) {
-      alert("Please sign in to book a Local Helper!");
+      alert("Vui lòng đăng nhập để đặt Local Helper!");
       navigate('/login');
       return;
     }
 
     if (isHelperOffline) {
-      alert("Helper is currently OFFLINE and cannot accept bookings at this time.");
+      alert("Helper hiện đang NGOẠI TUYẾN và tạm thời không nhận yêu cầu đặt tour mới.");
       return;
     }
     if (conflictingSlot) {
-      alert(`Helper is busy from ${conflictingSlot.startTime} to ${conflictingSlot.endTime}. Please pick another time.`);
+      alert(`Helper đã có lịch bận từ ${conflictingSlot.startTime} đến ${conflictingSlot.endTime}. Vui lòng chọn khung giờ khác.`);
       return;
     }
 
@@ -294,8 +296,8 @@ export default function HelperDetail() {
         guideEmail: gEmail,
         guideName: gName,
         guideAvatar: gAvatar,
-        tourName: guide.title || `${gName}'s Guided Experience`,
-        city: guide.city || 'Da Nang, Vietnam',
+        tourName: guide.title || `Trải nghiệm cùng ${gName}`,
+        city: guide.city || 'Đà Nẵng, Việt Nam',
         date,
         startTime,
         endTime: formattedEndTime,
@@ -310,7 +312,7 @@ export default function HelperDetail() {
   const handleRequestFormSubmit = () => {
     const storedUser = localStorage.getItem('localmate_user');
     if (!storedUser) {
-      alert("Please sign in to send a trip request!");
+      alert("Vui lòng đăng nhập để gửi yêu cầu tour!");
       navigate('/login');
       return;
     }
@@ -324,8 +326,8 @@ export default function HelperDetail() {
         guideEmail: gEmail,
         guideName: gName,
         guideAvatar: gAvatar,
-        tourName: guide.title || 'Custom Local Tour',
-        city: guide.city || 'Da Nang, Vietnam',
+        tourName: guide.title || 'Tour Khám Phá Bản Địa Tùy Chỉnh',
+        city: guide.city || 'Đà Nẵng, Việt Nam',
         pricePerHour: hourlyRate
       }
     });
@@ -334,7 +336,7 @@ export default function HelperDetail() {
   const handleMessageHelper = () => {
     const storedUser = localStorage.getItem('localmate_user');
     if (!storedUser) {
-      alert("Please sign in to message this Local Helper!");
+      alert("Vui lòng đăng nhập để nhắn tin cho Local Helper!");
       navigate('/login');
       return;
     }
@@ -347,7 +349,7 @@ export default function HelperDetail() {
 
     const gEmail = resolveGuideEmail();
     if (currentUserObj?.email && currentUserObj.email.toLowerCase().trim() === gEmail.toLowerCase().trim()) {
-      alert("This is your own helper profile! You cannot send messages to yourself.");
+      alert("Đây là tài khoản Helper của chính bạn! Bạn không thể tự nhắn tin cho mình.");
       return;
     }
 
@@ -358,8 +360,8 @@ export default function HelperDetail() {
         guideEmail: gEmail,
         guideName: gName,
         guideAvatar: gAvatar,
-        tourName: guide?.title || `${gName}'s Guided Experience`,
-        city: guide?.city || 'Vietnam',
+        tourName: guide?.title || `Trải nghiệm cùng ${gName}`,
+        city: guide?.city || 'Việt Nam',
         date,
         startTime,
         endTime: formattedEndTime,
@@ -414,29 +416,29 @@ export default function HelperDetail() {
             <div className="flex flex-wrap gap-2 mb-2">
               <div className="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full w-fit">
                 <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
-                <span className="font-label-bold text-label-bold uppercase">Verified Expert</span>
+                <span className="font-label-bold text-label-bold uppercase">Đã xác thực</span>
               </div>
               <div className="flex items-center gap-2 bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full w-fit">
                 <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
-                <span className="font-label-bold text-label-bold uppercase">Top Rated Helper</span>
+                <span className="font-label-bold text-label-bold uppercase">Helper xuất sắc</span>
               </div>
               {/* Availability Status Badge */}
               {(!guide.availabilityStatus || guide.availabilityStatus === 'AVAILABLE') && (
                 <div className="flex items-center gap-2 bg-emerald-500/90 text-white px-3 py-1 rounded-full w-fit shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-                  <span className="font-label-bold text-label-bold uppercase tracking-wider">AVAILABLE</span>
+                  <span className="font-label-bold text-label-bold uppercase tracking-wider">SẴN SÀNG</span>
                 </div>
               )}
               {guide.availabilityStatus === 'BUSY' && (
                 <div className="flex items-center gap-2 bg-amber-500/90 text-white px-3 py-1 rounded-full w-fit shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-white"></span>
-                  <span className="font-label-bold text-label-bold uppercase tracking-wider">BUSY (Check Schedule)</span>
+                  <span className="font-label-bold text-label-bold uppercase tracking-wider">ĐANG BẬN (Xem lịch)</span>
                 </div>
               )}
               {guide.availabilityStatus === 'OFFLINE' && (
                 <div className="flex items-center gap-2 bg-slate-600/90 text-white px-3 py-1 rounded-full w-fit shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-slate-300"></span>
-                  <span className="font-label-bold text-label-bold uppercase tracking-wider">OFFLINE</span>
+                  <span className="font-label-bold text-label-bold uppercase tracking-wider">NGOẠI TUYẾN</span>
                 </div>
               )}
             </div>
@@ -456,18 +458,18 @@ export default function HelperDetail() {
                 <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                 <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
               </div>
-              <p className="font-label-bold text-label-bold text-on-surface-variant mt-1">{guide.reviewsCount} Reviews</p>
+              <p className="font-label-bold text-label-bold text-on-surface-variant mt-1">{guide.reviewsCount} Đánh giá</p>
             </div>
             
             <div className="h-12 w-[1px] bg-border-subtle self-center"></div>
             <div className="text-center flex flex-col justify-center">
               <p className="font-headline-md text-headline-md text-primary font-bold">{guide.hostedHours}</p>
-              <p className="font-label-bold text-label-bold text-on-surface-variant uppercase">Hours Hosted</p>
+              <p className="font-label-bold text-label-bold text-on-surface-variant uppercase">Giờ dẫn tour</p>
             </div>
             
             <div className="h-12 w-[1px] bg-border-subtle self-center"></div>
             <div className="text-center flex flex-col justify-center">
-              <p className="font-headline-md text-headline-md text-primary font-bold">Languages</p>
+              <p className="font-headline-md text-headline-md text-primary font-bold">Ngôn ngữ</p>
               <p className="font-label-bold text-label-bold text-on-surface-variant uppercase">{guide.languages}</p>
             </div>
           </div>
@@ -491,10 +493,10 @@ export default function HelperDetail() {
           {/* Tabs Navigation */}
           <div className="sticky top-20 bg-surface/90 backdrop-blur-md z-40 border-b border-border-subtle mb-8 flex gap-8 overflow-x-auto no-scrollbar">
             {[
-              { id: 'info', label: 'Info' },
-              { id: 'experience', label: 'Experience' },
-              { id: 'availability', label: 'Availability' },
-              { id: 'reviews', label: 'Reviews' }
+              { id: 'info', label: 'Thông tin' },
+              { id: 'experience', label: 'Kinh nghiệm' },
+              { id: 'availability', label: 'Lịch trình' },
+              { id: 'reviews', label: 'Đánh giá' }
             ].map(tab => (
               <button 
                 key={tab.id}
@@ -514,7 +516,7 @@ export default function HelperDetail() {
           
           {/* Info Section */}
           <section id="info" className="scroll-mt-36">
-            <h2 className="font-headline-md text-headline-md font-bold mb-4">About {guide.name ? guide.name.split(' ')[0] : 'Guide'}</h2>
+            <h2 className="font-headline-md text-headline-md font-bold mb-4">Giới thiệu về {guide.name ? guide.name.split(' ')[0] : 'Helper'}</h2>
             <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
               {guide.bio}
             </p>
@@ -522,7 +524,7 @@ export default function HelperDetail() {
           
           {/* Experience Section */}
           <section id="experience" className="bg-surface-container-low p-8 rounded-3xl border border-border-subtle scroll-mt-36">
-            <h2 className="font-headline-md text-headline-md font-bold mb-6">Experience</h2>
+            <h2 className="font-headline-md text-headline-md font-bold mb-6">Kinh nghiệm thực tế</h2>
             <div className="space-y-6">
               {(guide.experiences || []).map((exp, idx) => (
                 <div key={idx} className="flex gap-4">
@@ -544,23 +546,23 @@ export default function HelperDetail() {
           <section id="availability" className="scroll-mt-36">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
-                <h2 className="font-headline-md text-headline-md font-bold">Availability & Schedule</h2>
+                <h2 className="font-headline-md text-headline-md font-bold">Lịch trình &amp; Khung giờ</h2>
                 <p className="text-body-sm text-on-surface-variant mt-1">
-                  Select an available date below to sync with your booking request.
+                  Chọn ngày còn trống bên dưới để đồng bộ vào phiếu đặt tour của bạn.
                 </p>
               </div>
               <div className="shrink-0">
                 {isHelperOffline ? (
                   <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-300 flex items-center gap-1.5 shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-slate-400"></span> OFFLINE
+                    <span className="w-2 h-2 rounded-full bg-slate-400"></span> NGOẠI TUYẾN
                   </span>
                 ) : guide?.availabilityStatus === 'BUSY' ? (
                   <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 flex items-center gap-1.5 shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> BUSY (Check slots)
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> ĐANG BẬN (Xem lịch)
                   </span>
                 ) : (
                   <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 flex items-center gap-1.5 shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span> AVAILABLE
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span> SẴN SÀNG
                   </span>
                 )}
               </div>
@@ -571,11 +573,11 @@ export default function HelperDetail() {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-headline-sm text-lg font-bold text-on-surface">
-                    {currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+                    {`Tháng ${currentMonth.getMonth() + 1}, ${currentMonth.getFullYear()}`}
                   </span>
                   {normalizedWorkingDays.length > 0 && (
                     <span className="text-xs text-on-surface-variant ml-2 font-medium">
-                      • Working: {normalizedWorkingDays.join(', ')}
+                      • Ngày làm việc: {normalizedWorkingDays.join(', ')}
                     </span>
                   )}
                 </div>
@@ -584,7 +586,7 @@ export default function HelperDetail() {
                     type="button"
                     onClick={handlePrevMonth} 
                     className="p-2 hover:bg-surface-container rounded-full transition-colors flex items-center justify-center border border-border-subtle"
-                    title="Previous Month"
+                    title="Tháng trước"
                   >
                     <span className="material-symbols-outlined text-[20px]">chevron_left</span>
                   </button>
@@ -592,7 +594,7 @@ export default function HelperDetail() {
                     type="button"
                     onClick={handleNextMonth} 
                     className="p-2 hover:bg-surface-container rounded-full transition-colors flex items-center justify-center border border-border-subtle"
-                    title="Next Month"
+                    title="Tháng sau"
                   >
                     <span className="material-symbols-outlined text-[20px]">chevron_right</span>
                   </button>
@@ -601,7 +603,7 @@ export default function HelperDetail() {
               
               {/* Days of week */}
               <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-on-surface-variant uppercase pb-2 border-b border-border-subtle/60">
-                <div>MO</div><div>TU</div><div>WE</div><div>TH</div><div>FR</div><div>SA</div><div>SU</div>
+                <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div>
               </div>
               
               {/* Calendar Days 7-Col Grid */}
@@ -619,7 +621,7 @@ export default function HelperDetail() {
                     return (
                       <div 
                         key={idx} 
-                        title="Helper is currently offline and not taking bookings"
+                        title="Helper hiện đang ngoại tuyến"
                         className="aspect-square flex flex-col items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800/40 text-slate-400 text-sm cursor-not-allowed select-none"
                       >
                         {item.dayNum}
@@ -631,7 +633,7 @@ export default function HelperDetail() {
                     return (
                       <div 
                         key={idx} 
-                        title={`Helper is off duty on ${item.dayName}`}
+                        title={`Helper nghỉ vào ${item.dayName}`}
                         className="aspect-square flex flex-col items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800/20 text-slate-300 dark:text-slate-600 text-sm cursor-not-allowed select-none line-through"
                       >
                         {item.dayNum}
@@ -646,7 +648,7 @@ export default function HelperDetail() {
                         type="button"
                         onClick={() => handleSelectDate(item)}
                         className="aspect-square flex flex-col items-center justify-center rounded-xl bg-primary text-white font-bold text-sm shadow-md ring-2 ring-primary ring-offset-2 scale-105 transition-all z-10"
-                        title="Selected Date for your booking"
+                        title="Ngày được chọn cho chuyến đi"
                       >
                         <span>{item.dayNum}</span>
                         <span className="w-1.5 h-1.5 bg-white rounded-full mt-0.5"></span>
@@ -661,7 +663,7 @@ export default function HelperDetail() {
                         type="button"
                         onClick={() => handleSelectDate(item)}
                         className="aspect-square flex flex-col items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 border border-amber-300 hover:bg-amber-100 hover:border-amber-400 font-bold text-sm transition-all"
-                        title="Limited spots: Helper has booked slots on this day. Click to view schedule."
+                        title="Đã có một số lịch bận trong ngày này. Nhấp để xem chi tiết."
                       >
                         <span>{item.dayNum}</span>
                         <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-0.5"></span>
@@ -675,7 +677,7 @@ export default function HelperDetail() {
                       type="button"
                       onClick={() => handleSelectDate(item)}
                       className="aspect-square flex flex-col items-center justify-center rounded-xl bg-primary-container/20 hover:bg-primary text-primary hover:text-white border border-primary/30 font-bold text-sm transition-all shadow-sm"
-                      title="Available full day. Click to select for booking."
+                      title="Trống cả ngày. Nhấp để chọn."
                     >
                       <span>{item.dayNum}</span>
                     </button>
@@ -687,23 +689,23 @@ export default function HelperDetail() {
               <div className="pt-3 border-t border-border-subtle/50 flex flex-wrap gap-4 sm:gap-6 text-xs text-on-surface">
                 <div className="flex items-center gap-1.5">
                   <div className="w-3.5 h-3.5 bg-primary text-white text-[9px] font-bold rounded flex items-center justify-center">✓</div>
-                  <span className="font-semibold text-primary">Selected Date</span>
+                  <span className="font-semibold text-primary">Ngày đã chọn</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-3.5 h-3.5 bg-surface-container-low border border-border-subtle rounded"></div>
-                  <span>Available Full Day</span>
+                  <span>Trống cả ngày</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-3.5 h-3.5 bg-amber-100 border border-amber-300 rounded flex items-center justify-center">
                     <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
                   </div>
-                  <span>Limited Spots (Booked intervals)</span>
+                  <span>Có một số giờ bận</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-3.5 h-3.5 bg-slate-100 border border-slate-200 rounded flex items-center justify-center text-[10px] text-slate-400 line-through">
                     -
                   </div>
-                  <span className="text-slate-500">Day Off / Offline</span>
+                  <span className="text-slate-500">Nghỉ / Ngoại tuyến</span>
                 </div>
               </div>
 
@@ -713,15 +715,15 @@ export default function HelperDetail() {
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary text-[20px]">calendar_month</span>
                     <span className="font-label-bold text-label-bold text-on-surface">
-                      Selected: {formattedSelectedDate}
+                      Đã chọn: {formattedSelectedDate}
                     </span>
                   </div>
                   <p className="text-xs text-on-surface-variant">
                     {isHelperOffline 
-                      ? 'Helper is offline. Booking requests are currently disabled.' 
+                      ? 'Helper đang ngoại tuyến. Tạm khóa nhận lịch mới.' 
                       : busySlots.length > 0 
-                      ? `Helper has ${busySlots.length} booked slot(s) on this date. Check available times on the booking card.` 
-                      : 'Helper has full availability on this date!'}
+                      ? `Helper có ${busySlots.length} lịch bận vào ngày này. Vui lòng kiểm tra khung giờ trống trên thẻ đặt tour.` 
+                      : 'Helper hoàn toàn trống lịch vào ngày này!'}
                   </p>
                 </div>
                 <button
@@ -734,7 +736,7 @@ export default function HelperDetail() {
                   }}
                   className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary-dark transition-all flex items-center gap-1.5 shrink-0 shadow-sm"
                 >
-                  Set Time in Booking Card
+                  Điền giờ đặt tour
                   <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                 </button>
               </div>
@@ -745,7 +747,7 @@ export default function HelperDetail() {
           <section id="reviews" className="space-y-8 scroll-mt-36">
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-headline-md text-headline-md font-bold">
-                Customer Reviews ({guide.reviewsCount || 0})
+                Đánh giá từ khách hàng ({guide.reviewsCount || 0})
               </h2>
             </div>
             
@@ -767,8 +769,8 @@ export default function HelperDetail() {
                     </span>
                   ))}
                 </div>
-                <div className="text-body-sm text-on-surface-variant font-medium">Average Rating</div>
-                <div className="text-label-bold text-primary mt-1 font-semibold">{guide.reviewsCount || 0} Verified Reviews</div>
+                <div className="text-body-sm text-on-surface-variant font-medium">Điểm đánh giá trung bình</div>
+                <div className="text-label-bold text-primary mt-1 font-semibold">{guide.reviewsCount || 0} Đánh giá xác thực</div>
               </div>
               
               <div className="flex-1 space-y-3">
@@ -778,7 +780,7 @@ export default function HelperDetail() {
                   const pct = revs.length > 0 ? Math.round((countForStar / revs.length) * 100) : (star === 5 ? 100 : 0);
                   return (
                     <div key={star} className="flex items-center gap-4 text-on-surface">
-                      <span className="w-12 text-body-sm text-right font-label-bold">{star} star</span>
+                      <span className="w-12 text-body-sm text-right font-label-bold">{star} sao</span>
                       <div className="flex-1 h-2 bg-border-subtle rounded-full overflow-hidden">
                         <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${pct}%` }}></div>
                       </div>
@@ -830,7 +832,7 @@ export default function HelperDetail() {
                     
                     {rev.reply && (
                       <div className="bg-surface-container-low p-4 rounded-xl border border-border-subtle mt-3">
-                        <p className="font-label-bold text-label-bold text-primary mb-1 text-xs">Reply from {guide.name ? guide.name.split(' ')[0] : 'Guide'}</p>
+                        <p className="font-label-bold text-label-bold text-primary mb-1 text-xs">Phản hồi từ {guide.name ? guide.name.split(' ')[0] : 'Helper'}</p>
                         <p className="font-body-md text-on-surface-variant text-xs">{rev.reply}</p>
                       </div>
                     )}
@@ -839,9 +841,9 @@ export default function HelperDetail() {
               ) : (
                 <div className="p-8 text-center bg-white dark:bg-surface-dark rounded-2xl border border-dashed border-border-subtle">
                   <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">rate_review</span>
-                  <p className="text-sm font-semibold text-slate-700">No customer reviews yet</p>
+                  <p className="text-sm font-semibold text-slate-700">Chưa có đánh giá nào từ khách hàng</p>
                   <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                    Book a tour with {guide.name || 'this helper'} and be the first to share your experience!
+                    Hãy đặt tour cùng {guide.name || 'Helper này'} và là người đầu tiên chia sẻ cảm nhận!
                   </p>
                 </div>
               )}
@@ -854,22 +856,21 @@ export default function HelperDetail() {
         <div id="booking-card" className="lg:col-span-4 sticky top-28 bg-white dark:bg-surface-dark p-6 rounded-3xl border border-border-subtle shadow-lg scroll-mt-28">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <span className="text-headline-md font-bold text-primary">${hourlyRate}</span>
-              <span className="text-on-surface-variant font-label-bold text-label-bold ml-1">/ hour</span>
+              <span className="text-headline-md font-bold text-primary">{formatRateVND(hourlyRate)}</span>
             </div>
             {/* Status indicator on card */}
             <div>
               {isHelperOffline ? (
                 <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-300">
-                  OFFLINE
+                  NGOẠI TUYẾN
                 </span>
               ) : guide?.availabilityStatus === 'BUSY' ? (
                 <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                  BUSY (Check slots)
+                  ĐANG BẬN (Xem lịch)
                 </span>
               ) : (
                 <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  AVAILABLE
+                  SẴN SÀNG
                 </span>
               )}
             </div>
@@ -880,15 +881,15 @@ export default function HelperDetail() {
             <div className="mb-4 p-3.5 bg-slate-100 border border-slate-300 rounded-2xl text-xs text-slate-700 flex items-start gap-2.5">
               <span className="material-symbols-outlined text-slate-500 text-[18px] shrink-0 mt-0.5">do_not_disturb_on</span>
               <div>
-                <p className="font-bold text-slate-800">Helper is Currently Offline</p>
-                <p className="text-slate-600 mt-0.5">This helper is not accepting new booking requests at the moment. You can still browse their profile and reviews.</p>
+                <p className="font-bold text-slate-800">Helper hiện đang ngoại tuyến</p>
+                <p className="text-slate-600 mt-0.5">Helper hiện tạm không nhận yêu cầu đặt tour mới. Bạn vẫn có thể xem hồ sơ và các đánh giá.</p>
               </div>
             </div>
           )}
           
           <form onSubmit={handleBookingSubmit} className="space-y-4">
             <div>
-              <label className="block font-label-bold text-label-bold text-on-surface-variant mb-2">DATE</label>
+              <label className="block font-label-bold text-label-bold text-on-surface-variant mb-2">NGÀY KHỞI HÀNH</label>
               <input 
                 type="date" 
                 required
@@ -901,7 +902,7 @@ export default function HelperDetail() {
             {/* Start Time & Duration */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block font-label-bold text-label-bold text-on-surface-variant mb-2">START TIME</label>
+                <label className="block font-label-bold text-label-bold text-on-surface-variant mb-2">GIỜ BẮT ĐẦU</label>
                 <select 
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
@@ -914,14 +915,14 @@ export default function HelperDetail() {
               </div>
 
               <div>
-                <label className="block font-label-bold text-label-bold text-on-surface-variant mb-2">DURATION</label>
+                <label className="block font-label-bold text-label-bold text-on-surface-variant mb-2">THỜI LƯỢNG</label>
                 <select 
                   value={hours}
                   onChange={(e) => setHours(Number(e.target.value))}
                   className="w-full px-4 py-3 border border-border-subtle rounded-xl bg-surface text-on-surface outline-none cursor-pointer"
                 >
                   {[2, 3, 4, 6, 8].map(h => (
-                    <option key={h} value={h}>{h} hours</option>
+                    <option key={h} value={h}>{h} giờ</option>
                   ))}
                 </select>
               </div>
@@ -932,7 +933,7 @@ export default function HelperDetail() {
               <div className="flex justify-between items-center text-slate-700">
                 <span className="font-semibold flex items-center gap-1">
                   <span className="material-symbols-outlined text-[15px] text-primary">schedule</span>
-                  Selected Schedule:
+                  Khung giờ đã chọn:
                 </span>
                 <span className="font-bold text-primary">{startTime} - {formattedEndTime}</span>
               </div>
@@ -940,11 +941,11 @@ export default function HelperDetail() {
               {/* Busy slots on date */}
               {busySlots.length > 0 ? (
                 <div className="pt-2 border-t border-border-subtle/50 text-[11px]">
-                  <span className="text-slate-500 font-medium block mb-1">Booked intervals on {date}:</span>
+                  <span className="text-slate-500 font-medium block mb-1">Các khung giờ bận ngày {date}:</span>
                   <div className="flex flex-wrap gap-1.5">
                     {busySlots.map((slot, sIdx) => (
                       <span key={sIdx} className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold">
-                        {slot.startTime} - {slot.endTime} (Busy)
+                        {slot.startTime} - {slot.endTime} (Đã có hẹn)
                       </span>
                     ))}
                   </div>
@@ -952,7 +953,7 @@ export default function HelperDetail() {
               ) : (
                 <div className="pt-1 text-[11px] text-emerald-600 flex items-center gap-1">
                   <span className="material-symbols-outlined text-[14px]">check_circle</span>
-                  <span>Helper has open availability for all slots on this date</span>
+                  <span>Helper trống tất cả khung giờ trong ngày này</span>
                 </div>
               )}
             </div>
@@ -962,21 +963,21 @@ export default function HelperDetail() {
               <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 space-y-1">
                 <div className="flex items-center gap-1.5 font-bold text-rose-900">
                   <span className="material-symbols-outlined text-[17px]">warning</span>
-                  Schedule Conflict Detected!
+                  Phát hiện trùng lịch trình!
                 </div>
-                <p>Helper is already booked from <strong>{conflictingSlot.startTime}</strong> to <strong>{conflictingSlot.endTime}</strong>. Please select another start time or date.</p>
+                <p>Helper đã có lịch bận từ <strong>{conflictingSlot.startTime}</strong> đến <strong>{conflictingSlot.endTime}</strong>. Vui lòng chọn giờ hoặc ngày khác.</p>
               </div>
             )}
             
             <div>
-              <label className="block font-label-bold text-label-bold text-on-surface-variant mb-2">TRAVELERS</label>
+              <label className="block font-label-bold text-label-bold text-on-surface-variant mb-2">SỐ LƯỢNG KHÁCH</label>
               <select 
                 value={people}
                 onChange={(e) => setPeople(Number(e.target.value))}
                 className="w-full px-4 py-3 border border-border-subtle rounded-xl bg-surface text-on-surface outline-none cursor-pointer"
               >
                 {[1, 2, 3, 4, 6, 8].map(p => (
-                  <option key={p} value={p}>{p} people</option>
+                  <option key={p} value={p}>{p} khách</option>
                 ))}
               </select>
             </div>
@@ -984,16 +985,16 @@ export default function HelperDetail() {
             {/* Price Calculations */}
             <div className="border-t border-border-subtle pt-4 space-y-2">
               <div className="flex justify-between font-body-md text-on-surface-variant">
-                <span>${hourlyRate} x {hours} hrs x {people} travelers</span>
-                <span>${baseCost}</span>
+                <span>{formatVND(hourlyRate)} x {hours} giờ x {people} khách</span>
+                <span>{formatVND(baseCost)}</span>
               </div>
               <div className="flex justify-between font-body-md text-on-surface-variant">
-                <span>Service Fee (10%)</span>
-                <span>${serviceFee}</span>
+                <span>Phí dịch vụ nền tảng (10%)</span>
+                <span>{formatVND(serviceFee)}</span>
               </div>
               <div className="flex justify-between font-label-bold text-label-bold text-on-surface border-t border-border-subtle pt-2">
-                <span>Total</span>
-                <span className="text-primary font-bold">${totalCost}</span>
+                <span>Tổng cộng</span>
+                <span className="text-primary font-bold">{formatVND(totalCost)}</span>
               </div>
             </div>
             
@@ -1009,10 +1010,10 @@ export default function HelperDetail() {
               }`}
             >
               {isHelperOffline 
-                ? 'Helper is Offline' 
+                ? 'Helper đang ngoại tuyến' 
                 : conflictingSlot 
-                ? 'Time Slot Conflicted (Pick Another)' 
-                : 'Send Booking Request (15m Timeout)'}
+                ? 'Bị trùng giờ bận (Chọn giờ khác)' 
+                : 'Đặt tour ngay (Giữ chỗ 15p)'}
             </button>
             
             <button 
@@ -1020,7 +1021,7 @@ export default function HelperDetail() {
               onClick={handleRequestFormSubmit}
               className="w-full border border-primary text-primary py-3.5 rounded-xl font-label-bold text-label-bold text-center block hover:bg-primary/5 transition-all"
             >
-              Custom Trip Request
+              Yêu cầu tour tùy chỉnh
             </button>
 
             <button 
@@ -1029,7 +1030,7 @@ export default function HelperDetail() {
               className="w-full flex items-center justify-center gap-2 bg-surface hover:bg-surface-container border border-border-subtle hover:border-primary text-on-surface hover:text-primary py-3.5 rounded-xl font-label-bold text-label-bold text-center transition-all"
             >
               <span className="material-symbols-outlined text-[20px] text-primary">chat</span>
-              Message {guide?.fullName || guide?.name || 'Helper'}
+              Nhắn tin cho {guide?.fullName || guide?.name || 'Helper'}
             </button>
           </form>
         </div>

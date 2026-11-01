@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import PlacesAutocompleteInput from '../components/PlacesAutocompleteInput';
 import GoogleMapsExplore from '../components/GoogleMapsExplore';
 import { API_BASE_URL } from '../config/api';
+import { formatRateVND } from '../utils/formatCurrency';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const [searchLocation, setSearchLocation] = useState('');
   const [searchWhen, setSearchWhen] = useState('');
-  const [searchLang, setSearchLang] = useState('English');
+  const [searchLang, setSearchLang] = useState('Tiếng Việt');
 
   const [allGuides, setAllGuides] = useState([]);
   const [featuredGuides, setFeaturedGuides] = useState([]);
@@ -43,19 +44,19 @@ export default function LandingPage() {
   const customerReviews = [
     {
       name: "James Wilson",
-      text: "Kevin was incredible! He took us to a tiny My Quang shop in a Hoi An alleyway that we would never have found on our own. It was the best meal of our entire trip. LocalMate made booking so easy.",
+      text: "Kevin thật tuyệt vời! Anh ấy đã dẫn chúng tôi đến một quán Mì Quảng nhỏ trong hẻm Hội An mà nếu tự đi chắc chắn chúng tôi không bao giờ tìm thấy. Bữa ăn ngon nhất cả chuyến đi. LocalMate đặt tour rất tiện lợi.",
       rating: 5,
       img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBbYRfLM-LxkRq3a3V473eGDYBv5jDjF5kEmW2WyoJMjqKNWSJ6lRMiXmAfhrhkWeLdNL44_eVHVAnlwuGirQ2VgTCwOyE6PYGQsnVuE6O4J053RD-PdGRcSTF-iQnDGt2pacjHqwrsFecEJ5XgOqv2DVlqpM86p49j0Q4sNHCAbsX9kFvSaX_kvcXv_4ursGyfjOJ4L0jx4HJODG5_CASyxJ-ZNFKM7L5eqdJKrAiHXznoogf_KXzAJXxryY7hlP0Ma1xf-PV0s-0"
     },
     {
       name: "David Chen",
-      text: "My experience in Hue with Huong was the highlight of my summer. His knowledge of local history and architecture was profound, but his restaurant recommendations were the real secret weapon!",
+      text: "Trải nghiệm ở Huế cùng Hướng là kỷ niệm đáng nhớ nhất mùa hè của tôi. Kiến thức lịch sử và ẩm thực địa phương của anh ấy rất sâu sắc, gợi ý quán ăn nào cũng xuất sắc!",
       rating: 5,
       img: "https://lh3.googleusercontent.com/aida-public/AB6AXuA-MkWEJACjcU-08gkihmxo_ArgNZOTBrlVsP6BIwDkaQ9_Mxa5iH4188dNm6IA6iOBwm38ZyICt0XPV0wqEZYz4uJ97eSFm_XDMBixmunyPwXslYOTuFX-B8L3YSSwMyQndtcfRP51nWXbcSfmbp1Xbx5pVW4gbvb59RZRlUBJ7U8UPVokRR5BxU1k8qbMdypTxJWOWZWUUM9fnzKMf6N2uXw8wv6Sh52DE8c7MetOLEErfT30LE7K8KH0SE5OXZmmN9REUhAHJnQ"
     },
     {
       name: "Sarah Miller",
-      text: "I was nervous traveling solo to Da Nang, but meeting Elena changed everything. She felt like an old friend by the end of the afternoon. Safe, informative, and so much fun!",
+      text: "Lúc đầu đi du lịch Đà Nẵng một mình tôi khá lo lắng, nhưng gặp được Elena đã thay đổi tất cả. Như đi cùng một người bạn thân lâu năm. Rất an toàn và vui vẻ!",
       rating: 5,
       img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBhlSR7Vd6VyakH3edggpio0MqPrb7E1EGt9z_3u1SDWcYS6ODvGh-D1Uz3FQesjVfc6SYhHBFLW9URg3cgYezF7uaoJXLG7DcutP5tL-xynzp2t51cILSVqB1qcOMdDpLgkgIEASWd3uLTyBxEBo0vAIiCKd20OEE6jP6KVz-GKq9TuyvHAaHsnGwvl8VGPtbFP1PWCEtYYdsryFw9p0joxa6GbQ3JewJQXRMEOLip0xuXayfMHlhvqAgE3kY_FLTb1n8-uKLj1PU"
     }
@@ -76,10 +77,10 @@ export default function LandingPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto mt-12">
           <h1 className="font-headline-xl text-headline-xl mb-6 text-on-surface">
-            Discover the World Through <span className="text-primary">Local Eyes</span>
+            Khám phá thế giới qua <span className="text-primary">Góc nhìn Bản địa</span>
           </h1>
           <p className="font-body-lg text-body-lg text-on-surface-variant mb-12 max-w-2xl mx-auto">
-            Connect with vetted local helpers who show you the hidden gems, authentic flavors, and untold stories of their hometown.
+            Kết nối với những người bạn đồng hành địa phương được kiểm duyệt, cùng trải nghiệm những nét văn hóa đích thực, ẩm thực tinh túy và những câu chuyện thú vị.
           </p>
 
           {/* Search Bar Widget */}
@@ -87,13 +88,13 @@ export default function LandingPage() {
             <div className="flex-1 flex items-center px-4 py-3 border-b md:border-b-0 md:border-r border-border-subtle group">
               <span className="material-symbols-outlined text-primary mr-3">location_on</span>
               <div className="text-left w-full">
-                <label className="block font-label-caps text-label-caps text-on-surface-variant">LOCATION</label>
+                <label className="block font-label-caps text-label-caps text-on-surface-variant">ĐỊA ĐIỂM</label>
                 <PlacesAutocompleteInput
                   value={searchLocation}
                   onChange={setSearchLocation}
                   onSelectPlace={(place) => setSearchLocation(place.name || place.city || '')}
                   className="w-full bg-transparent border-none p-0 focus:ring-0 font-body-md text-on-surface placeholder:text-outline-variant outline-none"
-                  placeholder="Where are you going?"
+                  placeholder="Bạn muốn đi đâu?"
                 />
               </div>
             </div>
@@ -101,13 +102,13 @@ export default function LandingPage() {
             <div className="flex-1 flex items-center px-4 py-3 border-b md:border-b-0 md:border-r border-border-subtle">
               <span className="material-symbols-outlined text-primary mr-3">calendar_month</span>
               <div className="text-left w-full">
-                <label className="block font-label-caps text-label-caps text-on-surface-variant">WHEN</label>
+                <label className="block font-label-caps text-label-caps text-on-surface-variant">THỜI GIAN</label>
                 <input
                   type="text"
                   value={searchWhen}
                   onChange={(e) => setSearchWhen(e.target.value)}
                   className="w-full bg-transparent border-none p-0 focus:ring-0 font-body-md text-on-surface placeholder:text-outline-variant outline-none"
-                  placeholder="Select dates"
+                  placeholder="Chọn ngày khởi hành"
                 />
               </div>
             </div>
@@ -115,23 +116,24 @@ export default function LandingPage() {
             <div className="flex-1 flex items-center px-4 py-3">
               <span className="material-symbols-outlined text-primary mr-3">language</span>
               <div className="text-left w-full">
-                <label className="block font-label-caps text-label-caps text-on-surface-variant">LANGUAGE</label>
+                <label className="block font-label-caps text-label-caps text-on-surface-variant">NGÔN NGỮ</label>
                 <select
                   value={searchLang}
                   onChange={(e) => setSearchLang(e.target.value)}
                   className="w-full bg-transparent border-none p-0 focus:ring-0 font-body-md text-on-surface appearance-none outline-none cursor-pointer"
                 >
-                  <option>English</option>
-                  <option>Spanish</option>
-                  <option>French</option>
-                  <option>Japanese</option>
+                  <option value="Tiếng Việt">Tiếng Việt</option>
+                  <option value="English">Tiếng Anh (English)</option>
+                  <option value="Spanish">Tiếng Tây Ban Nha</option>
+                  <option value="French">Tiếng Pháp</option>
+                  <option value="Japanese">Tiếng Nhật</option>
                 </select>
               </div>
             </div>
 
             <button type="submit" className="bg-primary-container text-on-primary-container hover:bg-primary px-8 py-4 rounded-xl font-label-bold text-label-bold flex items-center justify-center gap-2 transition-all">
               <span className="material-symbols-outlined">search</span>
-              Search Guides
+              Tìm Local Helper
             </button>
           </form>
         </div>
@@ -141,22 +143,22 @@ export default function LandingPage() {
       <section className="py-24 px-6 md:px-10 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           <div className="lg:col-span-7 bg-primary/5 rounded-3xl p-12 flex flex-col justify-center">
-            <h2 className="font-headline-lg text-headline-lg mb-6">Travel like a local, not a tourist.</h2>
+            <h2 className="font-headline-lg text-headline-lg mb-6">Trải nghiệm như người bản xứ.</h2>
             <p className="font-body-lg text-body-lg text-on-surface-variant mb-8">
-              LocalMate bridges the gap between global travelers and local experts. We believe the best travel experiences aren't found in brochures, but in the kitchens, back alleys, and secret viewpoints shared by people who call the destination home.
+              LocalMate kết nối du khách với những người bạn đồng hành địa phương am hiểu. Chúng tôi tin rằng trải nghiệm du lịch trọn vẹn nhất không nằm trong những trang sách quảng cáo, mà trong từng ngõ nhỏ, từng quán ăn mộc mạc và câu chuyện chân thật của người dân nơi đây.
             </p>
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2 bg-white dark:bg-surface-dark px-4 py-2 rounded-full border border-border-subtle shadow-sm">
                 <span className="material-symbols-outlined text-status-warning" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
-                <span className="font-label-bold text-label-bold text-on-surface">Vetted Guides</span>
+                <span className="font-label-bold text-label-bold text-on-surface">Đã kiểm duyệt</span>
               </div>
               <div className="flex items-center gap-2 bg-white dark:bg-surface-dark px-4 py-2 rounded-full border border-border-subtle shadow-sm">
                 <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
-                <span className="font-label-bold text-label-bold text-on-surface">Secure Booking</span>
+                <span className="font-label-bold text-label-bold text-on-surface">Đặt tour an toàn</span>
               </div>
               <div className="flex items-center gap-2 bg-white dark:bg-surface-dark px-4 py-2 rounded-full border border-border-subtle shadow-sm">
                 <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>support_agent</span>
-                <span className="font-label-bold text-label-bold text-on-surface">24/7 Support</span>
+                <span className="font-label-bold text-label-bold text-on-surface">Hỗ trợ 24/7</span>
               </div>
             </div>
           </div>
@@ -173,34 +175,34 @@ export default function LandingPage() {
       {/* How It Works Section */}
       <section className="py-24 bg-surface-container-low" id="how-it-works">
         <div className="px-6 md:px-10 max-w-7xl mx-auto text-center">
-          <span className="font-label-caps text-label-caps text-primary mb-4 block">THE JOURNEY</span>
-          <h2 className="font-headline-lg text-headline-lg mb-16">How LocalMate Works</h2>
+          <span className="font-label-caps text-label-caps text-primary mb-4 block">HÀNH TRÌNH TRẢI NGHIỆM</span>
+          <h2 className="font-headline-lg text-headline-lg mb-16">Cách LocalMate Hoạt Động</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary animate-pulse">
                 <span className="material-symbols-outlined text-4xl">search_check</span>
               </div>
-              <h3 className="font-headline-md text-headline-md mb-4 text-on-surface">Find Your Guide</h3>
+              <h3 className="font-headline-md text-headline-md mb-4 text-on-surface">Tìm Người Đồng Hành</h3>
               <p className="font-body-md text-body-md text-on-surface-variant px-4">
-                Browse through thousands of vetted local experts based on your interests, language, and budget.
+                Tìm kiếm hàng trăm Local Helper uy tín theo sở thích, ngôn ngữ và mức ngân sách của bạn.
               </p>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 bg-secondary/10 rounded-2xl flex items-center justify-center mb-6 text-secondary">
                 <span className="material-symbols-outlined text-4xl">chat_bubble</span>
               </div>
-              <h3 className="font-headline-md text-headline-md mb-4 text-on-surface">Chat &amp; Customize</h3>
+              <h3 className="font-headline-md text-headline-md mb-4 text-on-surface">Nhắn Tin &amp; Tùy Chỉnh Tour</h3>
               <p className="font-body-md text-body-md text-on-surface-variant px-4">
-                Message guides directly to discuss your itinerary and create a personalized experience just for you.
+                Trực tiếp trò chuyện cùng Helper để điều chỉnh lịch trình phù hợp với phong cách du lịch của bạn.
               </p>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 bg-tertiary-container/10 rounded-2xl flex items-center justify-center mb-6 text-tertiary">
                 <span className="material-symbols-outlined text-4xl">auto_awesome</span>
               </div>
-              <h3 className="font-headline-md text-headline-md mb-4 text-on-surface">Experience More</h3>
+              <h3 className="font-headline-md text-headline-md mb-4 text-on-surface">Khám Phá Trọn Vẹn</h3>
               <p className="font-body-md text-body-md text-on-surface-variant px-4">
-                Meet your guide and enjoy an unforgettable adventure off the beaten path with complete peace of mind.
+                Gặp gỡ người bạn bản địa và tận hưởng chuyến đi tuyệt vời với sự an tâm tuyệt đối.
               </p>
             </div>
           </div>
@@ -211,14 +213,14 @@ export default function LandingPage() {
       <section className="py-24 px-6 md:px-10 max-w-7xl mx-auto">
         <div className="flex justify-between items-end mb-12">
           <div>
-            <span className="font-label-caps text-label-caps text-primary mb-4 block">EXPERT COMPANIONS</span>
-            <h2 className="font-headline-lg text-headline-lg text-on-surface">Featured Local Helpers</h2>
+            <span className="font-label-caps text-label-caps text-primary mb-4 block">NGƯỜI ĐỒNG HÀNH BẢN ĐỊA</span>
+            <h2 className="font-headline-lg text-headline-lg text-on-surface">Local Helper Nổi Bật</h2>
           </div>
           <button
             onClick={() => navigate('/search')}
             className="text-primary font-label-bold text-label-bold flex items-center gap-1 hover:underline"
           >
-            View all guides
+            Xem tất cả Helper
             <span className="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>
@@ -248,12 +250,12 @@ export default function LandingPage() {
                   ))}
                 </div>
                 <div className="flex items-center justify-between border-t border-border-subtle pt-4">
-                  <p className="font-body-sm text-body-sm text-on-surface-variant">From <span className="text-on-surface font-bold text-body-lg">{String(guide.price).startsWith('$') ? guide.price : `$${guide.price}`}</span>/hr</p>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant">Từ <span className="text-on-surface font-bold text-body-lg">{formatRateVND(guide.price)}</span></p>
                   <button
                     onClick={() => navigate(`/helper/${guide.id}`)}
                     className="bg-primary/5 text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-xl font-label-bold text-label-bold transition-all"
                   >
-                    Profile
+                    Xem hồ sơ
                   </button>
                 </div>
               </div>
@@ -269,8 +271,8 @@ export default function LandingPage() {
       <section className="py-24 bg-primary text-white overflow-hidden">
         <div className="px-6 md:px-10 max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-headline-lg text-headline-lg mb-4">Trusted by over 10,000 travelers</h2>
-            <p className="font-body-lg text-body-lg opacity-80">See what our community has to say about their local adventures.</p>
+            <h2 className="font-headline-lg text-headline-lg mb-4">Được tin chọn bởi hơn 10.000 du khách</h2>
+            <p className="font-body-lg text-body-lg opacity-80">Những chia sẻ chân thật từ du khách sau mỗi chuyến đi cùng LocalMate.</p>
           </div>
 
           <div className="flex gap-6 overflow-x-auto hide-scrollbar pb-8 snap-x scroll-smooth">
@@ -302,22 +304,22 @@ export default function LandingPage() {
       <section className="py-24 px-6 md:px-10 max-w-7xl mx-auto text-center">
         <div className="bg-surface-container rounded-[40px] p-12 md:p-24 border border-border-subtle overflow-hidden relative">
           <div className="relative z-10">
-            <h2 className="font-headline-lg text-headline-lg mb-6 text-on-surface">Ready to explore like never before?</h2>
+            <h2 className="font-headline-lg text-headline-lg mb-6 text-on-surface">Sẵn sàng cho chuyến khám phá độc đáo?</h2>
             <p className="font-body-lg text-body-lg text-on-surface-variant mb-12 max-w-xl mx-auto">
-              Join the LocalMate community today and start your next adventure with a local by your side.
+              Tham gia cộng đồng LocalMate ngay hôm nay và bắt đầu hành trình đáng nhớ cùng người bạn bản địa.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate('/search')}
                 className="bg-primary-container text-on-primary-container px-12 py-4 rounded-xl font-label-bold text-label-bold hover:shadow-xl hover:-translate-y-1 transition-all"
               >
-                Find a Guide
+                Tìm Local Helper
               </button>
               <button
                 onClick={() => navigate('/login?tab=signup&role=guide')}
                 className="border-2 border-primary text-primary px-12 py-4 rounded-xl font-label-bold text-label-bold hover:bg-primary/5 transition-all"
               >
-                Become a Helper
+                Trở thành Helper
               </button>
             </div>
           </div>

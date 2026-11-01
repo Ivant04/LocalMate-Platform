@@ -50,7 +50,7 @@ export default function Navbar() {
                 : 'text-on-surface-variant dark:text-outline-variant hover:text-primary'
                 }`}
             >
-              Explore
+              Khám phá
             </Link>
             <Link
               to="/search"
@@ -59,13 +59,13 @@ export default function Navbar() {
                 : 'text-on-surface-variant dark:text-outline-variant hover:text-primary'
                 }`}
             >
-              Find Local Helper
+              Tìm Local Helper
             </Link>
             <button
               type="button"
               onClick={() => {
                 if (!currentUser) {
-                  alert("Please sign in to access messages!");
+                  alert("Vui lòng đăng nhập để xem tin nhắn!");
                   navigate('/login');
                 } else {
                   navigate('/chat');
@@ -76,7 +76,7 @@ export default function Navbar() {
                 : 'text-on-surface-variant dark:text-outline-variant hover:text-primary'
                 }`}
             >
-              Messages
+              Tin nhắn
             </button>
             {/* Display Dashboards when signed in */}
             {currentUser && (
@@ -91,14 +91,14 @@ export default function Navbar() {
                   className="font-label-bold text-label-bold text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors flex items-center gap-1 py-1"
                 >
                   {currentUser.roles?.includes('ROLE_ADMIN')
-                    ? 'Admin Portal'
+                    ? 'Kênh Quản trị'
                     : currentUser.roles?.includes('ROLE_HELPER')
-                      ? 'Helper Portal'
-                      : 'My Travel'}
+                      ? 'Kênh Helper'
+                      : 'Chuyến đi của tôi'}
                   <span className={`material-symbols-outlined text-sm transition-transform duration-200 ${dashboardOpen ? 'rotate-180' : ''}`}>keyboard_arrow_down</span>
                 </button>
                 {dashboardOpen && (
-                  <div className="absolute top-full left-0 pt-1 w-52 z-50">
+                  <div className="absolute top-full left-0 pt-1 w-56 z-50">
                     <div className="bg-surface dark:bg-surface-dark border border-border-subtle rounded-xl shadow-xl py-2 animate-in fade-in slide-in-from-top-1 duration-150">
                       {currentUser.roles?.includes('ROLE_ADMIN') && (
                         <>
@@ -107,14 +107,14 @@ export default function Navbar() {
                             onClick={() => setDashboardOpen(false)}
                             className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
                           >
-                            System Admin
+                            Quản trị hệ thống
                           </Link>
                           <Link
                             to="/reviews"
                             onClick={() => setDashboardOpen(false)}
                             className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
                           >
-                            Review Management
+                            Quản lý đánh giá
                           </Link>
                         </>
                       )}
@@ -126,14 +126,14 @@ export default function Navbar() {
                             onClick={() => setDashboardOpen(false)}
                             className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
                           >
-                            Helper Dashboard
+                            Bảng điều khiển Helper
                           </Link>
                           <Link
                             to="/reviews"
                             onClick={() => setDashboardOpen(false)}
                             className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
                           >
-                            My Reviews
+                            Đánh giá của tôi
                           </Link>
                         </>
                       )}
@@ -145,14 +145,14 @@ export default function Navbar() {
                             onClick={() => setDashboardOpen(false)}
                             className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
                           >
-                            Traveler Dashboard
+                            Bảng điều khiển Du khách
                           </Link>
                           <Link
                             to="/reviews"
                             onClick={() => setDashboardOpen(false)}
                             className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
                           >
-                            Review Management
+                            Quản lý đánh giá
                           </Link>
                         </>
                       )}
@@ -169,7 +169,7 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 to="/profile"
-                title="Edit profile"
+                title="Chỉnh sửa hồ sơ"
                 className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high border border-border-subtle transition-all cursor-pointer group"
               >
                 {currentUser.avatarUrl ? (
@@ -188,16 +188,16 @@ export default function Navbar() {
                     {currentUser.fullName || currentUser.email}
                   </p>
                   <p className="text-[11px] text-on-surface-variant leading-none">
-                    {currentUser.roles?.includes('ROLE_ADMIN') ? 'Admin' : currentUser.roles?.includes('ROLE_HELPER') ? 'Local Helper' : 'Traveler'}
+                    {currentUser.roles?.includes('ROLE_ADMIN') ? 'Quản trị viên' : currentUser.roles?.includes('ROLE_HELPER') ? 'Local Helper' : 'Du khách'}
                   </p>
                 </div>
               </Link>
               <button
                 onClick={handleLogout}
-                title="Log out"
+                title="Đăng xuất"
                 className="font-label-bold text-body-sm text-error hover:bg-error/10 px-3 py-2 rounded-xl transition-all"
               >
-                Log Out
+                Đăng xuất
               </button>
             </div>
           ) : location.pathname === '/login' ? (
@@ -206,7 +206,7 @@ export default function Navbar() {
               className="font-label-bold text-label-bold text-primary hover:bg-primary-container/10 px-4 py-2 rounded-xl transition-all flex items-center gap-1.5"
             >
               <span className="material-symbols-outlined text-lg">arrow_back</span>
-              Home
+              Trang chủ
             </Link>
           ) : (
             <>
@@ -214,13 +214,13 @@ export default function Navbar() {
                 onClick={() => navigate('/login')}
                 className="hidden md:block font-label-bold text-label-bold text-primary hover:bg-primary-container/10 px-4 py-2 rounded-xl transition-all"
               >
-                Log In
+                Đăng nhập
               </button>
               <button
                 onClick={() => navigate('/login?tab=signup')}
                 className="bg-primary-container text-on-primary-container font-label-bold text-label-bold px-6 py-2.5 rounded-xl hover:shadow-lg active:scale-95 transition-all"
               >
-                Sign Up
+                Đăng ký
               </button>
             </>
           )}
@@ -246,21 +246,21 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="font-label-bold text-label-bold text-on-surface hover:text-primary"
             >
-              Explore
+              Khám phá
             </Link>
             <Link
               to="/search"
               onClick={() => setMobileMenuOpen(false)}
               className="font-label-bold text-label-bold text-on-surface hover:text-primary"
             >
-              Find Guides
+              Tìm Local Helper
             </Link>
             <button
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 if (!currentUser) {
-                  alert("Please sign in to access messages!");
+                  alert("Vui lòng đăng nhập để xem tin nhắn!");
                   navigate('/login');
                 } else {
                   navigate('/chat');
@@ -268,34 +268,34 @@ export default function Navbar() {
               }}
               className="text-left font-label-bold text-label-bold text-on-surface hover:text-primary"
             >
-              Messages
+              Tin nhắn
             </button>
             {/* Display Dashboards on mobile when signed in */}
             {currentUser && (
               <div className="border-t border-border-subtle my-2 pt-2">
                 <p className="font-label-caps text-label-caps text-on-surface-variant mb-2">
                   {currentUser.roles?.includes('ROLE_ADMIN')
-                    ? 'Admin Portal'
+                    ? 'Kênh Quản trị'
                     : currentUser.roles?.includes('ROLE_HELPER')
-                      ? 'Helper Portal'
-                      : 'My Travel'}
+                      ? 'Kênh Helper'
+                      : 'Chuyến đi của tôi'}
                 </p>
                 {currentUser.roles?.includes('ROLE_ADMIN') && (
                   <>
-                    <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">System Admin</Link>
-                    <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Review Management</Link>
+                    <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Quản trị hệ thống</Link>
+                    <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Quản lý đánh giá</Link>
                   </>
                 )}
                 {currentUser.roles?.includes('ROLE_HELPER') && (
                   <>
-                    <Link to="/helper-dashboard" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Helper Dashboard</Link>
-                    <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">My Reviews</Link>
+                    <Link to="/helper-dashboard" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Bảng điều khiển Helper</Link>
+                    <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Đánh giá của tôi</Link>
                   </>
                 )}
                 {!currentUser.roles?.includes('ROLE_ADMIN') && !currentUser.roles?.includes('ROLE_HELPER') && (
                   <>
-                    <Link to="/traveler" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Traveler Dashboard</Link>
-                    <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Review Management</Link>
+                    <Link to="/traveler" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Bảng điều khiển Du khách</Link>
+                    <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-body-md text-on-surface hover:text-primary">Quản lý đánh giá</Link>
                   </>
                 )}
               </div>
@@ -306,7 +306,7 @@ export default function Navbar() {
                 onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
                 className="w-full text-center border border-error text-error py-3 rounded-xl font-label-bold"
               >
-                Log Out ({currentUser.fullName || currentUser.email})
+                Đăng xuất ({currentUser.fullName || currentUser.email})
               </button>
             ) : (
               <div className="flex flex-col gap-2 pt-2 border-t border-border-subtle">
@@ -314,13 +314,13 @@ export default function Navbar() {
                   onClick={() => { setMobileMenuOpen(false); navigate('/login'); }}
                   className="w-full text-center border border-primary text-primary py-3 rounded-xl font-label-bold"
                 >
-                  Log In
+                  Đăng nhập
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); navigate('/login?tab=signup'); }}
                   className="w-full text-center bg-primary text-on-primary py-3 rounded-xl font-label-bold"
                 >
-                  Sign Up
+                  Đăng ký
                 </button>
               </div>
             )}

@@ -26,9 +26,9 @@ export default function Sidebar({ activePage }) {
   }, []);
 
   const isHelper = currentUser?.roles?.includes('ROLE_HELPER');
-  const displayName = currentUser?.fullName || currentUser?.name || (isHelper ? 'Local Helper' : 'Traveler');
+  const displayName = currentUser?.fullName || currentUser?.name || (isHelper ? 'Local Helper' : 'Du khách');
   const displayAvatar = currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150';
-  const roleSubtitle = isHelper ? 'Local Helper Profile' : 'Traveler Profile';
+  const roleSubtitle = isHelper ? 'Hồ sơ Local Helper' : 'Hồ sơ Du khách';
 
   // Determine active item if not provided as prop
   const currentActive = activePage || (
@@ -59,7 +59,7 @@ export default function Sidebar({ activePage }) {
           onClick={() => navigate('/profile')}
           className="mt-3 w-full py-2 px-4 rounded-lg bg-cyan-50 text-cyan-800 text-xs border border-cyan-200 hover:bg-cyan-100 transition-all font-semibold cursor-pointer"
         >
-          Edit Profile
+          Chỉnh sửa hồ sơ
         </button>
       </div>
 
@@ -80,7 +80,7 @@ export default function Sidebar({ activePage }) {
           >
             dashboard
           </span>
-          <span className="text-sm font-medium">Dashboard</span>
+          <span className="text-sm font-medium">Bảng điều khiển</span>
         </button>
 
         {/* Explore Guides */}
@@ -98,7 +98,7 @@ export default function Sidebar({ activePage }) {
           >
             explore
           </span>
-          <span className="text-sm font-medium">Explore Guides</span>
+          <span className="text-sm font-medium">Khám phá Helper</span>
         </button>
 
         {/* Messages */}
@@ -116,7 +116,7 @@ export default function Sidebar({ activePage }) {
           >
             chat_bubble
           </span>
-          <span className="text-sm font-medium">Messages</span>
+          <span className="text-sm font-medium">Tin nhắn</span>
         </button>
 
         {/* Reviews (especially prominent for Helpers) */}
@@ -134,7 +134,7 @@ export default function Sidebar({ activePage }) {
           >
             stars
           </span>
-          <span className="text-sm font-medium">Reviews</span>
+          <span className="text-sm font-medium">Đánh giá</span>
         </button>
 
         {/* Profile */}
@@ -152,7 +152,7 @@ export default function Sidebar({ activePage }) {
           >
             person
           </span>
-          <span className="text-sm font-medium">Profile</span>
+          <span className="text-sm font-medium">Hồ sơ cá nhân</span>
         </button>
       </nav>
 
@@ -163,14 +163,14 @@ export default function Sidebar({ activePage }) {
           className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
         >
           <span className="material-symbols-outlined text-slate-400 text-[20px]">settings</span>
-          <span className="text-sm font-medium">Settings</span>
+          <span className="text-sm font-medium">Cài đặt</span>
         </button>
         <button 
           onClick={() => navigate('/')}
           className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
         >
           <span className="material-symbols-outlined text-slate-400 text-[20px]">help_outline</span>
-          <span className="text-sm font-medium">Help</span>
+          <span className="text-sm font-medium">Trợ giúp</span>
         </button>
       </div>
     </aside>

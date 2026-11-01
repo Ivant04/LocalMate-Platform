@@ -1,39 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatRateVND } from '../utils/formatCurrency';
 
 const DESTINATIONS = [
   {
     id: 'danang',
-    name: 'Da Nang',
-    tagline: 'Coastal Hub & Dragon Bridge',
-    badge: 'Bridges & Beaches',
+    name: 'Đà Nẵng',
+    tagline: 'Trung tâm ven biển & Cầu Rồng',
+    badge: 'Cầu Rồng & Biển',
     lat: 16.0544,
     lng: 108.2022,
     zoom: 13,
-    description: 'A modern coastal city famous for the golden Dragon Bridge, Marble Mountains, and pristine white sandy shores.',
-    highlights: ['Dragon Bridge', 'My Khe Beach', 'Marble Mountains', 'Son Tra Peninsula'],
+    description: 'Thành phố biển hiện đại nổi tiếng với Cầu Rồng phun lửa, Ngũ Hành Sơn hùng vĩ và bãi biển Mỹ Khê tuyệt đẹp.',
+    highlights: ['Cầu Rồng', 'Biển Mỹ Khê', 'Ngũ Hành Sơn', 'Bán đảo Sơn Trà'],
   },
   {
     id: 'hoian',
-    name: 'Hoi An',
-    tagline: 'Ancient Town & Lanterns',
-    badge: 'UNESCO Heritage',
+    name: 'Hội An',
+    tagline: 'Phố cổ đèn lồng & Di sản',
+    badge: 'Di sản UNESCO',
     lat: 15.8801,
     lng: 108.3380,
     zoom: 14,
-    description: 'Charming ancient trading port renowned for lantern-lit alleyways, historic merchant houses, and savory street food.',
-    highlights: ['Old Town Alleys', 'Japanese Covered Bridge', 'Night Market', 'An Bang Beach'],
+    description: 'Đô thị cổ quyến rũ với những con ngõ rực rỡ đèn lồng, nhà cổ trăm năm và ẩm thực đường phố đặc sắc.',
+    highlights: ['Phố cổ Hội An', 'Chùa Cầu', 'Chợ đêm', 'Biển An Bàng'],
   },
   {
     id: 'hue',
-    name: 'Hue',
-    tagline: 'Imperial Citadel & Royal Cuisine',
-    badge: 'Royal Dynasty',
+    name: 'Huế',
+    tagline: 'Kinh thành Cố đô & Ẩm thực Cung đình',
+    badge: 'Cố đô Triều Nguyễn',
     lat: 16.4637,
     lng: 107.5909,
     zoom: 13,
-    description: 'The ancient imperial capital filled with majestic palaces, royal tombs along the Perfume River, and sophisticated gastronomy.',
-    highlights: ['Imperial Citadel', 'Thien Mu Pagoda', 'Khai Dinh Tomb', 'Dong Ba Market'],
+    description: 'Cố đô cổ kính bên dòng sông Hương thơ mộng, nổi tiếng với hệ thống đền đài cung điện nguy nga và ẩm thực phong phú.',
+    highlights: ['Đại Nội Huế', 'Chùa Thiên Mụ', 'Lăng Khải Định', 'Chợ Đông Ba'],
   },
 ];
 
@@ -200,13 +201,13 @@ export default function GoogleMapsExplore({ helpers = [] }) {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold uppercase tracking-wider mb-3">
             <span className="material-symbols-outlined text-sm">map</span>
-            <span>Google Maps Experience</span>
+            <span>Trải nghiệm Bản đồ Trực quan</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Explore Destinations & Guides on <span className="text-cyan-700">Google Maps</span>
+            Khám phá Điểm đến &amp; Helper trên <span className="text-cyan-700">Google Maps</span>
           </h2>
           <p className="text-slate-500 mt-2 max-w-2xl text-sm md:text-base">
-            Discover verified local guides in real time across Vietnam. Switch destinations, pinpoint helper locations, and plan your authentic tour.
+            Tìm kiếm những người bạn đồng hành địa phương uy tín trên khắp Việt Nam. Chọn thành phố, định vị Helper và bắt đầu hành trình của bạn.
           </p>
         </div>
 
@@ -222,7 +223,7 @@ export default function GoogleMapsExplore({ helpers = [] }) {
             alt="Google Maps"
             className="w-4 h-4 object-contain"
           />
-          <span>Open {selectedCity.name} in Google Maps</span>
+          <span>Mở {selectedCity.name} trên Google Maps</span>
           <span className="material-symbols-outlined text-sm">open_in_new</span>
         </a>
       </div>
@@ -268,7 +269,7 @@ export default function GoogleMapsExplore({ helpers = [] }) {
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 text-xs">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-              <span className="font-semibold text-slate-800">{selectedCity.name}, Vietnam</span>
+              <span className="font-semibold text-slate-800">{selectedCity.name}, Việt Nam</span>
               <span className="text-slate-400">•</span>
               <span className="text-slate-500">{selectedCity.tagline}</span>
             </div>
@@ -282,7 +283,7 @@ export default function GoogleMapsExplore({ helpers = [] }) {
                   mapType === 'm' ? 'bg-white text-slate-800 shadow-xs' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                Map
+                Bản đồ
               </button>
               <button
                 type="button"
@@ -291,7 +292,7 @@ export default function GoogleMapsExplore({ helpers = [] }) {
                   mapType === 'k' ? 'bg-white text-slate-800 shadow-xs' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                Satellite
+                Vệ tinh
               </button>
             </div>
           </div>
@@ -304,14 +305,14 @@ export default function GoogleMapsExplore({ helpers = [] }) {
             ) : (
               // High-performance Google Maps Embed Frame
               <iframe
-                title={`Google Map of ${selectedCity.name}`}
+                title={`Google Map của ${selectedCity.name}`}
                 width="100%"
                 height="100%"
                 className="w-full h-full border-0"
                 loading="lazy"
                 allowFullScreen
                 referrerPolicy="no-referrer-when-downgrade"
-                src={`https://maps.google.com/maps?q=${selectedCity.lat},${selectedCity.lng}&hl=en&t=${mapType}&z=${selectedCity.zoom}&output=embed`}
+                src={`https://maps.google.com/maps?q=${selectedCity.lat},${selectedCity.lng}&hl=vi&t=${mapType}&z=${selectedCity.zoom}&output=embed`}
               />
             )}
 
@@ -320,10 +321,10 @@ export default function GoogleMapsExplore({ helpers = [] }) {
               <div className="flex items-center justify-between mb-1.5">
                 <span className="font-bold text-xs text-slate-900 flex items-center gap-1">
                   <span className="material-symbols-outlined text-cyan-700 text-sm">explore</span>
-                  {selectedCity.name} Highlights
+                  Điểm nổi bật tại {selectedCity.name}
                 </span>
                 <span className="text-[10px] bg-cyan-100 text-cyan-900 font-bold px-2 py-0.5 rounded-full">
-                  {cityHelpers.length} Local Guides
+                  {cityHelpers.length} Local Helper
                 </span>
               </div>
               <div className="flex flex-wrap gap-1.5 mt-2">
@@ -344,14 +345,14 @@ export default function GoogleMapsExplore({ helpers = [] }) {
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-teal-600 text-base">near_me</span>
               <span>
-                Exploring <strong>{selectedCity.name}</strong>: Zoom, drag or switch to Satellite view to discover local attractions.
+                Đang khám phá <strong>{selectedCity.name}</strong>: Phóng to hoặc chuyển sang chế độ Vệ tinh để xem các điểm tham quan.
               </span>
             </div>
             <button
               onClick={() => navigate(`/search?location=${encodeURIComponent(selectedCity.name)}`)}
               className="font-bold text-teal-700 hover:text-teal-900 underline shrink-0 cursor-pointer text-left sm:text-right"
             >
-              Search Guides in {selectedCity.name} →
+              Tìm Helper tại {selectedCity.name} →
             </button>
           </div>
         </div>
@@ -362,10 +363,10 @@ export default function GoogleMapsExplore({ helpers = [] }) {
             <div className="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <span className="material-symbols-outlined text-cyan-700 text-lg">supervised_user_circle</span>
-                <span>Guides in {selectedCity.name}</span>
+                <span>Helper tại {selectedCity.name}</span>
               </h3>
               <span className="text-xs font-semibold text-cyan-700 bg-cyan-50 px-2.5 py-0.5 rounded-full border border-cyan-200">
-                {cityHelpers.length} available
+                {cityHelpers.length} sẵn sàng
               </span>
             </div>
 
@@ -398,11 +399,11 @@ export default function GoogleMapsExplore({ helpers = [] }) {
                             {guide.name || guide.fullName}
                           </h4>
                           <span className="text-xs font-extrabold text-cyan-800">
-                            ${guide.price || guide.hourlyRate || 12}/hr
+                            {formatRateVND(guide.price || guide.hourlyRate)}
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                          {guide.title || 'Local Culture & Food Specialist'}
+                          {guide.title || 'Chuyên gia Văn hóa & Ẩm thực Địa phương'}
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <div className="flex items-center gap-1 text-[11px] font-bold text-amber-500">
@@ -413,7 +414,7 @@ export default function GoogleMapsExplore({ helpers = [] }) {
                           </div>
                           <span className="text-slate-300">•</span>
                           <span className="text-[10px] text-slate-400">
-                            {(guide.languages || ['English']).slice(0, 2).join(', ')}
+                            {(guide.languages || ['Tiếng Việt']).slice(0, 2).join(', ')}
                           </span>
                         </div>
                       </div>
@@ -428,7 +429,7 @@ export default function GoogleMapsExplore({ helpers = [] }) {
                         }}
                         className="text-cyan-800 hover:text-cyan-950 font-bold text-[11px] flex items-center gap-1 cursor-pointer"
                       >
-                        <span>View Profile & Schedule</span>
+                        <span>Xem hồ sơ &amp; Lịch</span>
                         <span className="material-symbols-outlined text-xs">arrow_forward</span>
                       </button>
                       <button
@@ -439,7 +440,7 @@ export default function GoogleMapsExplore({ helpers = [] }) {
                         }}
                         className="px-2.5 py-1 rounded-lg bg-cyan-700 hover:bg-cyan-800 text-white font-semibold text-[11px] transition-colors cursor-pointer"
                       >
-                        Book
+                        Đặt tour
                       </button>
                     </div>
                   </div>
@@ -447,13 +448,13 @@ export default function GoogleMapsExplore({ helpers = [] }) {
               ) : (
                 <div className="p-6 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-center">
                   <span className="material-symbols-outlined text-3xl text-slate-300 mb-2">person_search</span>
-                  <p className="text-xs font-semibold text-slate-700">No guides registered in this city yet</p>
-                  <p className="text-[11px] text-slate-400 mt-1">Be the first local expert to offer tours in {selectedCity.name}!</p>
+                  <p className="text-xs font-semibold text-slate-700">Chưa có Helper nào ở thành phố này</p>
+                  <p className="text-[11px] text-slate-400 mt-1">Hãy là người đầu tiên trở thành Local Helper tại {selectedCity.name}!</p>
                   <button
                     onClick={() => navigate('/login?tab=signup&role=guide')}
                     className="mt-3 text-xs font-bold text-cyan-800 hover:underline cursor-pointer"
                   >
-                    Become a Helper →
+                    Trở thành Helper →
                   </button>
                 </div>
               )}
@@ -467,7 +468,7 @@ export default function GoogleMapsExplore({ helpers = [] }) {
               className="w-full py-3 px-4 rounded-xl bg-cyan-700 hover:bg-cyan-800 text-white text-xs font-bold shadow-md shadow-cyan-700/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <span className="material-symbols-outlined text-base">search</span>
-              <span>Find All Guides in {selectedCity.name}</span>
+              <span>Tìm tất cả Helper tại {selectedCity.name}</span>
             </button>
           </div>
         </div>

@@ -34,8 +34,8 @@ const toHelperMap = async (user, profile) => {
     createdAt: r.createdAt,
   }));
 
-  const rate = profile.hourlyRate != null ? profile.hourlyRate : 10.0;
-  const displayPrice = rate > 1000 ? parseFloat((rate / 25000.0).toFixed(2)) : rate;
+  const rate = profile.hourlyRate != null ? profile.hourlyRate : 100000;
+  const displayPrice = rate < 1000 ? Math.round(rate * 25000) : Math.round(rate);
 
   const avatar = user.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150';
 
@@ -54,8 +54,8 @@ const toHelperMap = async (user, profile) => {
     )
     .reduce((sum, b) => {
       const p = b.totalPrice || 0;
-      const usd = p > 1000 ? parseFloat((p / 25000.0).toFixed(2)) : p;
-      return parseFloat((sum + usd).toFixed(2));
+      const vnd = p < 1000 ? Math.round(p * 25000) : Math.round(p);
+      return sum + vnd;
     }, 0);
 
   return {
@@ -288,12 +288,16 @@ const handleUpdatePrice = async (req, res) => {
     const { id } = req.params;
     const rateObj = req.body.hourlyRate !== undefined ? req.body.hourlyRate : req.body.price;
     if (rateObj === undefined || rateObj === null) {
-      return res.status(400).json({ message: 'hourlyRate or price is required' });
+      return res.status(400).json({ message: 'hourlyRate hoặc price là bắt buộc' });
     }
 
-    const newRate = parseFloat(String(rateObj).replace(',', '.'));
-    if (isNaN(newRate) || newRate <= 0 || newRate > 1000) {
-      return res.status(400).json({ message: 'Hourly rate must be between $0.1 and $1,000/hr' });
+    const cleanStr = String(rateObj).replace(/\./g, '').replace(',', '.').replace(/[^0-9.]/g, '');
+    let newRate = parseFloat(cleanStr);
+    if (!isNaN(newRate) && newRate < 1000) {
+      newRate = Math.round(newRate * 25000);
+    }
+    if (isNaN(newRate) || newRate < 10000 || newRate > 50000000) {
+      return res.status(400).json({ message: 'Giá theo giờ phải từ 10.000 ₫ đến 50.000.000 ₫/giờ' });
     }
 
     let profile = await HelperProfile.findOne({ userId: id });
@@ -365,7 +369,7 @@ router.post('/', async (req, res) => {
       city: city || 'Da Nang',
       languages: Array.isArray(languages) ? languages : ['English', 'Vietnamese'],
       skills: Array.isArray(skills) ? skills : ['Food Tour', 'Culture'],
-      hourlyRate: hourlyRate ? parseFloat(String(hourlyRate).replace(',', '.')) : 12.0,
+      hourlyRate: hourlyRate ? (parseFloat(String(hourlyRate).replace(/\./g, '').replace(',', '.')) < 1000 ? Math.round(parseFloat(String(hourlyRate).replace(/\./g, '').replace(',', '.')) * 25000) : Math.round(parseFloat(String(hourlyRate).replace(/\./g, '').replace(',', '.')))) : 100000,
       rating: 5.0,
       reviewCount: 0,
       verified: true,
@@ -419,7 +423,10 @@ router.put('/:id', async (req, res) => {
     if (title !== undefined) profile.title = title;
     if (bio !== undefined) profile.bio = bio;
     if (availabilityStatus !== undefined) profile.availabilityStatus = availabilityStatus.toUpperCase();
-    if (hourlyRate !== undefined) profile.hourlyRate = parseFloat(String(hourlyRate).replace(',', '.'));
+    if (hourlyRate !== undefined) {
+      const parsed = parseFloat(String(hourlyRate).replace(/\./g, '').replace(',', '.'));
+      profile.hourlyRate = parsed < 1000 ? Math.round(parsed * 25000) : Math.round(parsed);
+    }
     if (languages !== undefined && Array.isArray(languages)) profile.languages = languages;
 
     await user.save();

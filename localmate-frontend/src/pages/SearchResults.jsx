@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../config/api';
+import { formatRateVND, formatVND } from '../utils/formatCurrency';
 
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -13,9 +14,9 @@ export default function SearchResults() {
   // Filter States
   const [city, setCity] = useState('');
   const [selectedExpertise, setSelectedExpertise] = useState([]);
-  const [priceMax, setPriceMax] = useState(50);
+  const [priceMax, setPriceMax] = useState(1000000);
   const [minRating, setMinRating] = useState(4.0);
-  const [language, setLanguage] = useState('English');
+  const [language, setLanguage] = useState('All');
   const [favorites, setFavorites] = useState([]);
 
   // Fetch from database
@@ -52,16 +53,16 @@ export default function SearchResults() {
     if (e) e.preventDefault();
     const params = {};
     if (city) params.location = city;
-    if (language) params.lang = language;
+    if (language && language !== 'All') params.lang = language;
     setSearchParams(params);
   };
 
   const handleReset = () => {
     setCity('');
     setSelectedExpertise([]);
-    setPriceMax(50);
+    setPriceMax(1000000);
     setMinRating(4.0);
-    setLanguage('English');
+    setLanguage('All');
     setSearchParams({});
   };
 
@@ -95,8 +96,12 @@ export default function SearchResults() {
         return false;
       }
     }
-    // Price filter
-    if (guide.price != null && guide.price > priceMax) {
+    // Price filter (normalized to VND)
+    let gPrice = Number(guide.price || guide.hourlyRate || 0);
+    if (gPrice > 0 && gPrice < 1000) {
+      gPrice = Math.round(gPrice * 25000);
+    }
+    if (gPrice > priceMax) {
       return false;
     }
     // Rating filter
@@ -126,19 +131,19 @@ export default function SearchResults() {
         <aside className="w-full lg:w-72 flex-shrink-0">
           <div className="sticky top-24 bg-surface-container-low p-5 rounded-2xl border border-border-subtle shadow-sm max-h-[calc(100vh-6.5rem)] overflow-y-auto no-scrollbar">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-subtle">
-              <h2 className="font-headline-md text-base text-primary font-bold">Filters</h2>
+              <h2 className="font-headline-md text-base text-primary font-bold">Bộ lọc tìm kiếm</h2>
               <button
                 onClick={handleReset}
                 className="text-primary hover:underline font-label-bold text-xs"
               >
-                Reset All
+                Đặt lại
               </button>
             </div>
 
             <form onSubmit={handleFilterSubmit} className="space-y-4">
               {/* Filter: City */}
               <div>
-                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Destination</label>
+                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Điểm đến</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">location_on</span>
                   <input
@@ -146,20 +151,20 @@ export default function SearchResults() {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     className="w-full pl-8 pr-3 py-2 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-sm text-on-surface placeholder:text-outline-variant outline-none"
-                    placeholder="Where to?"
+                    placeholder="Bạn muốn đi đâu?"
                   />
                 </div>
               </div>
 
               {/* Filter: Expertise */}
               <div>
-                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Expertise</label>
+                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Chuyên môn / Kỹ năng</label>
                 <div className="space-y-1.5">
                   {[
-                    { key: 'culture', label: 'Culture & Arts' },
-                    { key: 'foodie', label: 'Food & Nightlife' },
-                    { key: 'photography', label: 'Photography' },
-                    { key: 'translation', label: 'Translation' }
+                    { key: 'culture', label: 'Văn hóa & Nghệ thuật' },
+                    { key: 'foodie', label: 'Ẩm thực & Đời sống đêm' },
+                    { key: 'photography', label: 'Nhiếp ảnh & Check-in' },
+                    { key: 'translation', label: 'Phiên dịch & Hướng dẫn' }
                   ].map(exp => (
                     <label key={exp.key} className="flex items-center gap-2.5 cursor-pointer group py-0.5">
                       <input
@@ -177,13 +182,14 @@ export default function SearchResults() {
               {/* Filter: Price Range */}
               <div>
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="block font-label-bold text-xs uppercase tracking-wider text-on-surface">Max Price</label>
-                  <span className="font-label-bold text-xs text-primary font-bold">${priceMax}/hr</span>
+                  <label className="block font-label-bold text-xs uppercase tracking-wider text-on-surface">Mức giá tối đa</label>
+                  <span className="font-label-bold text-xs text-primary font-bold">{formatRateVND(priceMax)}</span>
                 </div>
                 <input
                   type="range"
-                  min="1"
-                  max="100"
+                  min="50000"
+                  max="2000000"
+                  step="50000"
                   value={priceMax}
                   onChange={(e) => setPriceMax(Number(e.target.value))}
                   className="w-full h-1.5 bg-outline-variant rounded-full appearance-none cursor-pointer accent-primary"
@@ -192,7 +198,7 @@ export default function SearchResults() {
 
               {/* Filter: Rating */}
               <div>
-                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Rating</label>
+                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Đánh giá sao</label>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -219,18 +225,19 @@ export default function SearchResults() {
 
               {/* Filter: Language */}
               <div>
-                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Language</label>
+                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Ngôn ngữ</label>
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
                   className="w-full py-2 px-3 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-xs cursor-pointer outline-none"
                 >
-                  <option value="All">All Languages</option>
-                  <option value="English">English</option>
-                  <option value="Spanish">Spanish</option>
-                  <option value="Japanese">Japanese</option>
-                  <option value="French">French</option>
-                  <option value="Italian">Italian</option>
+                  <option value="All">Tất cả ngôn ngữ</option>
+                  <option value="Tiếng Việt">Tiếng Việt</option>
+                  <option value="English">Tiếng Anh (English)</option>
+                  <option value="Spanish">Tiếng Tây Ban Nha</option>
+                  <option value="Japanese">Tiếng Nhật</option>
+                  <option value="French">Tiếng Pháp</option>
+                  <option value="Italian">Tiếng Ý</option>
                 </select>
               </div>
 
@@ -238,7 +245,7 @@ export default function SearchResults() {
                 type="submit"
                 className="w-full py-2.5 bg-primary text-on-primary font-label-bold text-sm rounded-xl hover:shadow-md active:scale-95 transition-all mt-2"
               >
-                Apply Filters
+                Áp dụng bộ lọc
               </button>
             </form>
           </div>
@@ -249,24 +256,24 @@ export default function SearchResults() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
               <h1 className="font-headline-lg text-headline-lg text-on-surface mb-1 font-bold">
-                Local Helpers {city ? `in ${city}` : 'Worldwide'}
+                Local Helper {city ? `tại ${city}` : 'Toàn quốc'}
               </h1>
               <p className="font-body-md text-on-surface-variant">
-                {filteredGuides.length} experts ready to show you around
+                {filteredGuides.length} người sẵn sàng đồng hành cùng bạn
               </p>
             </div>
 
             <div className="flex items-center gap-3">
               <button className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-surface-dark border border-border-subtle rounded-full font-label-bold text-label-bold text-on-surface hover:bg-surface-container transition-all">
                 <span className="material-symbols-outlined text-[20px]">sort</span>
-                Most Popular
+                Phổ biến nhất
               </button>
               <button
-                onClick={() => alert('Map view is not implemented in this demo.')}
+                onClick={() => navigate('/')}
                 className="flex items-center gap-2 px-4 py-2.5 bg-secondary text-on-secondary rounded-full font-label-bold text-label-bold hover:shadow-md transition-all"
               >
                 <span className="material-symbols-outlined text-[20px]">map</span>
-                View Map
+                Bản đồ
               </button>
             </div>
           </div>
@@ -285,7 +292,7 @@ export default function SearchResults() {
                     <div className="absolute top-4 left-4 z-10 bg-white/95 dark:bg-surface-dark/95 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
                       <span className="material-symbols-outlined text-[18px] text-status-warning" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                       <span className="font-label-bold text-label-bold text-on-surface">{guide.rating}</span>
-                      <span className="text-on-surface-variant text-[12px] ml-1">({guide.reviewsCount})</span>
+                      <span className="text-on-surface-variant text-[12px] ml-1">({guide.reviewsCount || 0})</span>
                     </div>
                   </div>
 
@@ -294,30 +301,29 @@ export default function SearchResults() {
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-headline-md text-headline-md text-on-surface font-bold">{guide.name}</h3>
-                          <span className="material-symbols-outlined text-primary text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }} title="Verified Guide">verified</span>
+                          <span className="material-symbols-outlined text-primary text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }} title="Helper đã xác thực">verified</span>
                           {/* Helper Availability Status Badge */}
                           {(!guide.availabilityStatus || guide.availabilityStatus === 'AVAILABLE') && (
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                              AVAILABLE
+                              SẴN SÀNG
                             </span>
                           )}
                           {guide.availabilityStatus === 'BUSY' && (
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                              BUSY (Check schedule)
+                              ĐANG BẬN (Xem lịch)
                             </span>
                           )}
                           {guide.availabilityStatus === 'OFFLINE' && (
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-300 flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                              OFFLINE
+                              NGOẠI TUYẾN
                             </span>
                           )}
                         </div>
                         <div className="text-right">
-                          <span className="font-headline-md text-headline-md text-primary font-bold">${guide.price}</span>
-                          <span className="font-label-bold text-label-bold text-on-surface-variant block">per hour</span>
+                          <span className="font-headline-md text-headline-md text-primary font-bold">{formatRateVND(guide.price)}</span>
                         </div>
                       </div>
 
@@ -352,7 +358,7 @@ export default function SearchResults() {
                         onClick={() => navigate(`/helper/${guide.id}`)}
                         className="flex-1 py-3 bg-primary text-on-primary rounded-xl font-label-bold text-label-bold hover:shadow-lg transition-all active:scale-95"
                       >
-                        View Profile
+                        Xem hồ sơ
                       </button>
                       <button
                         onClick={() => toggleFavorite(guide.id)}
@@ -373,12 +379,12 @@ export default function SearchResults() {
           ) : (
             <div className="text-center py-20 bg-surface-container-low rounded-2xl border border-border-subtle">
               <span className="material-symbols-outlined text-6xl text-outline-variant mb-4">search_off</span>
-              <h3 className="font-headline-md text-headline-md text-on-surface mb-2">No Guides Found</h3>
+              <h3 className="font-headline-md text-headline-md text-on-surface mb-2">Không tìm thấy Helper phù hợp</h3>
               <p className="font-body-md text-on-surface-variant max-w-md mx-auto mb-6">
-                We couldn't find any guides matching your current filters. Try relaxing your budget or choosing different expertise areas.
+                Chúng tôi không tìm thấy Local Helper nào khớp với bộ lọc hiện tại. Vui lòng thử mở rộng mức giá hoặc chọn chuyên môn khác.
               </p>
               <button onClick={handleReset} className="bg-primary text-on-primary px-6 py-3 rounded-xl font-label-bold">
-                Clear All Filters
+                Xóa tất cả bộ lọc
               </button>
             </div>
           )}

@@ -11,16 +11,16 @@ export default function DeleteAccountDialog({ isOpen, onClose, onConfirm, accoun
         </div>
 
         <h3 className="text-lg font-bold text-gray-900 text-center mb-2">
-          Confirm Account Deletion
+          Xác nhận xóa tài khoản
         </h3>
 
         <p className="text-sm text-gray-500 text-center mb-5 leading-relaxed">
-          Are you sure you want to delete the account <span className="font-semibold text-gray-800">{account.fullName || account.name}</span> ({account.email})? This action will permanently remove the data and <strong className="text-rose-600">cannot be undone</strong>.
+          Bạn có chắc chắn muốn xóa tài khoản <span className="font-semibold text-gray-800">{account.fullName || account.name}</span> ({account.email})? Hành động này sẽ xóa dữ liệu vĩnh viễn và <strong className="text-rose-600">không thể khôi phục</strong>.
         </p>
 
         <div className="bg-rose-50/70 border border-rose-100 rounded-xl p-3 mb-6 text-xs text-rose-700 flex items-start gap-2">
           <span className="material-symbols-outlined text-base shrink-0 mt-0.5">info</span>
-          <span>All booking history, reviews, and profile details associated with this account will be permanently removed from the system.</span>
+          <span>Toàn bộ lịch sử đặt tour, đánh giá và thông tin hồ sơ liên kết với tài khoản này sẽ bị xóa khỏi hệ thống.</span>
         </div>
 
         <div className="flex gap-3">
@@ -30,7 +30,7 @@ export default function DeleteAccountDialog({ isOpen, onClose, onConfirm, accoun
             onClick={onClose}
             className="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer"
           >
-            Cancel
+            Hủy bỏ
           </button>
           <button
             type="button"
@@ -41,12 +41,12 @@ export default function DeleteAccountDialog({ isOpen, onClose, onConfirm, accoun
             {loading ? (
               <>
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                <span>Deleting...</span>
+                <span>Đang xóa...</span>
               </>
             ) : (
               <>
                 <span className="material-symbols-outlined text-base">delete</span>
-                <span>Confirm Delete</span>
+                <span>Xác nhận xóa</span>
               </>
             )}
           </button>

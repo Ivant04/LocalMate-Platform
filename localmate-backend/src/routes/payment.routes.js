@@ -25,21 +25,27 @@ router.post('/payos/create-payment', async (req, res) => {
     }
 
     const amountVnd = Math.round(Number(amount));
-    const orderCode = Number(String(Date.now()).slice(-6) + Math.floor(Math.random() * 1000));
+    // PayOS requires orderCode to be a unique integer <= Number.MAX_SAFE_INTEGER
+    const orderCode = Date.now();
 
-    let description = `Pay ${orderCode}`;
+    let description = `Tour ${String(orderCode).slice(-6)}`;
     if (customDescription && customDescription.trim()) {
-      let sanitized = customDescription.replace(/[^a-zA-Z0-9 ]/g, '').trim();
+      let sanitized = customDescription
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9 ]/g, '')
+        .trim();
       if (sanitized.length > 25) sanitized = sanitized.substring(0, 25);
       if (sanitized.length > 0) description = sanitized;
     }
 
-    const returnUrl = `${FRONTEND_URL}/payment-success?bookingId=${bookingId || ''}&orderCode=${orderCode}`;
-    const cancelUrl = `${FRONTEND_URL}/payment-cancel?bookingId=${bookingId || ''}&orderCode=${orderCode}`;
+    const returnUrl = `${FRONTEND_URL}/payment-result?bookingId=${bookingId || ''}&orderCode=${orderCode}&status=PAID`;
+    const cancelUrl = `${FRONTEND_URL}/payment-result?bookingId=${bookingId || ''}&orderCode=${orderCode}&cancel=true&status=CANCELLED`;
 
     if (payos) {
+      let paymentLinkRes = null;
       try {
-        const paymentLinkRes = await payos.createPaymentLink({
+        paymentLinkRes = await payos.createPaymentLink({
           orderCode,
           amount: amountVnd,
           description,
@@ -55,29 +61,34 @@ router.post('/payos/create-payment', async (req, res) => {
             },
           ],
         });
+      } catch (sdkError) {
+        console.warn('PayOS SDK call error:', sdkError.message || sdkError);
+      }
 
-        // Save pending transaction
-        const trans = new PaymentTransaction({
-          bookingId: bookingId || '',
-          amount: amountVnd,
-          currency: 'VND',
-          paymentMethod: 'PAYOS',
-          transactionRef: String(orderCode),
-          status: 'PENDING',
-          createdAt: new Date(),
-        });
-        await trans.save();
+      if (paymentLinkRes && paymentLinkRes.checkoutUrl) {
+        try {
+          const trans = new PaymentTransaction({
+            bookingId: String(bookingId || `BK-${orderCode}`),
+            orderCode: orderCode,
+            amount: amountVnd,
+            description: description,
+            checkoutUrl: paymentLinkRes.checkoutUrl,
+            paymentLinkId: paymentLinkRes.paymentLinkId || '',
+            status: 'PENDING',
+          });
+          await trans.save();
+        } catch (dbErr) {
+          console.warn('PaymentTransaction save warning:', dbErr.message);
+        }
 
         return res.json({
           status: 'SUCCESS',
           checkoutUrl: paymentLinkRes.checkoutUrl,
-          qrCode: paymentLinkRes.qrCode,
+          qrCode: paymentLinkRes.qrCode || '',
           orderCode,
           bookingId,
           amount: amountVnd,
         });
-      } catch (sdkError) {
-        console.warn('PayOS SDK call warning, fallback to REST API:', sdkError.message);
       }
     }
 
@@ -113,16 +124,20 @@ router.post('/payos/create-payment', async (req, res) => {
 
     if (apiRes.data && apiRes.data.code === '00') {
       const data = apiRes.data.data;
-      const trans = new PaymentTransaction({
-        bookingId: bookingId || '',
-        amount: amountVnd,
-        currency: 'VND',
-        paymentMethod: 'PAYOS',
-        transactionRef: String(orderCode),
-        status: 'PENDING',
-        createdAt: new Date(),
-      });
-      await trans.save();
+      try {
+        const trans = new PaymentTransaction({
+          bookingId: String(bookingId || `BK-${orderCode}`),
+          orderCode: orderCode,
+          amount: amountVnd,
+          description: description,
+          checkoutUrl: data.checkoutUrl,
+          paymentLinkId: data.paymentLinkId || '',
+          status: 'PENDING',
+        });
+        await trans.save();
+      } catch (dbErr) {
+        console.warn('PaymentTransaction save warning:', dbErr.message);
+      }
 
       return res.json({
         status: 'SUCCESS',
@@ -170,20 +185,30 @@ router.get('/payos/verify/:orderCode', async (req, res) => {
     const amount = orderInfo ? orderInfo.amount : 0;
 
     // Find and update transaction
-    const trans = await PaymentTransaction.findOne({ transactionRef: String(orderCode) });
+    const trans = await PaymentTransaction.findOne({
+      $or: [{ orderCode: Number(orderCode) }, { transactionRef: String(orderCode) }]
+    });
     let booking = null;
 
     if (trans) {
       if (trans.bookingId) {
-        booking = await Booking.findById(trans.bookingId);
+        booking = await Booking.findById(trans.bookingId).catch(() => null);
       }
 
       if (status === 'PAID') {
-        trans.status = 'SUCCESS';
+        trans.status = 'PAID';
         await trans.save();
 
         if (booking) {
+          const price = Number(booking.totalPrice) || amount || 0;
+          const fee = Math.round(price * 0.10); // 10% hoa hồng nền tảng
           booking.paymentStatus = 'PAID';
+          booking.escrowStatus = 'HELD'; // Bước 2: Bên trung gian giữ tiền trong quỹ Escrow
+          booking.escrowAmount = price;
+          booking.platformCommissionRate = 0.10;
+          booking.platformFee = fee;
+          booking.helperPayoutAmount = price - fee;
+          booking.escrowHeldAt = new Date();
           booking.updatedAt = new Date();
           await booking.save();
         }

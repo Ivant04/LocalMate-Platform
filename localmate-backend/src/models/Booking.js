@@ -47,6 +47,49 @@ const bookingSchema = new mongoose.Schema(
       enum: ['UNPAID', 'PAID', 'REFUNDED'],
       default: 'UNPAID',
     },
+    // Escrow (Cơ chế Quỹ ký quỹ trung gian an toàn)
+    escrowStatus: {
+      type: String,
+      enum: ['NOT_APPLICABLE', 'HELD', 'RELEASE_REQUESTED', 'RELEASED', 'REFUNDED'],
+      default: 'NOT_APPLICABLE',
+      index: true,
+    },
+    escrowAmount: {
+      type: Number,
+      default: 0,
+    },
+    platformCommissionRate: {
+      type: Number,
+      default: 0.10, // 10% hoa hồng nền tảng
+    },
+    platformFee: {
+      type: Number,
+      default: 0,
+    },
+    helperPayoutAmount: {
+      type: Number,
+      default: 0,
+    },
+    escrowHeldAt: {
+      type: Date,
+      default: null,
+    },
+    escrowReleasedAt: {
+      type: Date,
+      default: null,
+    },
+    escrowAutoReleaseAt: {
+      type: Date,
+      default: null,
+    },
+    confirmedByTraveler: {
+      type: Boolean,
+      default: false,
+    },
+    confirmedByHelper: {
+      type: Boolean,
+      default: false,
+    },
     startTime: {
       type: String,
       default: '09:00',

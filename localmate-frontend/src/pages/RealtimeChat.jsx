@@ -2,30 +2,31 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getConversationId } from '../utils/chatUtils';
 import API_BASE_URL from '../config/api';
+import { formatVND } from '../utils/formatCurrency';
 
 // Format Time Helper
 const formatTime = (isoString) => {
-  if (!isoString) return 'Just now';
+  if (!isoString) return 'Vừa xong';
   try {
     const d = new Date(isoString);
-    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
   } catch {
-    return '10:15 AM';
+    return '10:15';
   }
 };
 
 const formatRelativeTime = (isoString) => {
-  if (!isoString) return 'Just now';
+  if (!isoString) return 'Vừa xong';
   try {
     const diffMs = Date.now() - new Date(isoString).getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffMins < 1) return 'Vừa xong';
+    if (diffMins < 60) return `${diffMins} phút trước`;
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return 'Yesterday';
+    if (diffHours < 24) return `${diffHours} giờ trước`;
+    return 'Hôm qua';
   } catch {
-    return '2m ago';
+    return '2 phút trước';
   }
 };
 
@@ -70,7 +71,7 @@ export default function RealtimeChat() {
         }
       }
       if (!user) {
-        alert("Please sign in to access messages!");
+        alert("Vui lòng đăng nhập để truy cập tin nhắn!");
         navigate('/login');
         return;
       }
@@ -116,17 +117,17 @@ export default function RealtimeChat() {
             if (!convMap.has(convId)) {
               convMap.set(convId, {
                 id: convId,
-                name: b.guideName || 'Local Guide',
-                roleTag: 'Local Guide',
+                name: b.guideName || 'Local Helper',
+                roleTag: 'Local Helper',
                 receiverEmail: partnerEmail,
                 avatar: b.guideAvatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
                 online: true,
                 bookingId: b.id,
-                tourName: b.tourName || 'Guided Experience',
-                tourDate: b.bookingDate || 'Upcoming',
-                tourPrice: b.totalPrice ? `$${b.totalPrice}` : '',
+                tourName: b.tourName || 'Tour trải nghiệm',
+                tourDate: b.bookingDate || 'Sắp tới',
+                tourPrice: b.totalPrice ? formatVND(b.totalPrice) : '',
                 bookingStatus: b.status || 'PENDING',
-                lastMsg: 'Booking request sent',
+                lastMsg: 'Đã gửi yêu cầu đặt lịch',
                 time: formatRelativeTime(b.createdAt),
                 unread: false
               });
@@ -147,19 +148,19 @@ export default function RealtimeChat() {
             if (!convMap.has(convId)) {
               convMap.set(convId, {
                 id: convId,
-                name: r.travelerName || 'Traveler',
-                roleTag: 'Traveler Explorer',
+                name: r.travelerName || 'Du khách',
+                roleTag: 'Du khách',
                 receiverEmail: partnerEmail,
                 avatar: r.travelerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
                 online: true,
                 bookingId: r.id,
-                tourName: r.tourName || 'Tour Request',
-                tourDate: r.date || 'Upcoming',
-                tourPrice: r.price ? (r.price > 1000 ? `${Number(r.price).toLocaleString()} VND` : `$${r.price}`) : '',
+                tourName: r.tourName || 'Yêu cầu tour',
+                tourDate: r.date || 'Sắp tới',
+                tourPrice: r.price ? formatVND(r.price) : '',
                 bookingStatus: r.status || 'PENDING',
                 bookingLocation: r.location,
                 bookingRequests: r.requests,
-                lastMsg: 'Booking request received',
+                lastMsg: 'Nhận yêu cầu đặt lịch mới',
                 time: formatRelativeTime(r.sentAt || r.createdAt),
                 unread: false
               });
@@ -192,7 +193,7 @@ export default function RealtimeChat() {
 
       let partnerName = location.state?.guideName || location.state?.travelerName;
       let partnerAvatar = location.state?.guideAvatar || location.state?.travelerAvatar;
-      let partnerRole = isGuide ? 'Local Helper' : 'Traveler Explorer';
+      let partnerRole = isGuide ? 'Local Helper' : 'Du khách';
 
       if (!partnerName || !partnerAvatar) {
         try {
@@ -216,11 +217,11 @@ export default function RealtimeChat() {
         receiverEmail: partnerEmail,
         avatar: partnerAvatar || existingConv?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
         online: true,
-        tourName: location.state?.tourName || existingConv?.tourName || 'Direct Chat',
-        tourDate: location.state?.date || location.state?.tourDate || existingConv?.tourDate || 'Upcoming',
-        tourPrice: location.state?.totalCost ? `$${location.state.totalCost}` : (existingConv?.tourPrice || ''),
+        tourName: location.state?.tourName || existingConv?.tourName || 'Trò chuyện trực tiếp',
+        tourDate: location.state?.date || location.state?.tourDate || existingConv?.tourDate || 'Sắp tới',
+        tourPrice: location.state?.totalCost ? formatVND(location.state.totalCost) : (existingConv?.tourPrice || ''),
         bookingStatus: existingConv?.bookingStatus || 'ACTIVE',
-        lastMsg: existingConv?.lastMsg || 'Ready to chat',
+        lastMsg: existingConv?.lastMsg || 'Sẵn sàng trò chuyện',
         time: existingConv?.time || '',
         unread: false,
         bookingId: existingConv?.bookingId
@@ -237,7 +238,7 @@ export default function RealtimeChat() {
           const msgs = await msgRes.json();
           if (msgs && msgs.length > 0) {
             const last = msgs[msgs.length - 1];
-            c.lastMsg = last.content || 'Sent an attachment';
+            c.lastMsg = last.content || 'Đã gửi tệp đính kèm';
             c.time = formatRelativeTime(last.createdAt);
           }
         }
@@ -307,7 +308,7 @@ export default function RealtimeChat() {
             if (c.id === convId) {
               return {
                 ...c,
-                lastMsg: last.content || "Sent an attachment",
+                lastMsg: last.content || "Đã gửi tệp đính kèm",
                 time: formatRelativeTime(last.createdAt)
               };
             }
@@ -378,7 +379,7 @@ export default function RealtimeChat() {
 
     // Update conversation item snippet
     setConversations(prev => prev.map(c => 
-      c.id === currentConvId ? { ...c, lastMsg: messageText || "Sent an attachment", time: 'Just now' } : c
+      c.id === currentConvId ? { ...c, lastMsg: messageText || "Đã gửi tệp đính kèm", time: 'Vừa xong' } : c
     ));
 
     try {
@@ -415,7 +416,7 @@ export default function RealtimeChat() {
     setLocationError(null);
 
     if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by your browser.");
+      setLocationError("Trình duyệt của bạn không hỗ trợ định vị GPS.");
       return;
     }
 
@@ -428,11 +429,11 @@ export default function RealtimeChat() {
           const lng = position.coords.longitude;
 
           // Attempt reverse geocoding to retrieve human-readable address/city
-          let locName = `Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+          let locName = `Tọa độ (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
           try {
             const geoRes = await fetch(
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`,
-              { headers: { 'Accept-Language': 'en' } }
+              { headers: { 'Accept-Language': 'vi' } }
             );
             if (geoRes.ok) {
               const geoData = await geoRes.json();
@@ -458,7 +459,7 @@ export default function RealtimeChat() {
             conversationId: currentConvId,
             senderId: senderEmail,
             receiverId: receiverEmail,
-            content: `📍 Shared Location: ${locName}`,
+            content: `📍 Vị trí chia sẻ: ${locName}`,
             messageType: 'LOCATION',
             latitude: lat,
             longitude: lng,
@@ -471,7 +472,7 @@ export default function RealtimeChat() {
 
           // Update conversation last message preview
           setConversations(prev => prev.map(c => 
-            c.id === currentConvId ? { ...c, lastMsg: `📍 Shared Location: ${locName}`, time: 'Just now' } : c
+            c.id === currentConvId ? { ...c, lastMsg: `📍 Vị trí chia sẻ: ${locName}`, time: 'Vừa xong' } : c
           ));
 
           // Persist message to backend
@@ -488,7 +489,7 @@ export default function RealtimeChat() {
           });
         } catch (err) {
           console.error('Error sending location message:', err);
-          setLocationError('Failed to send location message. Please try again.');
+          setLocationError('Không thể gửi vị trí. Vui lòng thử lại.');
         } finally {
           setSharingLocation(false);
         }
@@ -497,13 +498,13 @@ export default function RealtimeChat() {
         setSharingLocation(false);
         console.warn('Geolocation error:', err);
         if (err.code === 1) { // PERMISSION_DENIED
-          setLocationError("Unable to access your location. Please allow location permission in your browser and try again.");
+          setLocationError("Không có quyền truy cập vị trí. Vui lòng cấp quyền định vị trong trình duyệt và thử lại.");
         } else if (err.code === 2) { // POSITION_UNAVAILABLE
-          setLocationError("Location information is currently unavailable.");
+          setLocationError("Thông tin vị trí hiện không khả dụng.");
         } else if (err.code === 3) { // TIMEOUT
-          setLocationError("Location request timed out. Please try again.");
+          setLocationError("Yêu cầu lấy vị trí quá hạn. Vui lòng thử lại.");
         } else {
-          setLocationError("Could not retrieve your location.");
+          setLocationError("Không thể xác định vị trí của bạn.");
         }
       },
       {
@@ -533,14 +534,14 @@ export default function RealtimeChat() {
           if (activeId) fetchMessages(activeId, false);
         }, 400);
 
-        alert(`Accepted booking for "${tourName}" with ${travelerName}! Automated confirmation sent to chat.`);
+        alert(`Đã chấp nhận tour "${tourName}" cùng ${travelerName}! Xác nhận đã được gửi vào cuộc trò chuyện.`);
       } else {
         const err = await res.json().catch(() => ({}));
-        alert(err.message || 'Could not accept booking request.');
+        alert(err.message || 'Không thể chấp nhận yêu cầu đặt lịch.');
       }
     } catch (err) {
       console.error('Error accepting booking in chat:', err);
-      alert('Network error connecting to booking server.');
+      alert('Lỗi kết nối máy chủ đặt lịch.');
     } finally {
       setAcceptingChatBooking(false);
     }
@@ -548,7 +549,7 @@ export default function RealtimeChat() {
 
   const handleDeclineBookingInChat = async (bookingId, travelerName) => {
     if (!bookingId) return;
-    if (!window.confirm(`Are you sure you want to decline this booking request from ${travelerName}?`)) return;
+    if (!window.confirm(`Bạn có chắc chắn muốn từ chối yêu cầu đặt lịch từ ${travelerName}?`)) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/v1/bookings/${bookingId}/decline`, { method: 'POST' });
       if (res.ok) {
@@ -564,9 +565,9 @@ export default function RealtimeChat() {
     }
   };
 
-  const displayName = currentUser?.fullName || currentUser?.email?.split('@')[0] || 'My Account';
+  const displayName = currentUser?.fullName || currentUser?.email?.split('@')[0] || 'Tài khoản của tôi';
   const displayAvatar = currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150';
-  const roleSubtitle = isHelper ? 'Local Helper Profile' : 'Traveler Explorer';
+  const roleSubtitle = isHelper ? 'Hồ sơ Local Helper' : 'Du khách khám phá';
 
   const filteredConvs = conversations.filter(c => 
     c.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -593,9 +594,9 @@ export default function RealtimeChat() {
           </div>
           <button 
             onClick={() => navigate('/profile')}
-            className="mt-3 w-full py-2 px-4 rounded-lg bg-cyan-50 text-cyan-800 font-label-bold text-xs border border-cyan-200 hover:bg-cyan-100 transition-all font-semibold"
+            className="mt-3 w-full py-2 px-4 rounded-lg bg-cyan-50 text-cyan-800 font-label-bold text-xs border border-cyan-200 hover:bg-cyan-100 transition-all font-semibold cursor-pointer"
           >
-            Edit Profile
+            Chỉnh sửa hồ sơ
           </button>
         </div>
 
@@ -603,34 +604,34 @@ export default function RealtimeChat() {
         <nav className="flex-1 space-y-1 px-2">
           <button 
             onClick={() => navigate(isHelper ? '/helper-dashboard' : '/traveler')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left"
+            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
           >
             <span className="material-symbols-outlined text-slate-400 text-[20px]">dashboard</span>
-            <span className="font-label-bold text-sm">Dashboard</span>
+            <span className="font-label-bold text-sm">Bảng điều khiển</span>
           </button>
 
           <button 
             onClick={() => navigate('/search')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left"
+            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
           >
             <span className="material-symbols-outlined text-slate-400 text-[20px]">explore</span>
-            <span className="font-label-bold text-sm">Explore Guides</span>
+            <span className="font-label-bold text-sm">Khám phá Helper</span>
           </button>
 
           {/* Active item: Messages */}
           <button 
-            className="w-full bg-cyan-50 text-cyan-800 font-semibold rounded-xl px-4 py-2.5 flex items-center gap-3 border border-cyan-100 text-left"
+            className="w-full bg-cyan-50 text-cyan-800 font-semibold rounded-xl px-4 py-2.5 flex items-center gap-3 border border-cyan-100 text-left cursor-pointer"
           >
             <span className="material-symbols-outlined text-cyan-700 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>chat_bubble</span>
-            <span className="font-label-bold text-sm">Messages</span>
+            <span className="font-label-bold text-sm">Tin nhắn</span>
           </button>
 
           <button 
             onClick={() => navigate('/profile')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left"
+            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
           >
             <span className="material-symbols-outlined text-slate-400 text-[20px]">person</span>
-            <span className="font-label-bold text-sm">Profile</span>
+            <span className="font-label-bold text-sm">Hồ sơ cá nhân</span>
           </button>
         </nav>
 
@@ -638,17 +639,17 @@ export default function RealtimeChat() {
         <div className="mt-auto border-t border-slate-200 pt-4 px-2">
           <button 
             onClick={() => navigate('/profile')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left"
+            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
           >
             <span className="material-symbols-outlined text-slate-400 text-[20px]">settings</span>
-            <span className="font-label-bold text-sm">Settings</span>
+            <span className="font-label-bold text-sm">Cài đặt</span>
           </button>
           <button 
             onClick={() => navigate('/')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left"
+            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
           >
             <span className="material-symbols-outlined text-slate-400 text-[20px]">help_outline</span>
-            <span className="font-label-bold text-sm">Help</span>
+            <span className="font-label-bold text-sm">Trợ giúp</span>
           </button>
         </div>
       </aside>
@@ -659,7 +660,7 @@ export default function RealtimeChat() {
         {/* Header & Search */}
         <div className="p-6 pb-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Messages</h2>
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Tin nhắn</h2>
             {conversations.length > 0 && (
               <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-cyan-100 text-cyan-800">
                 {conversations.length}
@@ -675,7 +676,7 @@ export default function RealtimeChat() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-11 pr-4 py-2.5 bg-slate-100/90 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 border-none outline-none focus:ring-2 focus:ring-[#005A71]/20 transition-all" 
-              placeholder="Search conversations..." 
+              placeholder="Tìm kiếm cuộc trò chuyện..." 
             />
           </div>
         </div>
@@ -685,27 +686,32 @@ export default function RealtimeChat() {
           {loadingConversations ? (
             <div className="p-8 text-center text-slate-400 text-xs">
               <span className="material-symbols-outlined text-[28px] animate-spin text-primary mb-2">progress_activity</span>
-              <p>Loading your conversations...</p>
+              <p>Đang tải cuộc trò chuyện...</p>
             </div>
           ) : filteredConvs.length === 0 ? (
             <div className="p-8 text-center flex flex-col items-center justify-center h-full text-slate-400">
               <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
                 <span className="material-symbols-outlined text-[24px]">forum</span>
               </div>
-              <p className="font-bold text-slate-800 text-sm mb-1">No conversations yet</p>
+              <p className="font-bold text-slate-800 text-sm mb-1">Chưa có cuộc trò chuyện nào</p>
               <p className="text-xs text-slate-500 mb-4 max-w-[200px]">
-                Book a local guide to begin a chat conversation and plan your experience.
+                Hãy đặt lịch với một Local Helper để bắt đầu trao đổi và lên lịch trình nhé.
               </p>
               <button
-                onClick={() => navigate('/explore')}
-                className="px-4 py-2 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-primary-dark transition-all shadow-sm"
+                onClick={() => navigate('/search')}
+                className="px-4 py-2 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-primary-dark transition-all shadow-sm cursor-pointer"
               >
-                Find a Local Guide
+                Tìm Local Helper
               </button>
             </div>
           ) : (
             filteredConvs.map(conv => {
               const isActive = conv.id === activeId;
+              const statusLabel = 
+                conv.bookingStatus === 'ACCEPTED' ? 'ĐÃ NHẬN' :
+                conv.bookingStatus === 'DECLINED' ? 'ĐÃ TỪ CHỐI' :
+                conv.bookingStatus === 'EXPIRED' ? 'HẾT HẠN' : 'CHỜ DUYỆT';
+
               return (
                 <div 
                   key={conv.id}
@@ -718,7 +724,7 @@ export default function RealtimeChat() {
                 >
                   <div className="relative flex-shrink-0">
                     <img 
-                      alt={conv.name}
+                      alt={conv.name} 
                       className="w-12 h-12 rounded-full object-cover shadow-sm ring-1 ring-slate-200" 
                       src={conv.avatar} 
                     />
@@ -743,7 +749,7 @@ export default function RealtimeChat() {
                           conv.bookingStatus === 'EXPIRED' ? 'bg-slate-100 text-slate-600' :
                           'bg-amber-100 text-amber-800'
                         }`}>
-                          {conv.bookingStatus}
+                          {statusLabel}
                         </span>
                       )}
                     </div>
@@ -765,15 +771,15 @@ export default function RealtimeChat() {
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4 text-slate-400 shadow-sm">
               <span className="material-symbols-outlined text-[32px] text-[#005A71]">chat</span>
             </div>
-            <h3 className="font-bold text-slate-800 text-base mb-1">No Active Conversation</h3>
+            <h3 className="font-bold text-slate-800 text-base mb-1">Chưa chọn cuộc trò chuyện</h3>
             <p className="text-xs text-slate-500 max-w-sm mb-6">
-              When you submit a booking request for a Local Helper, your conversation thread will appear here automatically so you can finalize plans.
+              Khi bạn gửi yêu cầu đặt lịch với Local Helper, cuộc trò chuyện sẽ tự động xuất hiện tại đây để bạn tiện trao đổi.
             </p>
             <button
-              onClick={() => navigate('/explore')}
-              className="px-5 py-2.5 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-primary-dark transition-all shadow-sm"
+              onClick={() => navigate('/search')}
+              className="px-5 py-2.5 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-primary-dark transition-all shadow-sm cursor-pointer"
             >
-              Browse Local Helpers
+              Khám phá Local Helper
             </button>
           </div>
         ) : (
@@ -783,7 +789,7 @@ export default function RealtimeChat() {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <img 
-                    alt={activeConv.name}
+                    alt={activeConv.name} 
                     className="w-10 h-10 rounded-full object-cover shadow-sm ring-1 ring-slate-200" 
                     src={activeConv.avatar} 
                   />
@@ -798,7 +804,7 @@ export default function RealtimeChat() {
                   </h2>
                   <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                    ONLINE
+                    ĐANG HOẠT ĐỘNG
                   </p>
                 </div>
               </div>
@@ -807,21 +813,21 @@ export default function RealtimeChat() {
               <div className="flex items-center gap-2 text-slate-700">
                 <button 
                   onClick={() => setCallStatus('video')}
-                  title="Start Video Call"
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 hover:text-slate-900"
+                  title="Gọi Video"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[22px]">videocam</span>
                 </button>
                 <button 
                   onClick={() => setCallStatus('voice')}
-                  title="Start Voice Call"
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 hover:text-slate-900"
+                  title="Gọi thoại"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[20px]">call</span>
                 </button>
                 <button 
-                  title="More Options"
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 hover:text-slate-900"
+                  title="Tùy chọn khác"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[22px]">more_vert</span>
                 </button>
@@ -836,14 +842,14 @@ export default function RealtimeChat() {
                     {callStatus === 'video' ? 'videocam' : 'call'}
                   </span>
                   <span className="text-sm font-medium">
-                    Calling <strong>{activeConv.name}</strong> with high-definition encrypted connection...
+                    Đang gọi cho <strong>{activeConv.name}</strong> qua đường truyền bảo mật HD...
                   </span>
                 </div>
                 <button 
                   onClick={() => setCallStatus(null)}
-                  className="px-3 py-1 bg-red-500 hover:bg-red-600 rounded-lg text-xs font-semibold"
+                  className="px-3 py-1 bg-red-500 hover:bg-red-600 rounded-lg text-xs font-semibold cursor-pointer"
                 >
-                  End Call
+                  Kết thúc cuộc gọi
                 </button>
               </div>
             )}
@@ -857,7 +863,7 @@ export default function RealtimeChat() {
                     <span className="material-symbols-outlined text-cyan-700 text-[22px]">confirmation_number</span>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900">Linked Booking: </span>
+                        <span className="font-bold text-slate-900">Lịch đặt liên quan: </span>
                         <span className="text-cyan-900 font-semibold">{activeConv.tourName}</span>
                       </div>
                       <span className="text-slate-500">
@@ -874,20 +880,20 @@ export default function RealtimeChat() {
                         <button
                           onClick={() => handleAcceptBookingInChat(activeConv.bookingId, activeConv.name, activeConv.tourName)}
                           disabled={acceptingChatBooking}
-                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all disabled:opacity-50"
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
                         >
                           {acceptingChatBooking ? (
                             <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                           ) : (
                             <span className="material-symbols-outlined text-[16px]">check_circle</span>
                           )}
-                          <span>Accept Request</span>
+                          <span>Chấp nhận tour</span>
                         </button>
                         <button
                           onClick={() => handleDeclineBookingInChat(activeConv.bookingId, activeConv.name)}
-                          className="px-3 py-1.5 bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-bold text-xs transition-all"
+                          className="px-3 py-1.5 bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-bold text-xs transition-all cursor-pointer"
                         >
-                          Decline
+                          Từ chối
                         </button>
                       </>
                     )}
@@ -897,7 +903,7 @@ export default function RealtimeChat() {
                       activeConv.bookingStatus === 'DECLINED' ? 'bg-rose-100 text-rose-800' :
                       'bg-amber-100 text-amber-800'
                     }`}>
-                      {activeConv.bookingStatus === 'ACCEPTED' ? 'ACCEPTED & CONFIRMED' : (activeConv.bookingStatus || 'Active Tour')}
+                      {activeConv.bookingStatus === 'ACCEPTED' ? 'ĐÃ XÁC NHẬN TOUR' : (activeConv.bookingStatus === 'DECLINED' ? 'ĐÃ TỪ CHỐI' : 'CHỜ DUYỆT')}
                     </span>
                   </div>
                 </div>
@@ -910,15 +916,15 @@ export default function RealtimeChat() {
               ) : messages.length === 0 ? (
                 <div className="p-8 text-center flex flex-col items-center justify-center text-slate-400 bg-white/60 rounded-3xl border border-dashed border-slate-200 my-8">
                   <span className="material-symbols-outlined text-[36px] text-primary/60 mb-2">waving_hand</span>
-                  <p className="font-bold text-slate-700 text-sm mb-1">Start chatting with {activeConv.name}!</p>
+                  <p className="font-bold text-slate-700 text-sm mb-1">Bắt đầu trò chuyện với {activeConv.name}!</p>
                   <p className="text-xs text-slate-500 max-w-sm mb-4">
-                    Say hello to coordinate details, meeting spot, or ask any questions about your tour.
+                    Gửi lời chào để trao đổi chi tiết điểm hẹn, lịch trình hoặc bất kỳ câu hỏi nào.
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center max-w-md">
                     {[
-                      `Hi ${activeConv.name}, I'd like to ask about your tour schedule!`,
-                      `Hello! Can we customize our itinerary together?`,
-                      `Hi, are you available for a tour this week?`
+                      `Chào ${activeConv.name}, mình muốn hỏi thêm về lịch trình nhé!`,
+                      `Chào bạn! Chúng mình có thể cùng điều chỉnh lịch trình được không?`,
+                      `Chào bạn, bạn có sẵn sàng cho chuyến đi tuần này không?`
                     ].map((prompt, pIdx) => (
                       <button
                         key={pIdx}
@@ -936,7 +942,7 @@ export default function RealtimeChat() {
                   const userEmail = (currentUser?.email || '').toLowerCase().trim();
                   const isMe = (msg.senderId || '').toLowerCase().trim() === userEmail;
                   const bubbleAvatar = isMe ? displayAvatar : (activeConv?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150');
-                  const bubbleName = isMe ? displayName : (activeConv?.name || 'Local Guide');
+                  const bubbleName = isMe ? displayName : (activeConv?.name || 'Local Helper');
 
                   return (
                     <div 
@@ -946,7 +952,7 @@ export default function RealtimeChat() {
                       }`}
                     >
                       <img 
-                        alt={bubbleName}
+                        alt={bubbleName} 
                         className="w-8 h-8 rounded-full object-cover mb-5 flex-shrink-0 shadow-sm ring-1 ring-slate-200" 
                         src={bubbleAvatar} 
                       />
@@ -958,16 +964,16 @@ export default function RealtimeChat() {
                             <div className="bg-gradient-to-r from-[#005A71] to-[#007A99] text-white px-3.5 py-2.5 flex items-center justify-between">
                               <div className="flex items-center gap-1.5 font-medium text-xs">
                                 <span className="material-symbols-outlined text-[18px] text-amber-300">location_on</span>
-                                <span>{isMe ? 'My Shared Location' : `${bubbleName}'s Location`}</span>
+                                <span>{isMe ? 'Vị trí của tôi' : `Vị trí của ${bubbleName}`}</span>
                               </div>
-                              <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-semibold">MAP</span>
+                              <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-semibold">BẢN ĐỒ</span>
                             </div>
 
                             {/* Google Maps Preview Embed */}
                             <div className="w-full h-40 bg-slate-100 relative">
                               <iframe
-                                title="Google Map Preview"
-                                src={`https://maps.google.com/maps?q=${msg.latitude},${msg.longitude}&hl=en&z=15&output=embed`}
+                                title="Bản đồ Google Maps"
+                                src={`https://maps.google.com/maps?q=${msg.latitude},${msg.longitude}&hl=vi&z=15&output=embed`}
                                 className="w-full h-full border-0 pointer-events-none"
                                 loading="lazy"
                               />
@@ -979,7 +985,7 @@ export default function RealtimeChat() {
                                 <span className="material-symbols-outlined text-red-500 text-[20px] mt-0.5 shrink-0">pin_drop</span>
                                 <div className="min-w-0">
                                   <p className="text-xs font-semibold text-slate-800 line-clamp-2 leading-tight">
-                                    {msg.locationName || 'Live Location'}
+                                    {msg.locationName || 'Vị trí hiện tại'}
                                   </p>
                                   <p className="text-[10px] font-mono text-slate-400 mt-0.5">
                                     {Number(msg.latitude).toFixed(5)}, {Number(msg.longitude).toFixed(5)}
@@ -993,7 +999,7 @@ export default function RealtimeChat() {
                                 rel="noopener noreferrer"
                                 className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-slate-100 hover:bg-[#005A71] text-slate-700 hover:text-white rounded-xl text-xs font-medium transition-all shadow-sm group"
                               >
-                                <span>Open in Google Maps</span>
+                                <span>Mở trên Google Maps</span>
                                 <span className="material-symbols-outlined text-[15px] group-hover:translate-x-0.5 transition-transform">open_in_new</span>
                               </a>
                             </div>
@@ -1001,7 +1007,7 @@ export default function RealtimeChat() {
                         ) : msg.imgAttachment ? (
                           <div className="bg-white border border-slate-200/90 rounded-2xl shadow-sm overflow-hidden max-w-md">
                             <img 
-                              alt="Attachment" 
+                              alt="Tệp đính kèm" 
                               className="w-full h-56 object-cover" 
                               src={msg.imgAttachment} 
                             />
@@ -1036,11 +1042,11 @@ export default function RealtimeChat() {
               {selectedImage && (
                 <div className="flex flex-row-reverse items-end gap-3 ml-auto max-w-[70%]">
                   <div className="p-2 bg-[#005A71]/10 rounded-2xl border border-[#005A71]/30 relative">
-                    <img alt="Preview" src={selectedImage} className="w-48 h-32 object-cover rounded-xl" />
+                    <img alt="Xem trước ảnh" src={selectedImage} className="w-48 h-32 object-cover rounded-xl" />
                     <button 
                       type="button" 
                       onClick={() => setSelectedImage(null)}
-                      className="absolute -top-2 -left-2 bg-red-500 text-white rounded-full p-1 shadow hover:bg-red-600 transition-colors"
+                      className="absolute -top-2 -left-2 bg-red-500 text-white rounded-full p-1 shadow hover:bg-red-600 transition-colors cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-[16px]">close</span>
                     </button>
@@ -1061,7 +1067,7 @@ export default function RealtimeChat() {
                 <button 
                   type="button" 
                   onClick={() => setLocationError(null)}
-                  className="text-amber-500 hover:text-amber-800 p-0.5 ml-2"
+                  className="text-amber-500 hover:text-amber-800 p-0.5 ml-2 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[16px]">close</span>
                 </button>
@@ -1084,8 +1090,8 @@ export default function RealtimeChat() {
               <button 
                 type="button" 
                 onClick={() => fileInputRef.current?.click()}
-                title="Attach Image / Itinerary"
-                className="p-2.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors"
+                title="Đính kèm ảnh"
+                className="p-2.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[24px]">attach_file</span>
               </button>
@@ -1095,8 +1101,8 @@ export default function RealtimeChat() {
                 type="button" 
                 onClick={handleShareLocation}
                 disabled={sharingLocation}
-                title="Share Current Location"
-                className={`p-2.5 rounded-xl transition-all ${
+                title="Chia sẻ vị trí hiện tại"
+                className={`p-2.5 rounded-xl transition-all cursor-pointer ${
                   sharingLocation 
                     ? 'bg-amber-50 text-amber-600 animate-pulse' 
                     : 'text-slate-500 hover:text-red-500 hover:bg-red-50'
@@ -1114,13 +1120,13 @@ export default function RealtimeChat() {
                 value={inputMsg}
                 onChange={(e) => setInputMsg(e.target.value)}
                 className="flex-grow py-3 px-4 bg-slate-100/90 rounded-xl text-slate-900 placeholder:text-slate-400 text-sm outline-none border-none focus:ring-1 focus:ring-[#005A71]" 
-                placeholder="Type a message..." 
+                placeholder="Nhập tin nhắn..." 
               />
               
               <button 
                 type="submit" 
                 disabled={!inputMsg.trim() && !selectedImage}
-                className="p-3 bg-[#005A71] hover:bg-[#004B5E] text-white rounded-xl shadow-sm hover:shadow transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center shrink-0"
+                className="p-3 bg-[#005A71] hover:bg-[#004B5E] text-white rounded-xl shadow-sm hover:shadow transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center shrink-0 cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[20px]">send</span>
               </button>

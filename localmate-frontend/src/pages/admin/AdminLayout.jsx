@@ -10,14 +10,14 @@ export default function AdminLayout({ children }) {
   useEffect(() => {
     const stored = localStorage.getItem('localmate_user');
     if (!stored) {
-      alert('Please log in with an Administrator account!');
+      alert('Vui lòng đăng nhập bằng tài khoản Quản trị viên!');
       navigate('/login');
       return;
     }
     try {
       const user = JSON.parse(stored);
       if (!user?.roles?.includes('ROLE_ADMIN')) {
-        alert('Access denied: Administrator privileges required!');
+        alert('Từ chối truy cập: Yêu cầu quyền Quản trị viên!');
         navigate('/');
         return;
       }
@@ -38,8 +38,8 @@ export default function AdminLayout({ children }) {
   const isHelpersActive = location.pathname === '/admin/accounts/local-helpers';
   const isAccountMgmtActive = isCustomersActive || isHelpersActive;
 
-  const rawName = currentUser?.fullName || "System Admin";
-  const displayName = rawName.includes('Quản trị viên') ? 'LocalMate Administrator' : rawName;
+  const rawName = currentUser?.fullName || "Quản trị viên";
+  const displayName = rawName;
   const displayAvatar = currentUser?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150";
 
   return (
@@ -57,14 +57,14 @@ export default function AdminLayout({ children }) {
               />
               <div className="min-w-0">
                 <p className="font-semibold text-sm text-slate-900 truncate">{displayName}</p>
-                <p className="text-xs text-slate-500 truncate">System Admin</p>
+                <p className="text-xs text-slate-500 truncate">Quản trị viên hệ thống</p>
               </div>
             </div>
             <button 
               onClick={() => navigate('/profile')}
               className="mt-3 w-full py-2 px-4 rounded-lg bg-cyan-50 text-cyan-800 text-xs border border-cyan-200 hover:bg-cyan-100 transition-all font-semibold cursor-pointer"
             >
-              Edit Profile
+              Chỉnh sửa hồ sơ
             </button>
           </div>
 
@@ -90,7 +90,7 @@ export default function AdminLayout({ children }) {
                   >
                     dashboard
                   </span>
-                  <span>Dashboard</span>
+                  <span>Tổng quan</span>
                 </>
               )}
             </NavLink>
@@ -108,7 +108,7 @@ export default function AdminLayout({ children }) {
                   <span className={`material-symbols-outlined text-[20px] ${isAccountMgmtActive ? 'text-cyan-700' : 'text-slate-400'}`}>
                     manage_accounts
                   </span>
-                  <span>Account Mgmt</span>
+                  <span>Quản lý tài khoản</span>
                 </div>
                 <span className={`material-symbols-outlined text-lg transition-transform duration-200 ${accountMgmtOpen ? 'rotate-180' : ''}`}>
                   expand_more
@@ -128,7 +128,7 @@ export default function AdminLayout({ children }) {
                     }
                   >
                     <span className={`w-1.5 h-1.5 rounded-full ${isCustomersActive ? 'bg-cyan-700' : 'bg-slate-300'}`}></span>
-                    <span>Customers</span>
+                    <span>Khách hàng</span>
                   </NavLink>
 
                   <NavLink
@@ -142,7 +142,7 @@ export default function AdminLayout({ children }) {
                     }
                   >
                     <span className={`w-1.5 h-1.5 rounded-full ${isHelpersActive ? 'bg-cyan-700' : 'bg-slate-300'}`}></span>
-                    <span>Local Helpers</span>
+                    <span>Local Helper</span>
                   </NavLink>
                 </div>
               )}
@@ -154,7 +154,7 @@ export default function AdminLayout({ children }) {
               className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
             >
               <span className="material-symbols-outlined text-slate-400 text-[20px]">verified_user</span>
-              <span>Helper Approval</span>
+              <span>Phê duyệt Helper</span>
             </NavLink>
           </nav>
         </div>
@@ -166,7 +166,7 @@ export default function AdminLayout({ children }) {
             className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
           >
             <span className="material-symbols-outlined text-slate-400 text-[20px]">settings</span>
-            <span>Settings</span>
+            <span>Cài đặt</span>
           </NavLink>
 
           <button
@@ -175,7 +175,7 @@ export default function AdminLayout({ children }) {
             className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer text-left"
           >
             <span className="material-symbols-outlined text-rose-500 text-[20px]">logout</span>
-            <span>Log Out</span>
+            <span>Đăng xuất</span>
           </button>
         </div>
       </aside>
