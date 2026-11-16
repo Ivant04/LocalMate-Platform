@@ -14,7 +14,7 @@ export default function MainLayout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface text-on-surface">
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 antialiased selection:bg-teal-500 selection:text-white">
       <Navbar />
       <main className={`flex-grow pt-16 ${isChat || isAuth ? 'h-screen overflow-hidden' : ''}`}>
         <Outlet />

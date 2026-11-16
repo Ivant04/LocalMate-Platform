@@ -36,27 +36,30 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 h-16 bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md shadow-sm border-b border-border-subtle flex items-center">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 md:px-10 w-full">
+    <header className="fixed top-0 left-0 w-full z-50 h-16 bg-white/90 backdrop-blur-md shadow-2xs border-b border-slate-200/80 flex items-center transition-all">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 md:px-10 w-full">
         <div className="flex items-center gap-8">
-          <Link to="/" className="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">
-            LocalMate
+          <Link to="/" className="text-xl md:text-2xl font-black text-teal-800 tracking-tight flex items-center gap-2 group">
+            <span className="w-8 h-8 rounded-xl bg-teal-700 text-white flex items-center justify-center font-black text-base shadow-sm group-hover:scale-105 transition-transform">
+              L
+            </span>
+            <span>LocalMate</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link
               to="/"
-              className={`font-label-bold text-label-bold pb-1 transition-colors ${isActive('/')
-                ? 'text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed'
-                : 'text-on-surface-variant dark:text-outline-variant hover:text-primary'
+              className={`text-sm font-semibold pb-1 transition-colors ${isActive('/')
+                ? 'text-teal-800 border-b-2 border-teal-700'
+                : 'text-slate-600 hover:text-teal-700'
                 }`}
             >
               Khám phá
             </Link>
             <Link
               to="/search"
-              className={`font-label-bold text-label-bold pb-1 transition-colors ${isActive('/search')
-                ? 'text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed'
-                : 'text-on-surface-variant dark:text-outline-variant hover:text-primary'
+              className={`text-sm font-semibold pb-1 transition-colors ${isActive('/search')
+                ? 'text-teal-800 border-b-2 border-teal-700'
+                : 'text-slate-600 hover:text-teal-700'
                 }`}
             >
               Tìm Local Helper
@@ -71,9 +74,9 @@ export default function Navbar() {
                   navigate('/chat');
                 }
               }}
-              className={`font-label-bold text-label-bold pb-1 transition-colors ${isActive('/chat')
-                ? 'text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed'
-                : 'text-on-surface-variant dark:text-outline-variant hover:text-primary'
+              className={`text-sm font-semibold pb-1 transition-colors cursor-pointer ${isActive('/chat')
+                ? 'text-teal-800 border-b-2 border-teal-700'
+                : 'text-slate-600 hover:text-teal-700'
                 }`}
             >
               Tin nhắn
@@ -88,7 +91,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setDashboardOpen((prev) => !prev)}
-                  className="font-label-bold text-label-bold text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors flex items-center gap-1 py-1"
+                  className="text-sm font-semibold text-slate-600 hover:text-teal-700 transition-colors flex items-center gap-1 py-1 cursor-pointer"
                 >
                   {currentUser.roles?.includes('ROLE_ADMIN')
                     ? 'Kênh Quản trị'
@@ -99,20 +102,20 @@ export default function Navbar() {
                 </button>
                 {dashboardOpen && (
                   <div className="absolute top-full left-0 pt-1 w-56 z-50">
-                    <div className="bg-surface dark:bg-surface-dark border border-border-subtle rounded-xl shadow-xl py-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="bg-white border border-slate-200 rounded-2xl shadow-xl py-2">
                       {currentUser.roles?.includes('ROLE_ADMIN') && (
                         <>
                           <Link
                             to="/admin"
                             onClick={() => setDashboardOpen(false)}
-                            className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
+                            className="block px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-800 hover:text-teal-700 transition-colors"
                           >
                             Quản trị hệ thống
                           </Link>
                           <Link
                             to="/reviews"
                             onClick={() => setDashboardOpen(false)}
-                            className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
+                            className="block px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-800 hover:text-teal-700 transition-colors"
                           >
                             Quản lý đánh giá
                           </Link>
@@ -124,14 +127,14 @@ export default function Navbar() {
                           <Link
                             to="/helper-dashboard"
                             onClick={() => setDashboardOpen(false)}
-                            className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
+                            className="block px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-800 hover:text-teal-700 transition-colors"
                           >
                             Bảng điều khiển Helper
                           </Link>
                           <Link
                             to="/reviews"
                             onClick={() => setDashboardOpen(false)}
-                            className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
+                            className="block px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-800 hover:text-teal-700 transition-colors"
                           >
                             Đánh giá của tôi
                           </Link>
@@ -143,14 +146,14 @@ export default function Navbar() {
                           <Link
                             to="/traveler"
                             onClick={() => setDashboardOpen(false)}
-                            className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
+                            className="block px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-800 hover:text-teal-700 transition-colors"
                           >
                             Bảng điều khiển Du khách
                           </Link>
                           <Link
                             to="/reviews"
                             onClick={() => setDashboardOpen(false)}
-                            className="block px-4 py-2.5 hover:bg-primary-container/10 text-body-sm font-label-bold text-on-surface transition-colors"
+                            className="block px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-800 hover:text-teal-700 transition-colors"
                           >
                             Quản lý đánh giá
                           </Link>
@@ -164,30 +167,30 @@ export default function Navbar() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {currentUser ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link
                 to="/profile"
                 title="Chỉnh sửa hồ sơ"
-                className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high border border-border-subtle transition-all cursor-pointer group"
+                className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 transition-all cursor-pointer group"
               >
                 {currentUser.avatarUrl ? (
                   <img
                     src={currentUser.avatarUrl}
                     alt="Avatar"
-                    className="w-8 h-8 rounded-full object-cover border border-primary/40 group-hover:scale-105 transition-transform"
+                    className="w-8 h-8 rounded-full object-cover ring-2 ring-teal-600/30 group-hover:scale-105 transition-transform"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">
+                  <div className="w-8 h-8 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold text-sm">
                     {currentUser.fullName ? currentUser.fullName.charAt(0).toUpperCase() : 'U'}
                   </div>
                 )}
                 <div className="hidden sm:block text-left">
-                  <p className="text-body-sm font-bold text-on-surface leading-tight max-w-[120px] truncate group-hover:text-primary transition-colors">
+                  <p className="text-xs font-bold text-slate-900 leading-tight max-w-[130px] truncate group-hover:text-teal-700 transition-colors">
                     {currentUser.fullName || currentUser.email}
                   </p>
-                  <p className="text-[11px] text-on-surface-variant leading-none">
+                  <p className="text-[10px] text-slate-500 font-medium leading-none mt-0.5">
                     {currentUser.roles?.includes('ROLE_ADMIN') ? 'Quản trị viên' : currentUser.roles?.includes('ROLE_HELPER') ? 'Local Helper' : 'Du khách'}
                   </p>
                 </div>
@@ -195,7 +198,7 @@ export default function Navbar() {
               <button
                 onClick={handleLogout}
                 title="Đăng xuất"
-                className="font-label-bold text-body-sm text-error hover:bg-error/10 px-3 py-2 rounded-xl transition-all"
+                className="text-xs font-bold text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-xl transition-all cursor-pointer"
               >
                 Đăng xuất
               </button>
@@ -203,34 +206,34 @@ export default function Navbar() {
           ) : location.pathname === '/login' ? (
             <Link
               to="/"
-              className="font-label-bold text-label-bold text-primary hover:bg-primary-container/10 px-4 py-2 rounded-xl transition-all flex items-center gap-1.5"
+              className="text-sm font-bold text-teal-800 hover:bg-teal-50 px-4 py-2 rounded-xl transition-all flex items-center gap-1.5"
             >
               <span className="material-symbols-outlined text-lg">arrow_back</span>
               Trang chủ
             </Link>
           ) : (
-            <>
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate('/login')}
-                className="hidden md:block font-label-bold text-label-bold text-primary hover:bg-primary-container/10 px-4 py-2 rounded-xl transition-all"
+                className="hidden sm:block text-sm font-bold text-slate-700 hover:text-teal-800 hover:bg-slate-50 px-4 py-2 rounded-xl transition-all cursor-pointer"
               >
                 Đăng nhập
               </button>
               <button
                 onClick={() => navigate('/login?tab=signup')}
-                className="bg-primary-container text-on-primary-container font-label-bold text-label-bold px-6 py-2.5 rounded-xl hover:shadow-lg active:scale-95 transition-all"
+                className="btn-primary"
               >
                 Đăng ký
               </button>
-            </>
+            </div>
           )}
 
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-on-surface hover:text-primary transition-colors"
+            className="md:hidden text-slate-700 hover:text-teal-700 p-1.5 rounded-lg transition-colors cursor-pointer"
           >
-            <span className="material-symbols-outlined text-3xl">
+            <span className="material-symbols-outlined text-2xl">
               {mobileMenuOpen ? 'close' : 'menu'}
             </span>
           </button>

@@ -43,26 +43,26 @@ export default function AdminLayout({ children }) {
   const displayAvatar = currentUser?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150";
 
   return (
-    <div className="flex h-screen w-full max-w-full bg-[#F8FAFC] text-slate-800 antialiased font-sans overflow-hidden selection:bg-cyan-700 selection:text-white">
+    <div className="flex h-screen w-full max-w-full bg-slate-50 text-slate-800 antialiased font-sans overflow-hidden selection:bg-teal-700 selection:text-white">
       {/* Sidebar Navigation - Fixed in place */}
       <aside className="w-64 shrink-0 h-full bg-white border-r border-slate-200/80 flex flex-col justify-between z-20 select-none overflow-y-auto">
         <div>
           {/* User Profile Card */}
           <div className="p-4 border-b border-slate-100 mb-2">
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80">
               <img 
                 alt={displayName} 
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-cyan-600/20 shrink-0" 
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-teal-600/20 shrink-0" 
                 src={displayAvatar} 
               />
               <div className="min-w-0">
-                <p className="font-semibold text-sm text-slate-900 truncate">{displayName}</p>
+                <p className="font-bold text-sm text-slate-900 truncate">{displayName}</p>
                 <p className="text-xs text-slate-500 truncate">Quản trị viên hệ thống</p>
               </div>
             </div>
             <button 
               onClick={() => navigate('/profile')}
-              className="mt-3 w-full py-2 px-4 rounded-lg bg-cyan-50 text-cyan-800 text-xs border border-cyan-200 hover:bg-cyan-100 transition-all font-semibold cursor-pointer"
+              className="mt-3 w-full py-2 px-4 rounded-xl bg-teal-50 text-teal-800 text-xs border border-teal-200/80 hover:bg-teal-100 transition-all font-bold cursor-pointer"
             >
               Chỉnh sửa hồ sơ
             </button>
@@ -77,7 +77,7 @@ export default function AdminLayout({ children }) {
               className={({ isActive }) =>
                 `w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all ${
                   isActive
-                    ? 'bg-cyan-50 text-cyan-800 font-semibold border border-cyan-100'
+                    ? 'bg-teal-50 text-teal-800 font-bold border border-teal-200/80 shadow-xs'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`
               }
@@ -85,7 +85,7 @@ export default function AdminLayout({ children }) {
               {({ isActive }) => (
                 <>
                   <span 
-                    className={`material-symbols-outlined text-[20px] ${isActive ? 'text-cyan-700' : 'text-slate-400'}`}
+                    className={`material-symbols-outlined text-[20px] ${isActive ? 'text-teal-700' : 'text-slate-400'}`}
                     style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
                   >
                     dashboard
@@ -101,11 +101,11 @@ export default function AdminLayout({ children }) {
                 type="button"
                 onClick={() => setAccountMgmtOpen(!accountMgmtOpen)}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors cursor-pointer ${
-                  isAccountMgmtActive ? 'bg-cyan-50 text-cyan-800 font-semibold border border-cyan-100' : 'text-slate-600 hover:bg-slate-50'
+                  isAccountMgmtActive ? 'bg-teal-50 text-teal-800 font-bold border border-teal-200/80' : 'text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className={`material-symbols-outlined text-[20px] ${isAccountMgmtActive ? 'text-cyan-700' : 'text-slate-400'}`}>
+                  <span className={`material-symbols-outlined text-[20px] ${isAccountMgmtActive ? 'text-teal-700' : 'text-slate-400'}`}>
                     manage_accounts
                   </span>
                   <span>Quản lý tài khoản</span>
@@ -122,12 +122,12 @@ export default function AdminLayout({ children }) {
                     className={({ isActive }) =>
                       `flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs transition-all ${
                         isActive
-                          ? 'bg-cyan-100/70 text-cyan-900 font-bold border border-cyan-200'
+                          ? 'bg-teal-100/70 text-teal-900 font-bold border border-teal-200'
                           : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                       }`
                     }
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${isCustomersActive ? 'bg-cyan-700' : 'bg-slate-300'}`}></span>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isCustomersActive ? 'bg-teal-700' : 'bg-slate-300'}`}></span>
                     <span>Khách hàng</span>
                   </NavLink>
 
@@ -136,12 +136,12 @@ export default function AdminLayout({ children }) {
                     className={({ isActive }) =>
                       `flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs transition-all ${
                         isActive
-                          ? 'bg-cyan-100/70 text-cyan-900 font-bold border border-cyan-200'
+                          ? 'bg-teal-100/70 text-teal-900 font-bold border border-teal-200'
                           : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                       }`
                     }
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${isHelpersActive ? 'bg-cyan-700' : 'bg-slate-300'}`}></span>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isHelpersActive ? 'bg-teal-700' : 'bg-slate-300'}`}></span>
                     <span>Local Helper</span>
                   </NavLink>
                 </div>
@@ -163,7 +163,7 @@ export default function AdminLayout({ children }) {
         <div className="p-3 border-t border-slate-200/80 space-y-1">
           <NavLink
             to="/profile"
-            className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+            className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
           >
             <span className="material-symbols-outlined text-slate-400 text-[20px]">settings</span>
             <span>Cài đặt</span>
@@ -172,7 +172,7 @@ export default function AdminLayout({ children }) {
           <button
             type="button"
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer text-left"
+            className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer text-left"
           >
             <span className="material-symbols-outlined text-rose-500 text-[20px]">logout</span>
             <span>Đăng xuất</span>
@@ -181,7 +181,7 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Main Content Area - Only this side scrolls! */}
-      <main className="flex-1 h-full min-w-0 flex flex-col bg-[#F8FAFC] overflow-y-auto overflow-x-hidden">
+      <main className="flex-1 h-full min-w-0 flex flex-col bg-slate-50 overflow-y-auto overflow-x-hidden">
         {children}
       </main>
     </div>

@@ -94,6 +94,10 @@ export default {
         "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
         "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
         "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }]
+      },
+      boxShadow: {
+        "2xs": "0 1px 2px 0 rgba(0, 0, 0, 0.04)",
+        "xs": "0 1px 3px 0 rgba(0, 0, 0, 0.06)",
       }
     },
   },

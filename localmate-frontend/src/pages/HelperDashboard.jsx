@@ -490,7 +490,7 @@ export default function HelperDashboard() {
             {/* Real Review Rating Card */}
             <div 
               onClick={() => navigate('/reviews')}
-              className="flex flex-col items-center bg-white p-3.5 px-5 rounded-2xl border border-slate-200/80 shadow-2xs min-w-[110px] cursor-pointer hover:border-cyan-400 transition-colors"
+              className="flex flex-col items-center bg-white p-3.5 px-5 rounded-2xl border border-slate-200/80 shadow-2xs min-w-[110px] cursor-pointer hover:border-teal-400 transition-colors"
               title="Xem tất cả đánh giá của bạn"
             >
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">ĐÁNH GIÁ</span>

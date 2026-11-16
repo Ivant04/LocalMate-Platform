@@ -983,30 +983,34 @@ export default function HelperDetail() {
             </div>
             
             {/* Price Calculations */}
-            <div className="border-t border-border-subtle pt-4 space-y-2">
-              <div className="flex justify-between font-body-md text-on-surface-variant">
+            <div className="border-t border-slate-200/80 pt-4 space-y-2">
+              <div className="flex justify-between text-xs sm:text-sm text-slate-600">
                 <span>{formatVND(hourlyRate)} x {hours} giờ x {people} khách</span>
-                <span>{formatVND(baseCost)}</span>
+                <span className="font-semibold text-slate-800">{formatVND(baseCost)}</span>
               </div>
-              <div className="flex justify-between font-body-md text-on-surface-variant">
+              <div className="flex justify-between text-xs sm:text-sm text-slate-600">
                 <span>Phí dịch vụ nền tảng (10%)</span>
-                <span>{formatVND(serviceFee)}</span>
+                <span className="font-semibold text-slate-800">{formatVND(serviceFee)}</span>
               </div>
-              <div className="flex justify-between font-label-bold text-label-bold text-on-surface border-t border-border-subtle pt-2">
-                <span>Tổng cộng</span>
-                <span className="text-primary font-bold">{formatVND(totalCost)}</span>
+              <div className="flex justify-between text-base font-bold text-slate-900 border-t border-slate-200/80 pt-2.5">
+                <span>Tổng cộng (Ký quỹ)</span>
+                <span className="text-teal-700 font-black text-lg">{formatVND(totalCost)}</span>
               </div>
+              <p className="text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1.5 rounded-lg font-medium flex items-center gap-1.5 mt-2">
+                <span className="material-symbols-outlined text-[15px] text-emerald-700" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
+                Quỹ Escrow giữ tiền an toàn 100% đến khi tour kết thúc
+              </p>
             </div>
             
             <button 
               type="submit"
               disabled={isHelperOffline || Boolean(conflictingSlot)}
-              className={`w-full py-4 rounded-xl font-label-bold text-label-bold text-center block shadow-md transition-all ${
+              className={`w-full py-3.5 rounded-xl font-bold text-sm text-center block shadow-sm transition-all cursor-pointer ${
                 isHelperOffline
                   ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300'
                   : conflictingSlot
                   ? 'bg-amber-100 text-amber-800 cursor-not-allowed border border-amber-300'
-                  : 'bg-primary-container text-on-primary-container hover:bg-primary active:scale-[0.98]'
+                  : 'btn-primary'
               }`}
             >
               {isHelperOffline 
@@ -1019,7 +1023,7 @@ export default function HelperDetail() {
             <button 
               type="button"
               onClick={handleRequestFormSubmit}
-              className="w-full border border-primary text-primary py-3.5 rounded-xl font-label-bold text-label-bold text-center block hover:bg-primary/5 transition-all"
+              className="w-full btn-secondary py-3 text-xs sm:text-sm"
             >
               Yêu cầu tour tùy chỉnh
             </button>
@@ -1027,10 +1031,10 @@ export default function HelperDetail() {
             <button 
               type="button"
               onClick={handleMessageHelper}
-              className="w-full flex items-center justify-center gap-2 bg-surface hover:bg-surface-container border border-border-subtle hover:border-primary text-on-surface hover:text-primary py-3.5 rounded-xl font-label-bold text-label-bold text-center transition-all"
+              className="w-full btn-outline py-2.5 text-xs sm:text-sm"
             >
-              <span className="material-symbols-outlined text-[20px] text-primary">chat</span>
-              Nhắn tin cho {guide?.fullName || guide?.name || 'Helper'}
+              <span className="material-symbols-outlined text-[18px] text-teal-700">chat</span>
+              <span>Nhắn tin cho {guide?.fullName || guide?.name || 'Helper'}</span>
             </button>
           </form>
         </div>

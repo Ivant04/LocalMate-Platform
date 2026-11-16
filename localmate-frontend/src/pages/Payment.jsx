@@ -218,27 +218,27 @@ export default function Payment() {
           </div>
 
           <div className="flex items-center gap-4 max-w-xl">
-            <div className="flex items-center gap-2 text-cyan-800 font-semibold text-sm">
-              <div className="w-8 h-8 rounded-full bg-cyan-700 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+            <div className="flex items-center gap-2 text-teal-800 font-bold text-xs sm:text-sm">
+              <div className="w-8 h-8 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                 <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
               </div>
               <span>Chọn Tour</span>
             </div>
-            <div className="flex-grow h-0.5 bg-cyan-600"></div>
+            <div className="flex-grow h-0.5 bg-teal-600"></div>
 
-            <div className="flex items-center gap-2 text-cyan-800 font-bold text-sm">
-              <div className="w-8 h-8 rounded-full bg-cyan-700 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-4 ring-cyan-100">
+            <div className="flex items-center gap-2 text-teal-800 font-bold text-xs sm:text-sm">
+              <div className="w-8 h-8 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-4 ring-teal-100">
                 2
               </div>
-              <span>Thanh toán &amp; Xác nhận</span>
+              <span>Thanh toán &amp; Ký quỹ</span>
             </div>
             <div className="flex-grow h-0.5 bg-slate-200"></div>
 
-            <div className="flex items-center gap-2 text-slate-400 font-semibold text-sm">
+            <div className="flex items-center gap-2 text-slate-400 font-semibold text-xs sm:text-sm">
               <div className="w-8 h-8 rounded-full border border-slate-300 text-slate-400 flex items-center justify-center font-bold text-xs">
                 3
               </div>
-              <span>Hoàn tất</span>
+              <span>Hoàn tất &amp; Giữ chỗ</span>
             </div>
           </div>
         </section>
@@ -505,7 +505,7 @@ export default function Payment() {
               <button 
                 type="submit"
                 disabled={isProcessing}
-                className="w-full py-4 rounded-xl bg-cyan-700 hover:bg-cyan-800 text-white font-bold text-base shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                className="w-full btn-primary py-4 text-base font-bold shadow-md disabled:opacity-50"
               >
                 {isProcessing ? (
                   <>

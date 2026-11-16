@@ -30,6 +30,11 @@ Thumbs.db
 .env.test.local
 .env.production.local
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
 # Logs
 *.log
 npm-debug.log*

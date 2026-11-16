@@ -70,32 +70,32 @@ export default function PaymentResult() {
   const isCancelled = result?.isCancelled || result?.status === 'CANCELLED';
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-12 md:py-16 selection:bg-cyan-700 selection:text-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+    <div className="min-h-screen bg-slate-50 py-12 md:py-16 selection:bg-teal-700 selection:text-white">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
         {isLoading ? (
-          <div className="bg-white rounded-3xl p-10 md:p-14 border border-slate-200 shadow-sm text-center space-y-6">
-            <div className="w-16 h-16 mx-auto rounded-full border-4 border-cyan-600 border-t-transparent animate-spin"></div>
+          <div className="card-bento p-10 md:p-14 text-center space-y-6">
+            <div className="w-16 h-16 mx-auto rounded-full border-4 border-teal-700 border-t-transparent animate-spin"></div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-900">Đang xác thực thanh toán...</h2>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">Đang xác thực thanh toán...</h2>
               <p className="text-slate-500 text-sm max-w-md mx-auto">
                 Vui lòng đợi trong giây lát, hệ thống đang kiểm tra giao dịch với cổng thanh toán PayOS VietQR.
               </p>
             </div>
           </div>
         ) : error ? (
-          <div className="bg-white rounded-3xl p-8 md:p-12 border border-red-200 shadow-sm text-center space-y-6">
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-red-50 text-red-600 flex items-center justify-center">
+          <div className="card-bento p-8 md:p-12 border-rose-200 text-center space-y-6">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
               <span className="material-symbols-outlined text-4xl">error</span>
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-900">Lỗi xác thực giao dịch</h2>
-              <p className="text-red-600 text-sm max-w-md mx-auto">{error}</p>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">Lỗi xác thực giao dịch</h2>
+              <p className="text-rose-600 text-sm max-w-md mx-auto">{error}</p>
             </div>
             <div className="pt-4 flex justify-center gap-3">
               <button 
                 onClick={() => navigate('/payment')} 
-                className="px-6 py-2.5 bg-cyan-700 hover:bg-cyan-800 text-white font-semibold text-sm rounded-xl transition shadow-sm"
+                className="btn-primary"
               >
                 Quay lại thanh toán
               </button>
@@ -103,7 +103,7 @@ export default function PaymentResult() {
           </div>
         ) : isSuccess ? (
           /* SUCCESS RECEIPT */
-          <div className="bg-white rounded-3xl p-8 md:p-12 border border-slate-200 shadow-sm space-y-8">
+          <div className="card-bento p-8 md:p-12 space-y-8">
             
             {/* Success Header */}
             <div className="text-center space-y-3">
@@ -112,19 +112,19 @@ export default function PaymentResult() {
                   check_circle
                 </span>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 font-headline-lg">
+              <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
                 Thanh toán thành công!
               </h1>
-              <p className="text-slate-500 text-sm max-w-md mx-auto">
-                Cảm ơn bạn! Giao dịch đã được xác nhận qua PayOS VietQR và lịch trình của bạn đã được đảm bảo.
+              <p className="text-slate-500 text-sm max-w-md mx-auto leading-relaxed">
+                Cảm ơn bạn! Giao dịch đã được xác nhận qua PayOS VietQR và lịch trình của bạn đã được đảm bảo an toàn.
               </p>
             </div>
 
             {/* Receipt Summary Card */}
             <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/80 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Hóa đơn giao dịch</span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Hóa đơn giao dịch</span>
+                <span className="badge-success">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                   ĐÃ THANH TOÁN
                 </span>
@@ -132,39 +132,39 @@ export default function PaymentResult() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-slate-400 text-xs block">Mã đặt tour</span>
-                  <span className="font-semibold text-slate-900 break-all">{result.bookingId || result.orderCode}</span>
+                  <span className="text-slate-400 text-xs block font-medium">Mã đặt tour</span>
+                  <span className="font-bold text-slate-900 break-all">{result.bookingId || result.orderCode}</span>
                 </div>
 
                 <div>
-                  <span className="text-slate-400 text-xs block">Mã đơn hàng PayOS</span>
-                  <span className="font-semibold text-slate-900">{result.orderCode || 'N/A'}</span>
+                  <span className="text-slate-400 text-xs block font-medium">Mã đơn hàng PayOS</span>
+                  <span className="font-bold text-slate-900">{result.orderCode || 'N/A'}</span>
                 </div>
 
                 {result.amount > 0 && (
                   <div>
-                    <span className="text-slate-400 text-xs block">Số tiền đã thanh toán</span>
-                    <span className="font-bold text-cyan-800 text-base">
+                    <span className="text-slate-400 text-xs block font-medium">Số tiền đã thanh toán</span>
+                    <span className="font-black text-teal-800 text-base">
                       {formatVND(result.amount)}
                     </span>
                   </div>
                 )}
 
                 <div>
-                  <span className="text-slate-400 text-xs block">Cổng thanh toán</span>
-                  <span className="font-semibold text-slate-900">
+                  <span className="text-slate-400 text-xs block font-medium">Cổng thanh toán</span>
+                  <span className="font-bold text-slate-900">
                     PayOS (VietQR Chuyển khoản 24/7)
                   </span>
                 </div>
 
                 <div>
-                  <span className="text-slate-400 text-xs block">Trạng thái xác thực</span>
-                  <span className="font-medium text-emerald-700">Đã xác thực & Thành công</span>
+                  <span className="text-slate-400 text-xs block font-medium">Trạng thái xác thực</span>
+                  <span className="font-bold text-emerald-700">Đã xác thực &amp; Thành công</span>
                 </div>
 
                 {result.tourName && (
                   <div>
-                    <span className="text-slate-400 text-xs block">Trải nghiệm đặt</span>
+                    <span className="text-slate-400 text-xs block font-medium">Trải nghiệm đặt</span>
                     <span className="font-medium text-slate-700">{result.tourName}</span>
                   </div>
                 )}
@@ -172,10 +172,10 @@ export default function PaymentResult() {
             </div>
 
             {/* Shield & Protection Banner */}
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-cyan-50/60 border border-cyan-100 text-xs text-cyan-900">
-              <span className="material-symbols-outlined text-cyan-700 text-xl shrink-0">verified_user</span>
-              <span>
-                Khoản tiền được giữ an toàn qua <strong>LocalMate Shield</strong> cho đến khi bạn gặp Local Helper và chuyến đi kết thúc an toàn.
+            <div className="flex items-center gap-3 p-4 rounded-2xl bg-teal-50/80 border border-teal-200/80 text-xs text-teal-900">
+              <span className="material-symbols-outlined text-teal-700 text-2xl shrink-0">verified_user</span>
+              <span className="leading-relaxed">
+                Khoản tiền được giữ an toàn qua cơ chế <strong>Ký quỹ Escrow Bảo đảm 100%</strong> cho đến khi bạn gặp Local Helper và chuyến đi kết thúc an toàn.
               </span>
             </div>
 
@@ -183,14 +183,14 @@ export default function PaymentResult() {
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to="/traveler"
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-cyan-700 hover:bg-cyan-800 text-white font-semibold text-sm transition shadow-sm flex items-center justify-center gap-2"
+                className="btn-primary w-full sm:w-auto"
               >
                 <span className="material-symbols-outlined text-[18px]">calendar_month</span>
                 <span>Xem lịch đặt của tôi</span>
               </Link>
               <Link
                 to="/chat"
-                className="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm transition flex items-center justify-center gap-2"
+                className="btn-outline w-full sm:w-auto"
               >
                 <span className="material-symbols-outlined text-[18px]">chat</span>
                 <span>Nhắn tin với Helper</span>
@@ -200,17 +200,17 @@ export default function PaymentResult() {
           </div>
         ) : (
           /* CANCELLED OR FAILED PAYMENT */
-          <div className="bg-white rounded-3xl p-8 md:p-12 border border-slate-200 shadow-sm space-y-8">
+          <div className="card-bento p-8 md:p-12 space-y-8">
             <div className="text-center space-y-3">
               <div className="w-20 h-20 mx-auto rounded-full bg-amber-50 text-amber-600 flex items-center justify-center ring-8 ring-amber-50/50">
                 <span className="material-symbols-outlined text-5xl">
                   {isCancelled ? 'cancel' : 'highlight_off'}
                 </span>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 font-headline-lg">
+              <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
                 {isCancelled ? 'Giao dịch đã hủy' : 'Thanh toán chưa hoàn tất'}
               </h1>
-              <p className="text-slate-500 text-sm max-w-md mx-auto">
+              <p className="text-slate-500 text-sm max-w-md mx-auto leading-relaxed">
                 {isCancelled
                   ? 'Bạn đã hủy phiên giao dịch thanh toán. Không có khoản phí nào bị trừ khỏi tài khoản của bạn.'
                   : result?.message || 'Không thể hoàn tất giao dịch. Vui lòng thử lại phương thức thanh toán khác hoặc liên hệ hỗ trợ.'}
@@ -231,14 +231,14 @@ export default function PaymentResult() {
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => navigate('/payment')}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-cyan-700 hover:bg-cyan-800 text-white font-semibold text-sm transition shadow-sm flex items-center justify-center gap-2"
+                className="btn-primary w-full sm:w-auto"
               >
                 <span className="material-symbols-outlined text-[18px]">replay</span>
                 <span>Thử thanh toán lại</span>
               </button>
               <Link
                 to="/"
-                className="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm transition flex items-center justify-center gap-2"
+                className="btn-outline w-full sm:w-auto"
               >
                 <span>Về trang chủ</span>
               </Link>

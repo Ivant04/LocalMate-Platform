@@ -385,8 +385,8 @@ export default function TravelerDashboard() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('all')}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                    activeTab === 'all' ? 'bg-[#005A71] text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === 'all' ? 'bg-teal-700 text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
                   Tất cả ({bookings.length})
@@ -394,8 +394,8 @@ export default function TravelerDashboard() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('active')}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                    activeTab === 'active' ? 'bg-[#005A71] text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === 'active' ? 'bg-teal-700 text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
                   Sắp tới / Đang chờ ({bookings.filter(b => b.status === 'PENDING' || b.status === 'ACCEPTED' || b.status === 'CONFIRMED').length})
@@ -403,8 +403,8 @@ export default function TravelerDashboard() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('completed')}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                    activeTab === 'completed' ? 'bg-[#005A71] text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === 'completed' ? 'bg-teal-700 text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
                   Đã hoàn thành ({bookings.filter(b => b.status === 'COMPLETED').length})

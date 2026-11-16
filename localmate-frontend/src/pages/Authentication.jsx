@@ -342,85 +342,113 @@ export default function Authentication() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] w-full flex items-center justify-center relative py-8 px-4 auth-gradient overflow-x-hidden">
-      {/* Background Decoration */}
+    <div className="min-h-[calc(100vh-4rem)] w-full flex items-center justify-center relative py-10 px-4 bg-slate-50 selection:bg-teal-700 selection:text-white overflow-x-hidden">
+      {/* Background Subtle Gradient Blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-teal-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-emerald-200/20 rounded-full blur-3xl"></div>
       </div>
 
       <div className={`w-full ${isSignUp ? 'max-w-lg' : 'max-w-md'} relative z-10 my-auto transition-all duration-300`}>
+        {/* Segmented Top Tab Switcher */}
+        <div className="flex items-center p-1 bg-slate-200/80 rounded-2xl mb-6 shadow-inner">
+          <button
+            type="button"
+            onClick={() => setIsSignUp(false)}
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all text-center cursor-pointer ${
+              !isSignUp 
+                ? 'bg-white text-slate-900 shadow-sm' 
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Đăng nhập
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsSignUp(true)}
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all text-center cursor-pointer ${
+              isSignUp 
+                ? 'bg-white text-slate-900 shadow-sm' 
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Đăng ký tài khoản
+          </button>
+        </div>
+
         {!isSignUp ? (
           /* Login Card */
-          <section className="glass-card p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 max-h-[90vh] overflow-y-auto">
+          <section className="bg-white/95 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200/80 transition-all duration-300 max-h-[90vh] overflow-y-auto">
             <div className="text-center mb-6">
-              <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Chào mừng trở lại</h1>
-              <p className="font-body-md text-on-surface-variant text-gray-500">Đăng nhập để kết nối cùng Local Helper bản địa</p>
+              <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center mx-auto mb-3 text-teal-700 shadow-sm">
+                <span className="material-symbols-outlined text-2xl">lock_open</span>
+              </div>
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight mb-1">Chào mừng trở lại</h1>
+              <p className="text-xs text-slate-500 font-medium">Đăng nhập để kết nối cùng Local Helper bản địa</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleLogin}>
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-2">Email hoặc Số điện thoại</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">Email hoặc Số điện thoại</label>
                 <div className="relative">
                   <input
                     type="text"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 h-[52px] rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 bg-surface outline-none transition-all font-medium text-gray-900"
+                    className="input-field pl-11 !h-12"
                     placeholder="name@example.com"
                   />
-                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none flex items-center">
-                    <span className="material-symbols-outlined text-lg">person</span>
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center">
+                    <span className="material-symbols-outlined text-[19px]">person</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-2">Mật khẩu</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700">Mật khẩu</label>
+                  <a className="text-xs text-teal-700 hover:underline cursor-pointer font-bold" href="#">Quên mật khẩu?</a>
+                </div>
                 <div className="relative">
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 h-[52px] rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 bg-surface outline-none transition-all font-medium text-gray-900"
+                    className="input-field pl-11 !h-12"
                     placeholder="••••••••"
                   />
-                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none flex items-center">
-                    <span className="material-symbols-outlined text-lg">lock</span>
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center">
+                    <span className="material-symbols-outlined text-[19px]">lock</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-end">
-                <a className="text-sm text-emerald-600 hover:underline cursor-pointer" href="#">Quên mật khẩu?</a>
-              </div>
-
               {errorMessage && (
-                <div className="p-3.5 bg-red-50/90 border border-red-200 text-red-700 rounded-xl text-xs space-y-2.5">
+                <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs space-y-2.5">
                   <div className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-red-600 shrink-0 mt-0.5">error</span>
+                    <span className="material-symbols-outlined text-base text-rose-600 shrink-0 mt-0.5">error</span>
                     <span className="leading-relaxed font-medium">{errorMessage}</span>
                   </div>
 
                   {/* Instant Offline Demo Bypass */}
                   {(errorMessage.includes('Lỗi') || errorMessage.includes('quá hạn') || errorMessage.includes('Không thể kết nối')) && (
-                    <div className="pt-2 border-t border-red-200/80 flex flex-wrap gap-2 items-center">
-                      <span className="text-[11px] text-gray-500 font-medium">Truy cập thử nghiệm nhanh:</span>
+                    <div className="pt-2 border-t border-rose-200/80 flex flex-wrap gap-2 items-center">
+                      <span className="text-[11px] text-slate-500 font-medium">Truy cập thử nghiệm nhanh:</span>
                       <button
                         type="button"
                         onClick={() => handleOfflineDemoLogin('admin')}
-                        className="text-[11px] font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-2xs"
+                        className="text-[11px] font-bold bg-white hover:bg-teal-50 text-teal-800 border border-teal-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-xs"
                       >
-                        ⚡ Đăng nhập Quản trị viên
+                        ⚡ Quản trị viên
                       </button>
                       <button
                         type="button"
                         onClick={() => handleOfflineDemoLogin('helper')}
-                        className="text-[11px] font-bold bg-white hover:bg-sky-50 text-sky-700 border border-sky-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-2xs"
+                        className="text-[11px] font-bold bg-white hover:bg-sky-50 text-sky-800 border border-sky-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-xs"
                       >
-                        ⚡ Đăng nhập Local Helper
+                        ⚡ Local Helper
                       </button>
                     </div>
                   )}
@@ -430,15 +458,15 @@ export default function Authentication() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-[52px] rounded-xl font-semibold shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="btn-primary w-full !h-12 !text-sm mt-2"
               >
                 {loading ? 'Đang xử lý...' : 'Đăng nhập'}
               </button>
 
               <div className="relative py-3">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500 text-xs rounded-full">Hoặc tiếp tục với</span>
+                  <span className="px-3 bg-white text-slate-400 text-xs font-semibold rounded-full">Hoặc tiếp tục với</span>
                 </div>
               </div>
 
@@ -449,24 +477,24 @@ export default function Authentication() {
                 <button
                   type="button"
                   onClick={triggerGoogleSignIn}
-                  className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 hover:border-gray-300 h-[52px] rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-all cursor-pointer shadow-sm"
+                  className="btn-outline w-full !h-12 !text-xs font-bold text-slate-700"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
                   </svg>
-                  Đăng nhập bằng Google
+                  <span>Đăng nhập bằng Google</span>
                 </button>
               )}
 
-              <p className="text-center text-sm text-gray-600 mt-6">
+              <p className="text-center text-xs text-slate-500 mt-5 font-medium">
                 Chưa có tài khoản?{' '}
                 <button
                   type="button"
                   onClick={() => setIsSignUp(true)}
-                  className="text-emerald-600 font-semibold hover:underline cursor-pointer"
+                  className="text-teal-700 font-bold hover:underline cursor-pointer ml-1"
                 >
                   Đăng ký ngay
                 </button>
@@ -475,65 +503,68 @@ export default function Authentication() {
           </section>
         ) : (
           /* Signup Card */
-          <section className="glass-card p-6 sm:p-8 rounded-2xl shadow-xl transition-all duration-300 max-h-[90vh] overflow-y-auto">
+          <section className="bg-white/95 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200/80 transition-all duration-300 max-h-[90vh] overflow-y-auto">
             <div className="text-center mb-6">
-              <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2 font-bold text-2xl">Tham gia LocalMate</h1>
-              <p className="font-body-md text-on-surface-variant text-gray-500">Bắt đầu hành trình khám phá hôm nay</p>
+              <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center mx-auto mb-3 text-teal-700 shadow-sm">
+                <span className="material-symbols-outlined text-2xl">person_add</span>
+              </div>
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight mb-1">Tham gia LocalMate</h1>
+              <p className="text-xs text-slate-500 font-medium">Bắt đầu hành trình khám phá và kết nối an toàn</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleSignUp}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block font-medium text-sm text-gray-700 mb-1">Họ và tên</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Họ và tên</label>
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
+                    className="input-field !h-11"
                     placeholder="Nguyễn Văn A"
                   />
                 </div>
                 <div>
-                  <label className="block font-medium text-sm text-gray-700 mb-1">Số điện thoại</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Số điện thoại</label>
                   <input
                     type="tel"
                     required
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
+                    className="input-field !h-11"
                     placeholder="0988 123 456"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-1">Địa chỉ Email</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Địa chỉ Email</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
+                  className="input-field !h-11"
                   placeholder="name@example.com"
                 />
               </div>
 
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-1">Mật khẩu</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Mật khẩu</label>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 h-[48px] rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface outline-none transition-all"
+                  className="input-field !h-11"
                   placeholder="••••••••"
                 />
               </div>
 
               <div>
-                <label className="block font-medium text-sm text-gray-700 mb-2">Vai trò tham gia</label>
-                <div className="flex gap-4">
+                <label className="block text-xs font-bold text-slate-700 mb-2">Vai trò tham gia</label>
+                <div className="flex gap-3">
                   <label className="flex-1 cursor-pointer">
                     <input
                       type="radio"
@@ -543,9 +574,9 @@ export default function Authentication() {
                       className="hidden peer"
                       value="traveler"
                     />
-                    <div className="p-3 text-center rounded-xl border-2 border-gray-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-all">
-                      <span className="material-symbols-outlined block text-emerald-600 mb-1">person</span>
-                      <span className="font-semibold text-sm text-gray-800">Du khách</span>
+                    <div className="p-3 text-center rounded-2xl border-2 border-slate-200 peer-checked:border-teal-700 peer-checked:bg-teal-50/80 transition-all shadow-xs">
+                      <span className="material-symbols-outlined block text-teal-700 mb-0.5 text-xl">person</span>
+                      <span className="font-bold text-xs text-slate-800">Du khách</span>
                     </div>
                   </label>
                   <label className="flex-1 cursor-pointer">
@@ -557,42 +588,42 @@ export default function Authentication() {
                       className="hidden peer"
                       value="guide"
                     />
-                    <div className="p-3 text-center rounded-xl border-2 border-gray-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-all">
-                      <span className="material-symbols-outlined block text-emerald-600 mb-1">map</span>
-                      <span className="font-semibold text-sm text-gray-800">Local Helper</span>
+                    <div className="p-3 text-center rounded-2xl border-2 border-slate-200 peer-checked:border-teal-700 peer-checked:bg-teal-50/80 transition-all shadow-xs">
+                      <span className="material-symbols-outlined block text-teal-700 mb-0.5 text-xl">map</span>
+                      <span className="font-bold text-xs text-slate-800">Local Helper</span>
                     </div>
                   </label>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 py-1">
+              <div className="flex items-start gap-2.5 py-1">
                 <input
                   type="checkbox"
                   id="terms"
                   required
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="mt-1 w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer"
+                  className="mt-0.5 w-4 h-4 text-teal-700 border-slate-300 rounded focus:ring-teal-700 cursor-pointer"
                 />
-                <label className="text-xs text-gray-600 leading-tight select-none cursor-pointer" htmlFor="terms">
-                  Tôi đồng ý với <a className="text-emerald-600 hover:underline cursor-pointer" href="#">Điều khoản dịch vụ</a> và <a className="text-emerald-600 hover:underline cursor-pointer" href="#">Chính sách bảo mật</a>
+                <label className="text-xs text-slate-500 leading-tight select-none cursor-pointer" htmlFor="terms">
+                  Tôi đồng ý với <a className="text-teal-700 font-bold hover:underline cursor-pointer" href="#">Điều khoản dịch vụ</a> và <a className="text-teal-700 font-bold hover:underline cursor-pointer" href="#">Chính sách bảo mật</a>
                 </label>
               </div>
 
               {errorMessage && (
-                <div className="p-3.5 bg-red-50/90 border border-red-200 text-red-700 rounded-xl text-xs space-y-2.5">
+                <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs space-y-2.5">
                   <div className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-red-600 shrink-0 mt-0.5">error</span>
+                    <span className="material-symbols-outlined text-base text-rose-600 shrink-0 mt-0.5">error</span>
                     <span className="leading-relaxed font-medium">{errorMessage}</span>
                   </div>
 
                   {(errorMessage.includes('Lỗi') || errorMessage.includes('quá hạn') || errorMessage.includes('Không thể kết nối')) && (
-                    <div className="pt-2 border-t border-red-200/80 flex flex-wrap gap-2 items-center">
-                      <span className="text-[11px] text-gray-500 font-medium">Truy cập thử nghiệm nhanh:</span>
+                    <div className="pt-2 border-t border-rose-200/80 flex flex-wrap gap-2 items-center">
+                      <span className="text-[11px] text-slate-500 font-medium">Truy cập thử nghiệm nhanh:</span>
                       <button
                         type="button"
                         onClick={() => handleOfflineDemoLogin('traveler')}
-                        className="text-[11px] font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-2xs"
+                        className="text-[11px] font-bold bg-white hover:bg-teal-50 text-teal-800 border border-teal-300 px-2.5 py-1 rounded-lg transition-all cursor-pointer shadow-xs"
                       >
                         ⚡ Tiếp tục với vai trò Du khách
                       </button>
@@ -604,15 +635,15 @@ export default function Authentication() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-[50px] rounded-xl font-semibold shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="btn-primary w-full !h-12 !text-sm mt-2"
               >
                 {loading ? 'Đang tạo...' : 'Tạo tài khoản'}
               </button>
 
               <div className="relative py-2">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500 text-xs rounded-full">Hoặc đăng ký bằng</span>
+                  <span className="px-3 bg-white text-slate-400 text-xs font-semibold rounded-full">Hoặc đăng ký bằng</span>
                 </div>
               </div>
 
@@ -623,24 +654,24 @@ export default function Authentication() {
                 <button
                   type="button"
                   onClick={triggerGoogleSignIn}
-                  className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 hover:border-gray-300 h-[48px] rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-all cursor-pointer shadow-sm text-sm"
+                  className="btn-outline w-full !h-12 !text-xs font-bold text-slate-700"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
                   </svg>
-                  Đăng ký bằng Google
+                  <span>Đăng ký bằng Google</span>
                 </button>
               )}
 
-              <p className="text-center text-sm text-gray-600 mt-4">
+              <p className="text-center text-xs text-slate-500 mt-4 font-medium">
                 Đã có tài khoản?{' '}
                 <button
                   type="button"
                   onClick={() => setIsSignUp(false)}
-                  className="text-emerald-600 font-semibold hover:underline cursor-pointer"
+                  className="text-teal-700 font-bold hover:underline cursor-pointer ml-1"
                 >
                   Đăng nhập
                 </button>
@@ -653,17 +684,17 @@ export default function Authentication() {
       {/* Google Login Options Modal */}
       {showGoogleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative border border-gray-100 my-auto">
+          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 sm:p-7 shadow-2xl relative border border-slate-200/80 my-auto">
             <button
               onClick={() => setShowGoogleModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-xl">close</span>
             </button>
 
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
-                <svg className="w-6 h-6" viewBox="0 0 24 24">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center text-teal-700 shadow-xs">
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
@@ -671,18 +702,18 @@ export default function Authentication() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Xác thực Google</h3>
-                <p className="text-xs text-gray-500">Đăng nhập nhanh &amp; Thiết lập tài khoản</p>
+                <h3 className="text-base font-bold text-slate-900">Xác thực Google</h3>
+                <p className="text-xs text-slate-500 font-medium">Đăng nhập nhanh &amp; Thiết lập tài khoản</p>
               </div>
             </div>
 
             {/* Quick 1-Click Simulation */}
-            <div className="bg-emerald-50/60 border border-emerald-100 rounded-xl p-4 mb-5">
-              <h4 className="text-sm font-bold text-emerald-900 mb-1 flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-base text-emerald-600">bolt</span>
+            <div className="bg-teal-50/60 border border-teal-100 rounded-2xl p-4 mb-5">
+              <h4 className="text-xs font-bold text-teal-900 mb-1 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-base text-teal-700">bolt</span>
                 Đăng nhập nhanh với tài khoản Google
               </h4>
-              <p className="text-xs text-emerald-700 mb-3">
+              <p className="text-xs text-teal-700 mb-3">
                 Nhập email Google của bạn để tự động đăng ký hoặc liên kết hồ sơ:
               </p>
               <div className="space-y-2.5">
@@ -691,14 +722,14 @@ export default function Authentication() {
                   value={googleNameInput}
                   onChange={(e) => setGoogleNameInput(e.target.value)}
                   placeholder="Họ và tên (Ví dụ: Nguyễn Mỹ Duyên)"
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="input-field !h-10"
                 />
                 <input
                   type="email"
                   value={googleEmailInput}
                   onChange={(e) => setGoogleEmailInput(e.target.value)}
                   placeholder="Email Google (Ví dụ: user@gmail.com)"
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="input-field !h-10"
                 />
                 <button
                   type="button"
@@ -711,7 +742,7 @@ export default function Authentication() {
                       avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${testName}`,
                     });
                   }}
-                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="btn-primary w-full !h-11 !text-xs"
                 >
                   <span className="material-symbols-outlined text-base">login</span>
                   Tiếp tục với Google ({googleEmailInput.trim() || 'traveler@gmail.com'})
@@ -719,11 +750,11 @@ export default function Authentication() {
               </div>
             </div>
 
-            <div className="border-t border-gray-100 pt-3">
+            <div className="border-t border-slate-100 pt-3">
               <button
                 type="button"
                 onClick={() => setShowGoogleModal(false)}
-                className="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg transition-colors cursor-pointer"
+                className="btn-outline w-full !py-2 text-xs"
               >
                 Đóng
               </button>

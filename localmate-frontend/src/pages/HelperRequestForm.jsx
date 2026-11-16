@@ -82,167 +82,166 @@ export default function HelperRequestForm() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 py-10 w-full overflow-hidden">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 py-8 w-full overflow-hidden">
       
       {/* Progress Indicator */}
-      <div className="mb-12 overflow-x-auto pb-2">
+      <div className="mb-10 overflow-x-auto pb-2">
         <div className="flex items-center justify-between max-w-3xl mx-auto relative min-w-[500px]">
           <div className="flex flex-col items-center z-10">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold mb-2">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-teal-700 text-white font-bold mb-2 shadow-xs">
               <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
             </div>
-            <span className="font-label-bold text-label-bold text-primary">Chọn Helper</span>
+            <span className="text-xs font-bold text-teal-800">1. Chọn Helper</span>
           </div>
-          <div className="absolute top-5 left-0 w-full h-[2px] bg-outline-variant -z-10"></div>
-          <div className="absolute top-5 left-0 w-[33%] h-[2px] bg-primary -z-10"></div>
+          <div className="absolute top-5 left-0 w-full h-[2px] bg-slate-200 -z-10"></div>
+          <div className="absolute top-5 left-0 w-[66%] h-[2px] bg-teal-600 -z-10"></div>
           
           <div className="flex flex-col items-center z-10">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold mb-2">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-teal-700 text-white font-bold mb-2 shadow-xs">
               <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
             </div>
-            <span className="font-label-bold text-label-bold text-primary">Đặt lịch</span>
-          </div>
-          <div className="absolute top-5 left-0 w-[66%] h-[2px] bg-primary -z-10"></div>
-          
-          <div className="flex flex-col items-center z-10">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-2 border-primary text-primary font-bold mb-2">3</div>
-            <span className="font-label-bold text-label-bold text-primary font-bold">Chi tiết yêu cầu</span>
+            <span className="text-xs font-bold text-teal-800">2. Lên lịch trình</span>
           </div>
           
           <div className="flex flex-col items-center z-10">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-2 border-outline-variant text-outline-variant font-bold mb-2">4</div>
-            <span className="font-label-bold text-label-bold text-on-surface-variant">Xác nhận</span>
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-2 border-teal-700 text-teal-800 font-bold mb-2 shadow-xs">3</div>
+            <span className="text-xs font-bold text-teal-800">3. Chi tiết yêu cầu</span>
+          </div>
+          
+          <div className="flex flex-col items-center z-10">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-2 border-slate-300 text-slate-400 font-bold mb-2">4</div>
+            <span className="text-xs font-medium text-slate-500">4. Xác nhận &amp; Ký quỹ</span>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Side: Form Container */}
         <div className="lg:col-span-8 space-y-6 min-w-0">
           <form className="space-y-6" onSubmit={handleSubmit}>
             
             {/* Section 1: Basic Information */}
-            <div className="bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle shadow-sm">
+            <div className="card-bento p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
-                <span className="material-symbols-outlined text-primary p-2 bg-primary-container/10 rounded-lg">person</span>
-                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Thông tin cơ bản</h2>
+                <span className="material-symbols-outlined text-teal-700 p-2 bg-teal-50 rounded-xl text-xl">person</span>
+                <h2 className="text-lg font-bold text-slate-900">Thông tin cơ bản của bạn</h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Họ và tên</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Họ và tên</label>
                   <input 
                     type="text" 
                     required 
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
+                    className="input-field" 
                     placeholder="Ví dụ: Nguyễn Văn A" 
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Quốc tịch</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Quốc tịch</label>
                   <input 
                     type="text" 
                     required 
                     value={nationality}
                     onChange={(e) => setNationality(e.target.value)}
-                    className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
+                    className="input-field" 
                     placeholder="Ví dụ: Việt Nam" 
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Số điện thoại liên hệ</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Số điện thoại liên hệ</label>
                   <input 
                     type="tel" 
                     required 
                     value={contactNumber}
                     onChange={(e) => setContactNumber(e.target.value)}
-                    className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
+                    className="input-field" 
                     placeholder="0912 345 678" 
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Zalo / Telegram / WhatsApp (Tùy chọn)</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Zalo / WhatsApp (Tùy chọn)</label>
                   <input 
                     type="text" 
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
-                    className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    placeholder="Số Zalo hoặc @username" 
+                    className="input-field" 
+                    placeholder="Số Zalo hoặc tài khoản liên lạc" 
                   />
                 </div>
               </div>
             </div>
 
             {/* Section 2: Trip Information */}
-            <div className="bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle shadow-sm">
+            <div className="card-bento p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
-                <span className="material-symbols-outlined text-primary p-2 bg-primary-container/10 rounded-lg">map</span>
-                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Thông tin chuyến đi</h2>
+                <span className="material-symbols-outlined text-teal-700 p-2 bg-teal-50 rounded-xl text-xl">map</span>
+                <h2 className="text-lg font-bold text-slate-900">Thông tin chuyến đi</h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Điểm đến (Thành phố)</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Điểm đến (Thành phố)</label>
                   <input 
                     type="text" 
                     required 
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
-                    className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
+                    className="input-field" 
                     placeholder="Ví dụ: Đà Nẵng, Việt Nam" 
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Khu vực muốn tham quan</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Khu vực muốn tham quan</label>
                   <input 
                     type="text" 
                     value={areas}
                     onChange={(e) => setAreas(e.target.value)}
-                    className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
+                    className="input-field" 
                     placeholder="Ví dụ: Bán đảo Sơn Trà, Ngũ Hành Sơn" 
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Ngày đến</label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Ngày đến</label>
                     <input 
                       type="date" 
                       required 
                       value={arrival}
                       onChange={(e) => setArrival(e.target.value)}
-                      className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all cursor-pointer" 
+                      className="input-field cursor-pointer" 
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Ngày về</label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Ngày về</label>
                     <input 
                       type="date" 
                       required 
                       value={departure}
                       onChange={(e) => setDeparture(e.target.value)}
-                      className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all cursor-pointer" 
+                      className="input-field cursor-pointer" 
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Giờ hẹn gặp</label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Giờ hẹn gặp</label>
                     <input 
                       type="time" 
                       required 
                       value={meetingTime}
                       onChange={(e) => setMeetingTime(e.target.value)}
-                      className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all cursor-pointer" 
+                      className="input-field cursor-pointer" 
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="font-label-bold text-label-bold text-on-surface-variant block">Địa điểm gặp mặt</label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Địa điểm gặp mặt</label>
                     <input 
                       type="text" 
                       required 
                       value={meetingLocation}
                       onChange={(e) => setMeetingLocation(e.target.value)}
-                      className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
+                      className="input-field" 
                       placeholder="Sảnh khách sạn, Quán cafe, v.v." 
                     />
                   </div>
@@ -251,10 +250,10 @@ export default function HelperRequestForm() {
             </div>
 
             {/* Section 3: Service Requirements */}
-            <div className="bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle shadow-sm">
+            <div className="card-bento p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
-                <span className="material-symbols-outlined text-primary p-2 bg-primary-container/10 rounded-lg">handyman</span>
-                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Nhu cầu &amp; Hỗ trợ</h2>
+                <span className="material-symbols-outlined text-teal-700 p-2 bg-teal-50 rounded-xl text-xl">handyman</span>
+                <h2 className="text-lg font-bold text-slate-900">Nhu cầu &amp; Hỗ trợ từ Helper</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6">
                 {[
@@ -267,23 +266,23 @@ export default function HelperRequestForm() {
                   { key: 'nightlife', label: 'Đời sống đêm' },
                   { key: 'emergency', label: 'Hỗ trợ khẩn cấp' },
                 ].map(req => (
-                  <label key={req.key} className="flex items-center gap-3 cursor-pointer group select-none">
+                  <label key={req.key} className="flex items-center gap-2.5 cursor-pointer group select-none">
                     <input 
                       type="checkbox" 
                       checked={requirements[req.key]}
                       onChange={() => handleRequirementChange(req.key)}
-                      className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer" 
+                      className="w-4 h-4 rounded border-slate-300 text-teal-700 focus:ring-teal-500 cursor-pointer" 
                     />
-                    <span className="font-body-md text-on-surface-variant group-hover:text-primary transition-colors">{req.label}</span>
+                    <span className="text-xs font-medium text-slate-700 group-hover:text-teal-800 transition-colors">{req.label}</span>
                   </label>
                 ))}
                 
-                <div className="col-span-full mt-4">
+                <div className="col-span-full mt-3">
                   <input 
                     type="text" 
                     value={otherReqs}
                     onChange={(e) => setOtherReqs(e.target.value)}
-                    className="w-full h-12 px-4 rounded-xl border border-outline-variant bg-surface text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
+                    className="input-field" 
                     placeholder="Yêu cầu cụ thể khác của bạn..." 
                   />
                 </div>
@@ -291,18 +290,18 @@ export default function HelperRequestForm() {
             </div>
 
             {/* Section 4: Trip Details */}
-            <div className="bg-white dark:bg-surface-dark p-8 rounded-xl border border-border-subtle shadow-sm">
+            <div className="card-bento p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
-                <span className="material-symbols-outlined text-primary p-2 bg-primary-container/10 rounded-lg">luggage</span>
-                <h2 className="font-headline-md text-headline-md font-bold text-on-surface">Chi tiết nhóm đi</h2>
+                <span className="material-symbols-outlined text-teal-700 p-2 bg-teal-50 rounded-xl text-xl">luggage</span>
+                <h2 className="text-lg font-bold text-slate-900">Chi tiết nhóm đi</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Số lượng thành viên</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Số lượng thành viên</label>
                   <select 
                     value={travelersCount}
                     onChange={(e) => setTravelersCount(e.target.value)}
-                    className="w-full h-12 px-4 border border-outline-variant rounded-xl bg-surface text-on-surface outline-none cursor-pointer"
+                    className="input-field cursor-pointer"
                   >
                     <option>1 Người</option>
                     <option>2 Người</option>
@@ -311,9 +310,9 @@ export default function HelperRequestForm() {
                   </select>
                 </div>
                 
-                <div className="space-y-2">
-                  <label className="font-label-bold text-label-bold text-on-surface-variant block">Phong cách du lịch</label>
-                  <div className="flex gap-2 p-1 bg-surface-container rounded-xl">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Phong cách du lịch</label>
+                  <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
                     {[
                       { key: 'Relaxed', label: 'Thư giãn' },
                       { key: 'Active', label: 'Năng động' },
@@ -324,10 +323,10 @@ export default function HelperRequestForm() {
                         key={style.key}
                         type="button"
                         onClick={() => setTravelStyle(style.label)}
-                        className={`flex-1 py-2 text-body-sm font-label-bold rounded-lg transition-all ${
+                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
                           travelStyle === style.label 
-                            ? 'bg-white dark:bg-surface-dark text-primary shadow-sm' 
-                            : 'text-on-surface-variant hover:text-on-surface'
+                            ? 'bg-white text-teal-800 shadow-xs' 
+                            : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
                         {style.label}
@@ -340,26 +339,38 @@ export default function HelperRequestForm() {
 
             <button 
               type="submit" 
-              className="w-full bg-primary-container text-on-primary-container hover:bg-primary py-4 rounded-xl font-label-bold text-label-bold text-center block shadow-md transition-all active:scale-[0.98]"
+              className="w-full btn-primary py-4 text-sm font-bold shadow-md"
             >
-              Gửi yêu cầu tới {guideName}
+              Gửi yêu cầu thiết kế tour tới {guideName}
             </button>
           </form>
         </div>
 
         {/* Right Side Info Widget */}
-        <aside className="lg:col-span-4 bg-white dark:bg-surface-dark p-6 rounded-3xl border border-border-subtle shadow-sm min-w-0 break-words">
-          <h3 className="font-headline-md text-headline-md font-bold mb-4 text-on-surface">Hướng dẫn gửi yêu cầu</h3>
-          <p className="font-body-md text-on-surface-variant mb-6">
-            Bạn đang gửi yêu cầu thiết kế tour riêng tới **{guideName}**. Helper sẽ nghiên cứu lịch trình và phản hồi kế hoạch chi tiết cho bạn.
+        <aside className="lg:col-span-4 card-bento p-6 sm:p-7 sticky top-24">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined text-teal-700 text-lg">info</span>
+            <h3 className="font-bold text-base text-slate-900">Hướng dẫn gửi yêu cầu</h3>
+          </div>
+          <p className="text-xs text-slate-600 leading-relaxed mb-6">
+            Bạn đang gửi yêu cầu thiết kế tour riêng tới <strong className="text-slate-800">{guideName}</strong>. Helper sẽ nghiên cứu lịch trình và phản hồi kế hoạch chi tiết cho bạn qua tin nhắn.
           </p>
-          <div className="flex gap-4 items-center border-t border-border-subtle pt-6">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-              <span className="material-symbols-outlined">support_agent</span>
+          <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200/80 text-xs text-emerald-900 mb-6 space-y-1">
+            <div className="flex items-center gap-1.5 font-bold">
+              <span className="material-symbols-outlined text-[16px] text-emerald-700" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
+              Bảo đảm Ký quỹ 100%
+            </div>
+            <p className="text-emerald-800 text-[11px] leading-relaxed">
+              Bạn chỉ thanh toán sau khi Helper chấp thuận lịch trình. Toàn bộ tiền được bảo vệ bởi Quỹ Escrow an toàn.
+            </p>
+          </div>
+          <div className="flex gap-3.5 items-center border-t border-slate-100 pt-5">
+            <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-700 font-bold shrink-0">
+              <span className="material-symbols-outlined text-xl">support_agent</span>
             </div>
             <div>
-              <h4 className="font-label-bold text-label-bold text-on-surface">Cần trợ giúp?</h4>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Đội ngũ hỗ trợ LocalMate luôn sẵn sàng 24/7 để đồng hành cùng bạn.</p>
+              <h4 className="font-bold text-xs text-slate-900">Cần trợ giúp trực tiếp?</h4>
+              <p className="text-[11px] text-slate-500 mt-0.5">Đội ngũ hỗ trợ LocalMate luôn sẵn sàng 24/7 để đồng hành cùng bạn.</p>
             </div>
           </div>
         </aside>

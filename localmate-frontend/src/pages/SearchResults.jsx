@@ -124,17 +124,20 @@ export default function SearchResults() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-10 py-10 min-h-screen">
-      <div className="flex flex-col lg:flex-row gap-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 py-8 min-h-screen">
+      <div className="flex flex-col lg:flex-row gap-8">
 
         {/* Left Sidebar Filters */}
         <aside className="w-full lg:w-72 flex-shrink-0">
-          <div className="sticky top-24 bg-surface-container-low p-5 rounded-2xl border border-border-subtle shadow-sm max-h-[calc(100vh-6.5rem)] overflow-y-auto no-scrollbar">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-subtle">
-              <h2 className="font-headline-md text-base text-primary font-bold">Bộ lọc tìm kiếm</h2>
+          <div className="sticky top-24 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs max-h-[calc(100vh-6.5rem)] overflow-y-auto no-scrollbar">
+            <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-teal-700 text-lg">tune</span>
+                <h2 className="text-base text-slate-900 font-bold">Bộ lọc tìm kiếm</h2>
+              </div>
               <button
                 onClick={handleReset}
-                className="text-primary hover:underline font-label-bold text-xs"
+                className="text-teal-700 hover:text-teal-900 font-bold text-xs hover:underline cursor-pointer"
               >
                 Đặt lại
               </button>
@@ -143,22 +146,22 @@ export default function SearchResults() {
             <form onSubmit={handleFilterSubmit} className="space-y-4">
               {/* Filter: City */}
               <div>
-                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Điểm đến</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5 text-slate-700">Điểm đến</label>
                 <div className="relative">
-                  <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">location_on</span>
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">location_on</span>
                   <input
                     type="text"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full pl-8 pr-3 py-2 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-sm text-on-surface placeholder:text-outline-variant outline-none"
-                    placeholder="Bạn muốn đi đâu?"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 focus:border-teal-600 focus:ring-2 focus:ring-teal-500/20 rounded-xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all"
+                    placeholder="Hà Nội, Đà Nẵng, Hội An..."
                   />
                 </div>
               </div>
 
               {/* Filter: Expertise */}
               <div>
-                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Chuyên môn / Kỹ năng</label>
+                <label className="block text-[11px] font-bold uppercase tracking-wider mb-2 text-slate-700">Chuyên môn / Kỹ năng</label>
                 <div className="space-y-1.5">
                   {[
                     { key: 'culture', label: 'Văn hóa & Nghệ thuật' },
@@ -171,19 +174,19 @@ export default function SearchResults() {
                         type="checkbox"
                         checked={selectedExpertise.includes(exp.key)}
                         onChange={() => toggleExpertise(exp.key)}
-                        className="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer"
+                        className="w-4 h-4 rounded border-slate-300 text-teal-700 focus:ring-teal-500 cursor-pointer"
                       />
-                      <span className="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">{exp.label}</span>
+                      <span className="text-xs text-slate-600 group-hover:text-slate-900 transition-colors font-medium">{exp.label}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
               {/* Filter: Price Range */}
-              <div>
+              <div className="pt-2">
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="block font-label-bold text-xs uppercase tracking-wider text-on-surface">Mức giá tối đa</label>
-                  <span className="font-label-bold text-xs text-primary font-bold">{formatRateVND(priceMax)}</span>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700">Giá tối đa / giờ</label>
+                  <span className="text-xs text-teal-800 font-extrabold">{formatRateVND(priceMax)}</span>
                 </div>
                 <input
                   type="range"
@@ -192,20 +195,20 @@ export default function SearchResults() {
                   step="50000"
                   value={priceMax}
                   onChange={(e) => setPriceMax(Number(e.target.value))}
-                  className="w-full h-1.5 bg-outline-variant rounded-full appearance-none cursor-pointer accent-primary"
+                  className="w-full h-1.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-teal-700"
                 />
               </div>
 
               {/* Filter: Rating */}
-              <div>
-                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Đánh giá sao</label>
+              <div className="pt-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5 text-slate-700">Đánh giá tối thiểu</label>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => setMinRating(4.0)}
-                    className={`flex-1 py-1.5 rounded-lg border font-label-bold text-xs transition-all ${minRating === 4.0
-                      ? 'border-primary bg-primary-container/10 text-primary font-bold'
-                      : 'border-outline-variant text-on-surface-variant hover:border-primary'
+                    className={`flex-1 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${minRating === 4.0
+                      ? 'border-teal-600 bg-teal-50 text-teal-800'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                   >
                     4.0+ ★
@@ -213,9 +216,9 @@ export default function SearchResults() {
                   <button
                     type="button"
                     onClick={() => setMinRating(4.5)}
-                    className={`flex-1 py-1.5 rounded-lg border font-label-bold text-xs transition-all ${minRating === 4.5
-                      ? 'border-primary bg-primary-container/10 text-primary font-bold'
-                      : 'border-outline-variant text-on-surface-variant hover:border-primary'
+                    className={`flex-1 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${minRating === 4.5
+                      ? 'border-teal-600 bg-teal-50 text-teal-800'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                   >
                     4.5+ ★
@@ -224,12 +227,12 @@ export default function SearchResults() {
               </div>
 
               {/* Filter: Language */}
-              <div>
-                <label className="block font-label-bold text-xs uppercase tracking-wider mb-1.5 text-on-surface">Ngôn ngữ</label>
+              <div className="pt-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5 text-slate-700">Ngôn ngữ</label>
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full py-2 px-3 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-xs cursor-pointer outline-none"
+                  className="w-full py-2 px-3 bg-slate-50 border border-slate-200 focus:border-teal-600 focus:ring-2 focus:ring-teal-500/20 rounded-xl text-xs font-medium cursor-pointer outline-none transition-all"
                 >
                   <option value="All">Tất cả ngôn ngữ</option>
                   <option value="Tiếng Việt">Tiếng Việt</option>
@@ -243,7 +246,7 @@ export default function SearchResults() {
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-primary text-on-primary font-label-bold text-sm rounded-xl hover:shadow-md active:scale-95 transition-all mt-2"
+                className="w-full btn-primary py-2.5 text-xs font-bold rounded-xl mt-3"
               >
                 Áp dụng bộ lọc
               </button>
@@ -253,121 +256,118 @@ export default function SearchResults() {
 
         {/* Main Search Results Content */}
         <section className="flex-1">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4 border-b border-slate-200/80 pb-4">
             <div>
-              <h1 className="font-headline-lg text-headline-lg text-on-surface mb-1 font-bold">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 Local Helper {city ? `tại ${city}` : 'Toàn quốc'}
               </h1>
-              <p className="font-body-md text-on-surface-variant">
-                {filteredGuides.length} người sẵn sàng đồng hành cùng bạn
+              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+                Tìm thấy <strong className="text-teal-800">{filteredGuides.length}</strong> người đồng hành sẵn sàng dẫn tour
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-surface-dark border border-border-subtle rounded-full font-label-bold text-label-bold text-on-surface hover:bg-surface-container transition-all">
-                <span className="material-symbols-outlined text-[20px]">sort</span>
-                Phổ biến nhất
-              </button>
-              <button
+            <div className="flex items-center gap-2">
+              <button 
                 onClick={() => navigate('/')}
-                className="flex items-center gap-2 px-4 py-2.5 bg-secondary text-on-secondary rounded-full font-label-bold text-label-bold hover:shadow-md transition-all"
+                className="btn-outline text-xs py-2 px-3.5"
               >
-                <span className="material-symbols-outlined text-[20px]">map</span>
-                Bản đồ
+                <span className="material-symbols-outlined text-[16px] text-teal-700">map</span>
+                <span>Xem trên bản đồ</span>
               </button>
             </div>
           </div>
 
           {/* Results Grid */}
           {filteredGuides.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-5">
               {filteredGuides.map((guide) => (
-                <div key={guide.id} className="group flex flex-col md:flex-row bg-white dark:bg-surface-dark border border-border-subtle rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 min-h-[280px]">
-                  <div className="w-full md:w-[320px] md:min-w-[320px] md:max-w-[320px] h-64 md:h-auto relative overflow-hidden flex-shrink-0">
+                <div key={guide.id} className="card-bento flex flex-col md:flex-row overflow-hidden group">
+                  <div className="w-full md:w-[280px] md:min-w-[280px] md:max-w-[280px] h-60 md:h-auto relative overflow-hidden bg-slate-100 shrink-0">
                     <img
                       className="w-full h-full md:absolute md:inset-0 object-cover object-center group-hover:scale-105 transition-transform duration-500"
                       alt={guide.name}
                       src={guide.img}
                     />
-                    <div className="absolute top-4 left-4 z-10 bg-white/95 dark:bg-surface-dark/95 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                      <span className="material-symbols-outlined text-[18px] text-status-warning" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                      <span className="font-label-bold text-label-bold text-on-surface">{guide.rating}</span>
-                      <span className="text-on-surface-variant text-[12px] ml-1">({guide.reviewsCount || 0})</span>
+                    <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs border border-slate-200/80">
+                      <span className="material-symbols-outlined text-sm text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                      <span className="text-xs font-extrabold text-slate-900">{guide.rating}</span>
+                      <span className="text-slate-400 text-[11px]">({guide.reviewsCount || 0})</span>
                     </div>
                   </div>
 
-                  <div className="flex-1 p-6 flex flex-col justify-between">
+                  <div className="flex-1 p-5 sm:p-6 flex flex-col justify-between">
                     <div>
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex justify-between items-start mb-2 gap-2">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-headline-md text-headline-md text-on-surface font-bold">{guide.name}</h3>
-                          <span className="material-symbols-outlined text-primary text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }} title="Helper đã xác thực">verified</span>
+                          <h3 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-teal-800 transition-colors">{guide.name}</h3>
+                          <span className="material-symbols-outlined text-teal-600 text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }} title="Helper đã xác thực">verified</span>
+                          
                           {/* Helper Availability Status Badge */}
                           {(!guide.availabilityStatus || guide.availabilityStatus === 'AVAILABLE') && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                            <span className="badge-success text-[10px] py-0.5 px-2">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                               SẴN SÀNG
                             </span>
                           )}
                           {guide.availabilityStatus === 'BUSY' && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
+                            <span className="badge-warning text-[10px] py-0.5 px-2">
                               <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                              ĐANG BẬN (Xem lịch)
+                              ĐANG BẬN
                             </span>
                           )}
                           {guide.availabilityStatus === 'OFFLINE' && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-300 flex items-center gap-1">
+                            <span className="badge-neutral text-[10px] py-0.5 px-2">
                               <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                               NGOẠI TUYẾN
                             </span>
                           )}
                         </div>
-                        <div className="text-right">
-                          <span className="font-headline-md text-headline-md text-primary font-bold">{formatRateVND(guide.price)}</span>
+                        <div className="text-right shrink-0">
+                          <span className="text-base sm:text-lg font-black text-teal-700">{formatRateVND(guide.price)}</span>
+                          <span className="text-[10px] text-slate-600 block">/ giờ</span>
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-1.5 mb-3">
                         {(guide.expertises || []).map(exp => (
-                          <span key={exp} className="px-3 py-1 bg-secondary-container/30 text-on-secondary-container rounded-full font-label-caps text-label-caps font-bold">
+                          <span key={exp} className="px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-full text-[11px] font-semibold border border-slate-200">
                             {exp}
                           </span>
                         ))}
                       </div>
 
-                      <p className="text-on-surface-variant font-body-md line-clamp-2 mb-4">
+                      <p className="text-slate-600 text-xs sm:text-sm line-clamp-2 mb-4 leading-relaxed">
                         {guide.description || guide.bio}
                       </p>
 
-                      <div className="flex items-center gap-4 text-on-surface-variant">
-                        <div className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[18px]">language</span>
-                          <span className="font-body-sm text-body-sm">
-                            {Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages}
-                          </span>
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-2 border-t border-slate-100">
+                        <div className="flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[16px] text-teal-600">language</span>
+                          <span>{Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[18px]">location_on</span>
-                          <span className="font-body-sm text-body-sm">{guide.city || guide.location}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[16px] text-teal-600">location_on</span>
+                          <span>{guide.city || guide.location}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex gap-3 mt-6">
+                    <div className="flex items-center gap-2.5 mt-5 pt-3 border-t border-slate-100">
                       <button
                         onClick={() => navigate(`/helper/${guide.id}`)}
-                        className="flex-1 py-3 bg-primary text-on-primary rounded-xl font-label-bold text-label-bold hover:shadow-lg transition-all active:scale-95"
+                        className="flex-1 btn-primary text-xs py-2.5"
                       >
-                        Xem hồ sơ
+                        Xem hồ sơ &amp; Đặt tour
                       </button>
                       <button
                         onClick={() => toggleFavorite(guide.id)}
-                        className={`p-3 border rounded-xl transition-all ${favorites.includes(guide.id)
-                          ? 'bg-error/10 border-error text-error'
-                          : 'border-border-subtle text-on-surface-variant hover:bg-surface-container'
+                        className={`p-2.5 border rounded-xl transition-all cursor-pointer ${favorites.includes(guide.id)
+                          ? 'bg-rose-50 border-rose-200 text-rose-600'
+                          : 'border-slate-200 text-slate-400 hover:text-rose-500 hover:bg-slate-50'
                           }`}
+                        title="Lưu yêu thích"
                       >
-                        <span className="material-symbols-outlined" style={favorites.includes(guide.id) ? { fontVariationSettings: "'FILL' 1" } : {}}>
+                        <span className="material-symbols-outlined text-lg" style={favorites.includes(guide.id) ? { fontVariationSettings: "'FILL' 1" } : {}}>
                           favorite
                         </span>
                       </button>
@@ -377,13 +377,13 @@ export default function SearchResults() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 bg-surface-container-low rounded-2xl border border-border-subtle">
-              <span className="material-symbols-outlined text-6xl text-outline-variant mb-4">search_off</span>
-              <h3 className="font-headline-md text-headline-md text-on-surface mb-2">Không tìm thấy Helper phù hợp</h3>
-              <p className="font-body-md text-on-surface-variant max-w-md mx-auto mb-6">
-                Chúng tôi không tìm thấy Local Helper nào khớp với bộ lọc hiện tại. Vui lòng thử mở rộng mức giá hoặc chọn chuyên môn khác.
+            <div className="text-center py-16 bg-white rounded-3xl border border-slate-200/80 p-8 shadow-2xs">
+              <span className="material-symbols-outlined text-5xl text-slate-300 mb-3">search_off</span>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">Không tìm thấy Helper phù hợp</h3>
+              <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto mb-6">
+                Vui lòng thử mở rộng mức giá hoặc đổi điểm đến khác để tìm kiếm nhiều kết quả hơn.
               </p>
-              <button onClick={handleReset} className="bg-primary text-on-primary px-6 py-3 rounded-xl font-label-bold">
+              <button onClick={handleReset} className="btn-primary">
                 Xóa tất cả bộ lọc
               </button>
             </div>

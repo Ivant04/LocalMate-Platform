@@ -44,20 +44,20 @@ export default function Sidebar({ activePage }) {
       
       {/* User Card Profile Section */}
       <div className="px-4 mb-6">
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80">
           <img 
             alt={displayName} 
-            className="w-10 h-10 rounded-full object-cover ring-2 ring-cyan-600/20 shrink-0" 
+            className="w-10 h-10 rounded-full object-cover ring-2 ring-teal-600/30 shrink-0" 
             src={displayAvatar} 
           />
           <div className="min-w-0">
-            <p className="font-semibold text-sm text-slate-900 truncate">{displayName}</p>
+            <p className="font-bold text-sm text-slate-900 truncate">{displayName}</p>
             <p className="text-xs text-slate-500 truncate">{roleSubtitle}</p>
           </div>
         </div>
         <button 
           onClick={() => navigate('/profile')}
-          className="mt-3 w-full py-2 px-4 rounded-lg bg-cyan-50 text-cyan-800 text-xs border border-cyan-200 hover:bg-cyan-100 transition-all font-semibold cursor-pointer"
+          className="mt-3 w-full py-2 px-4 rounded-xl bg-teal-50 text-teal-800 text-xs border border-teal-200/80 hover:bg-teal-100 transition-all font-bold cursor-pointer"
         >
           Chỉnh sửa hồ sơ
         </button>
@@ -68,91 +68,106 @@ export default function Sidebar({ activePage }) {
         {/* Dashboard */}
         <button 
           onClick={() => navigate(isHelper ? '/helper-dashboard' : '/traveler')}
-          className={`w-full px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer ${
+          className={`w-full px-4 py-2.5 rounded-xl flex items-center justify-between transition-all text-left cursor-pointer ${
             currentActive === 'dashboard'
-              ? 'bg-cyan-50 text-cyan-800 font-semibold border border-cyan-100'
-              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              ? 'bg-teal-50 text-teal-800 font-bold border border-teal-200/80 shadow-2xs'
+              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
           }`}
         >
-          <span 
-            className={`material-symbols-outlined text-[20px] ${currentActive === 'dashboard' ? 'text-cyan-700' : 'text-slate-400'}`}
-            style={{ fontVariationSettings: currentActive === 'dashboard' ? "'FILL' 1" : "'FILL' 0" }}
-          >
-            dashboard
-          </span>
-          <span className="text-sm font-medium">Bảng điều khiển</span>
+          <div className="flex items-center gap-3">
+            <span 
+              className={`material-symbols-outlined text-[20px] ${currentActive === 'dashboard' ? 'text-teal-700' : 'text-slate-400'}`}
+              style={{ fontVariationSettings: currentActive === 'dashboard' ? "'FILL' 1" : "'FILL' 0" }}
+            >
+              dashboard
+            </span>
+            <span className="text-sm">Bảng điều khiển</span>
+          </div>
+          {currentActive === 'dashboard' && <span className="w-1.5 h-1.5 rounded-full bg-teal-600"></span>}
         </button>
 
         {/* Explore Guides */}
         <button 
           onClick={() => navigate('/helpers')}
-          className={`w-full px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer ${
+          className={`w-full px-4 py-2.5 rounded-xl flex items-center justify-between transition-all text-left cursor-pointer ${
             currentActive === 'explore'
-              ? 'bg-cyan-50 text-cyan-800 font-semibold border border-cyan-100'
-              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              ? 'bg-teal-50 text-teal-800 font-bold border border-teal-200/80 shadow-2xs'
+              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
           }`}
         >
-          <span 
-            className={`material-symbols-outlined text-[20px] ${currentActive === 'explore' ? 'text-cyan-700' : 'text-slate-400'}`}
-            style={{ fontVariationSettings: currentActive === 'explore' ? "'FILL' 1" : "'FILL' 0" }}
-          >
-            explore
-          </span>
-          <span className="text-sm font-medium">Khám phá Helper</span>
+          <div className="flex items-center gap-3">
+            <span 
+              className={`material-symbols-outlined text-[20px] ${currentActive === 'explore' ? 'text-teal-700' : 'text-slate-400'}`}
+              style={{ fontVariationSettings: currentActive === 'explore' ? "'FILL' 1" : "'FILL' 0" }}
+            >
+              explore
+            </span>
+            <span className="text-sm">Khám phá Helper</span>
+          </div>
+          {currentActive === 'explore' && <span className="w-1.5 h-1.5 rounded-full bg-teal-600"></span>}
         </button>
 
         {/* Messages */}
         <button 
           onClick={() => navigate('/chat')}
-          className={`w-full px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer ${
+          className={`w-full px-4 py-2.5 rounded-xl flex items-center justify-between transition-all text-left cursor-pointer ${
             currentActive === 'messages'
-              ? 'bg-cyan-50 text-cyan-800 font-semibold border border-cyan-100'
-              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              ? 'bg-teal-50 text-teal-800 font-bold border border-teal-200/80 shadow-2xs'
+              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
           }`}
         >
-          <span 
-            className={`material-symbols-outlined text-[20px] ${currentActive === 'messages' ? 'text-cyan-700' : 'text-slate-400'}`}
-            style={{ fontVariationSettings: currentActive === 'messages' ? "'FILL' 1" : "'FILL' 0" }}
-          >
-            chat_bubble
-          </span>
-          <span className="text-sm font-medium">Tin nhắn</span>
+          <div className="flex items-center gap-3">
+            <span 
+              className={`material-symbols-outlined text-[20px] ${currentActive === 'messages' ? 'text-teal-700' : 'text-slate-400'}`}
+              style={{ fontVariationSettings: currentActive === 'messages' ? "'FILL' 1" : "'FILL' 0" }}
+            >
+              chat_bubble
+            </span>
+            <span className="text-sm">Tin nhắn</span>
+          </div>
+          {currentActive === 'messages' && <span className="w-1.5 h-1.5 rounded-full bg-teal-600"></span>}
         </button>
 
         {/* Reviews (especially prominent for Helpers) */}
         <button 
           onClick={() => navigate('/reviews')}
-          className={`w-full px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer ${
+          className={`w-full px-4 py-2.5 rounded-xl flex items-center justify-between transition-all text-left cursor-pointer ${
             currentActive === 'reviews'
-              ? 'bg-cyan-50 text-cyan-800 font-semibold border border-cyan-100'
-              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              ? 'bg-teal-50 text-teal-800 font-bold border border-teal-200/80 shadow-2xs'
+              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
           }`}
         >
-          <span 
-            className={`material-symbols-outlined text-[20px] ${currentActive === 'reviews' ? 'text-cyan-700' : 'text-slate-400'}`}
-            style={{ fontVariationSettings: currentActive === 'reviews' ? "'FILL' 1" : "'FILL' 0" }}
-          >
-            stars
-          </span>
-          <span className="text-sm font-medium">Đánh giá</span>
+          <div className="flex items-center gap-3">
+            <span 
+              className={`material-symbols-outlined text-[20px] ${currentActive === 'reviews' ? 'text-teal-700' : 'text-slate-400'}`}
+              style={{ fontVariationSettings: currentActive === 'reviews' ? "'FILL' 1" : "'FILL' 0" }}
+            >
+              stars
+            </span>
+            <span className="text-sm">Đánh giá</span>
+          </div>
+          {currentActive === 'reviews' && <span className="w-1.5 h-1.5 rounded-full bg-teal-600"></span>}
         </button>
 
         {/* Profile */}
         <button 
           onClick={() => navigate('/profile')}
-          className={`w-full px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer ${
+          className={`w-full px-4 py-2.5 rounded-xl flex items-center justify-between transition-all text-left cursor-pointer ${
             currentActive === 'profile'
-              ? 'bg-cyan-50 text-cyan-800 font-semibold border border-cyan-100'
-              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              ? 'bg-teal-50 text-teal-800 font-bold border border-teal-200/80 shadow-2xs'
+              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
           }`}
         >
-          <span 
-            className={`material-symbols-outlined text-[20px] ${currentActive === 'profile' ? 'text-cyan-700' : 'text-slate-400'}`}
-            style={{ fontVariationSettings: currentActive === 'profile' ? "'FILL' 1" : "'FILL' 0" }}
-          >
-            person
-          </span>
-          <span className="text-sm font-medium">Hồ sơ cá nhân</span>
+          <div className="flex items-center gap-3">
+            <span 
+              className={`material-symbols-outlined text-[20px] ${currentActive === 'profile' ? 'text-teal-700' : 'text-slate-400'}`}
+              style={{ fontVariationSettings: currentActive === 'profile' ? "'FILL' 1" : "'FILL' 0" }}
+            >
+              person
+            </span>
+            <span className="text-sm">Hồ sơ cá nhân</span>
+          </div>
+          {currentActive === 'profile' && <span className="w-1.5 h-1.5 rounded-full bg-teal-600"></span>}
         </button>
       </nav>
 

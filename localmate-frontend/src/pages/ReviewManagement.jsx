@@ -139,7 +139,7 @@ export default function ReviewManagement() {
     });
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC] text-slate-800 selection:bg-cyan-700 selection:text-white">
+    <div className="flex min-h-screen bg-slate-50 text-slate-800 selection:bg-teal-700 selection:text-white">
       
       {/* 1. Shared Left Navigation Sidebar */}
       <Sidebar activePage="reviews" />
@@ -150,7 +150,7 @@ export default function ReviewManagement() {
         {/* Toast Feedback */}
         {toastMessage && (
           <div className="fixed top-5 right-5 z-50 animate-in slide-in-from-top-3 duration-300">
-            <div className="px-4 py-3 rounded-xl shadow-xl border bg-teal-50 border-teal-200 text-teal-800 flex items-center gap-2.5 text-xs font-semibold">
+            <div className="px-4 py-3 rounded-xl shadow-lg border bg-teal-50 border-teal-200 text-teal-800 flex items-center gap-2.5 text-xs font-semibold">
               <span className="material-symbols-outlined text-base">check_circle</span>
               <span>{toastMessage}</span>
             </div>
@@ -160,16 +160,16 @@ export default function ReviewManagement() {
         {/* Top Header & Breadcrumb */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
               <span>Cổng Helper</span>
               <span>›</span>
-              <span className="text-teal-600 font-bold">Đánh giá &amp; Nhận xét</span>
+              <span className="text-teal-700 font-bold">Đánh giá &amp; Nhận xét</span>
             </div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+              <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
                 Quản lý Đánh giá
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-teal-100 text-teal-800 tracking-wider">
+              <span className="badge-info font-black">
                 ĐÁNH GIÁ CAO
               </span>
             </div>
@@ -181,14 +181,14 @@ export default function ReviewManagement() {
           <div className="flex items-center gap-2.5 shrink-0">
             <button
               onClick={() => navigate('/profile')}
-              className="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+              className="btn-outline text-xs !py-2 !px-4"
             >
               <span className="material-symbols-outlined text-base">visibility</span>
               <span>Xem hồ sơ công khai</span>
             </button>
             <button
               onClick={() => navigate(currentUser?.roles?.includes('ROLE_HELPER') ? '/helper-dashboard' : '/traveler')}
-              className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:shadow transition-all cursor-pointer"
+              className="btn-primary text-xs !py-2 !px-4"
             >
               <span className="material-symbols-outlined text-base">dashboard</span>
               <span>Về Bảng điều khiển</span>
@@ -200,11 +200,11 @@ export default function ReviewManagement() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Card 1: Score & Satisfaction */}
-          <div className="lg:col-span-4 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex flex-col items-center justify-center text-center">
+          <div className="lg:col-span-4 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col items-center justify-center text-center">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
               ĐIỂM ĐÁNH GIÁ TRUNG BÌNH
             </span>
-            <div className="text-5xl font-extrabold text-slate-900 tracking-tight leading-none mb-3">
+            <div className="text-5xl font-black text-slate-900 tracking-tight leading-none mb-3">
               {avgRating}
             </div>
             
@@ -221,29 +221,29 @@ export default function ReviewManagement() {
             </div>
 
             <p className="text-xs text-slate-500 font-medium">
-              Dựa trên <strong className="text-slate-800">{totalReviews} lượt đánh giá thực tế</strong>
+              Dựa trên <strong className="text-slate-800 font-bold">{totalReviews} lượt đánh giá thực tế</strong>
             </p>
 
             <div className="mt-5 pt-5 border-t border-slate-100 w-full flex items-center justify-around">
               <div>
-                <p className="text-lg font-bold text-teal-600">
+                <p className="text-lg font-bold text-teal-700">
                   {totalReviews > 0 ? `${Math.round((reviews.filter(r => (r.rating || 5) >= 4).length / totalReviews) * 100)}%` : '100%'}
                 </p>
-                <p className="text-[10px] font-semibold text-slate-400 uppercase">HÀI LÒNG</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase">HÀI LÒNG</p>
               </div>
               <div className="w-px h-8 bg-slate-200"></div>
               <div>
                 <p className="text-lg font-bold text-emerald-600">100%</p>
-                <p className="text-[10px] font-semibold text-slate-400 uppercase">ĐÃ XÁC MINH</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase">ĐÃ XÁC MINH</p>
               </div>
             </div>
           </div>
 
           {/* Card 2: Star Breakdown Progress Bars */}
-          <div className="lg:col-span-8 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex flex-col justify-between">
+          <div className="lg:col-span-8 p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <span className="material-symbols-outlined text-teal-600 text-lg">bar_chart</span>
+                <span className="material-symbols-outlined text-teal-700 text-lg">bar_chart</span>
                 <span>Phân bổ đánh giá theo sao</span>
               </h3>
               <span className="text-xs font-semibold text-slate-400">Thống kê thời gian thực</span>
@@ -259,7 +259,7 @@ export default function ReviewManagement() {
                   <div className="flex-1 h-3 rounded-full bg-slate-100 overflow-hidden">
                     <div 
                       className={`h-full rounded-full transition-all duration-500 ${
-                        star === 5 ? 'bg-teal-500' : star === 4 ? 'bg-teal-400' : star === 3 ? 'bg-amber-400' : 'bg-rose-400'
+                        star === 5 ? 'bg-teal-600' : star === 4 ? 'bg-teal-500' : star === 3 ? 'bg-amber-400' : 'bg-rose-400'
                       }`}
                       style={{ width: `${pct}%` }}
                     ></div>
@@ -273,19 +273,19 @@ export default function ReviewManagement() {
 
             <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
               <span>Du khách thường khen ngợi sự am hiểu địa phương, thân thiện và linh hoạt trong tour.</span>
-              <span className="font-semibold text-teal-600 cursor-pointer hover:underline" onClick={() => setFilterRating('all')}>Xem tất cả</span>
+              <span className="font-bold text-teal-700 cursor-pointer hover:underline" onClick={() => setFilterRating('all')}>Xem tất cả</span>
             </div>
           </div>
         </div>
 
         {/* Filter & Sort Controls */}
-        <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setFilterRating('all')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 filterRating === 'all'
-                  ? 'bg-teal-600 text-white shadow-xs'
+                  ? 'bg-teal-700 text-white shadow-sm'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
               }`}
             >
@@ -293,9 +293,9 @@ export default function ReviewManagement() {
             </button>
             <button
               onClick={() => setFilterRating('5')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 filterRating === '5'
-                  ? 'bg-teal-600 text-white shadow-xs'
+                  ? 'bg-teal-700 text-white shadow-sm'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
               }`}
             >
@@ -303,9 +303,9 @@ export default function ReviewManagement() {
             </button>
             <button
               onClick={() => setFilterRating('no_reply')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 filterRating === 'no_reply'
-                  ? 'bg-amber-500 text-white shadow-xs'
+                  ? 'bg-amber-500 text-white shadow-sm'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
               }`}
             >
@@ -318,7 +318,7 @@ export default function ReviewManagement() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold outline-none cursor-pointer focus:border-teal-500"
+              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold outline-none cursor-pointer focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
             >
               <option value="recent">Mới nhất</option>
               <option value="highest">Đánh giá cao nhất</option>
@@ -361,7 +361,7 @@ export default function ReviewManagement() {
               return (
                 <div 
                   key={revId}
-                  className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-xs transition-shadow space-y-4"
+                  className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow transition-shadow space-y-4"
                 >
                   {/* Review Header */}
                   <div className="flex items-start justify-between gap-4">
@@ -374,7 +374,7 @@ export default function ReviewManagement() {
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="text-sm font-bold text-slate-900">{authorName}</h4>
-                          <span className="px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                          <span className="badge-success text-[10px] !py-0.5">
                             Tour đã xác thực
                           </span>
                         </div>
@@ -398,15 +398,15 @@ export default function ReviewManagement() {
                   </div>
 
                   {/* Review Text */}
-                  <p className="text-sm text-slate-700 leading-relaxed font-normal bg-slate-50/50 p-3.5 rounded-xl border border-slate-100">
+                  <p className="text-sm text-slate-700 leading-relaxed font-normal bg-slate-50/70 p-4 rounded-xl border border-slate-100">
                     "{rev.comment || rev.text}"
                   </p>
 
                   {/* Reply Section */}
                   <div className="pt-2">
                     {isReplying ? (
-                      <div className="space-y-3 bg-cyan-50/50 p-4 rounded-xl border border-cyan-100">
-                        <label className="text-xs font-bold text-cyan-900 flex items-center gap-1.5">
+                      <div className="space-y-3 bg-teal-50/50 p-4 rounded-xl border border-teal-100">
+                        <label className="text-xs font-bold text-teal-900 flex items-center gap-1.5">
                           <span className="material-symbols-outlined text-sm">reply</span>
                           <span>Phản hồi của bạn cho {authorName}:</span>
                         </label>
@@ -415,7 +415,7 @@ export default function ReviewManagement() {
                           onChange={(e) => setReplyText(e.target.value)}
                           placeholder="Nhập lời cảm ơn hoặc giải đáp của bạn..."
                           rows="3"
-                          className="w-full p-3 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                          className="w-full p-3 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
                         />
                         <div className="flex items-center justify-end gap-2">
                           <button
@@ -430,7 +430,7 @@ export default function ReviewManagement() {
                             type="button"
                             onClick={() => handleSaveReply(revId)}
                             disabled={submittingReply}
-                            className="px-4 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1"
+                            className="btn-primary text-xs !py-1.5 !px-4"
                           >
                             <span className="material-symbols-outlined text-sm">send</span>
                             <span>{submittingReply ? 'Đang gửi...' : 'Gửi phản hồi'}</span>
@@ -438,7 +438,7 @@ export default function ReviewManagement() {
                         </div>
                       </div>
                     ) : rev.response ? (
-                      <div className="bg-slate-50 p-4 rounded-xl border-l-4 border-teal-500 space-y-1">
+                      <div className="bg-slate-50 p-4 rounded-xl border-l-4 border-teal-600 space-y-1">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-teal-800 flex items-center gap-1.5">
                             <span className="material-symbols-outlined text-sm">forum</span>
@@ -447,7 +447,7 @@ export default function ReviewManagement() {
                           <button
                             type="button"
                             onClick={() => handleStartEdit(rev)}
-                            className="text-slate-400 hover:text-teal-600 text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                            className="text-slate-400 hover:text-teal-700 text-xs font-semibold flex items-center gap-1 cursor-pointer"
                           >
                             <span className="material-symbols-outlined text-sm">edit</span>
                             <span>Sửa</span>
@@ -461,7 +461,7 @@ export default function ReviewManagement() {
                       <button
                         type="button"
                         onClick={() => handleStartEdit(rev)}
-                        className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer py-1"
+                        className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1 cursor-pointer py-1"
                       >
                         <span className="material-symbols-outlined text-sm">reply</span>
                         <span>Phản hồi đánh giá này</span>

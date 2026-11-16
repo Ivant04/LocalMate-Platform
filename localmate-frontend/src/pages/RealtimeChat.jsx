@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getConversationId } from '../utils/chatUtils';
 import API_BASE_URL from '../config/api';
 import { formatVND } from '../utils/formatCurrency';
+import Sidebar from '../components/Sidebar';
 
 // Format Time Helper
 const formatTime = (isoString) => {
@@ -574,95 +575,20 @@ export default function RealtimeChat() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-white text-slate-900 selection:bg-[#005A71] selection:text-white">
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-slate-50 text-slate-900 selection:bg-teal-700 selection:text-white">
       
       {/* 1. Left Navigation Sidebar */}
-      <aside className="hidden lg:flex flex-col h-full py-6 overflow-y-auto bg-white border-r border-slate-200 w-64 shadow-sm shrink-0">
-        
-        {/* User Card Profile Section */}
-        <div className="px-4 mb-6">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-            <img 
-              alt={displayName} 
-              className="w-10 h-10 rounded-full object-cover ring-2 ring-cyan-600/20" 
-              src={displayAvatar} 
-            />
-            <div className="min-w-0">
-              <p className="font-label-bold text-sm text-slate-900 truncate font-semibold">{displayName}</p>
-              <p className="font-body-sm text-xs text-slate-500 truncate">{roleSubtitle}</p>
-            </div>
-          </div>
-          <button 
-            onClick={() => navigate('/profile')}
-            className="mt-3 w-full py-2 px-4 rounded-lg bg-cyan-50 text-cyan-800 font-label-bold text-xs border border-cyan-200 hover:bg-cyan-100 transition-all font-semibold cursor-pointer"
-          >
-            Chỉnh sửa hồ sơ
-          </button>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="flex-1 space-y-1 px-2">
-          <button 
-            onClick={() => navigate(isHelper ? '/helper-dashboard' : '/traveler')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">dashboard</span>
-            <span className="font-label-bold text-sm">Bảng điều khiển</span>
-          </button>
-
-          <button 
-            onClick={() => navigate('/search')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">explore</span>
-            <span className="font-label-bold text-sm">Khám phá Helper</span>
-          </button>
-
-          {/* Active item: Messages */}
-          <button 
-            className="w-full bg-cyan-50 text-cyan-800 font-semibold rounded-xl px-4 py-2.5 flex items-center gap-3 border border-cyan-100 text-left cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-cyan-700 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>chat_bubble</span>
-            <span className="font-label-bold text-sm">Tin nhắn</span>
-          </button>
-
-          <button 
-            onClick={() => navigate('/profile')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2.5 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">person</span>
-            <span className="font-label-bold text-sm">Hồ sơ cá nhân</span>
-          </button>
-        </nav>
-
-        {/* Settings & Help at Bottom */}
-        <div className="mt-auto border-t border-slate-200 pt-4 px-2">
-          <button 
-            onClick={() => navigate('/profile')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">settings</span>
-            <span className="font-label-bold text-sm">Cài đặt</span>
-          </button>
-          <button 
-            onClick={() => navigate('/')}
-            className="w-full text-slate-600 hover:bg-slate-50 hover:text-slate-900 px-4 py-2 rounded-xl flex items-center gap-3 transition-all text-left cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-slate-400 text-[20px]">help_outline</span>
-            <span className="font-label-bold text-sm">Trợ giúp</span>
-          </button>
-        </div>
-      </aside>
+      <Sidebar activePage="messages" />
 
       {/* 2. Middle Column: Conversations List */}
-      <section className="w-full md:w-80 lg:w-96 flex flex-col border-r border-slate-200 shrink-0 bg-white">
+      <section className="w-full md:w-80 lg:w-96 flex flex-col border-r border-slate-200/80 shrink-0 bg-white">
         
         {/* Header & Search */}
-        <div className="p-6 pb-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Tin nhắn</h2>
+        <div className="p-5 pb-4 border-b border-slate-100">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xl font-black text-slate-900 tracking-tight">Tin nhắn</h2>
             {conversations.length > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-cyan-100 text-cyan-800">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200/80">
                 {conversations.length}
               </span>
             )}
@@ -675,7 +601,7 @@ export default function RealtimeChat() {
               type="text" 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-slate-100/90 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 border-none outline-none focus:ring-2 focus:ring-[#005A71]/20 transition-all" 
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200/90 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 outline-none transition-all" 
               placeholder="Tìm kiếm cuộc trò chuyện..." 
             />
           </div>
@@ -685,12 +611,12 @@ export default function RealtimeChat() {
         <div className="flex-grow overflow-y-auto divide-y divide-slate-100">
           {loadingConversations ? (
             <div className="p-8 text-center text-slate-400 text-xs">
-              <span className="material-symbols-outlined text-[28px] animate-spin text-primary mb-2">progress_activity</span>
+              <span className="material-symbols-outlined text-[28px] animate-spin text-teal-700 mb-2">progress_activity</span>
               <p>Đang tải cuộc trò chuyện...</p>
             </div>
           ) : filteredConvs.length === 0 ? (
             <div className="p-8 text-center flex flex-col items-center justify-center h-full text-slate-400">
-              <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+              <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-200/60 flex items-center justify-center text-teal-700 mb-3">
                 <span className="material-symbols-outlined text-[24px]">forum</span>
               </div>
               <p className="font-bold text-slate-800 text-sm mb-1">Chưa có cuộc trò chuyện nào</p>
@@ -698,8 +624,8 @@ export default function RealtimeChat() {
                 Hãy đặt lịch với một Local Helper để bắt đầu trao đổi và lên lịch trình nhé.
               </p>
               <button
-                onClick={() => navigate('/search')}
-                className="px-4 py-2 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-primary-dark transition-all shadow-sm cursor-pointer"
+                onClick={() => navigate('/helpers')}
+                className="btn-primary text-xs !py-2 !px-4"
               >
                 Tìm Local Helper
               </button>
@@ -716,16 +642,16 @@ export default function RealtimeChat() {
                 <div 
                   key={conv.id}
                   onClick={() => setActiveId(conv.id)}
-                  className={`p-4 px-6 flex items-center gap-3.5 cursor-pointer transition-all ${
+                  className={`p-4 px-5 flex items-center gap-3.5 cursor-pointer transition-all ${
                     isActive 
-                      ? 'bg-slate-50 border-l-4 border-[#005A71]' 
-                      : 'hover:bg-slate-50/70 border-l-4 border-transparent'
+                      ? 'bg-teal-50/70 border-l-4 border-teal-600' 
+                      : 'hover:bg-slate-50 border-l-4 border-transparent'
                   }`}
                 >
                   <div className="relative flex-shrink-0">
                     <img 
                       alt={conv.name} 
-                      className="w-12 h-12 rounded-full object-cover shadow-sm ring-1 ring-slate-200" 
+                      className="w-11 h-11 rounded-full object-cover shadow-2xs ring-2 ring-slate-100" 
                       src={conv.avatar} 
                     />
                     {conv.online && (
@@ -739,21 +665,21 @@ export default function RealtimeChat() {
                       <span className="text-[11px] text-slate-400 whitespace-nowrap ml-2">{conv.time}</span>
                     </div>
                     <div className="flex items-center gap-2 mb-0.5">
-                      <p className="text-[11px] font-medium text-cyan-800 truncate">
+                      <p className="text-[11px] font-semibold text-teal-800 truncate">
                         {conv.roleTag}
                       </p>
                       {conv.bookingStatus && (
                         <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
-                          conv.bookingStatus === 'ACCEPTED' ? 'bg-emerald-100 text-emerald-800' :
-                          conv.bookingStatus === 'DECLINED' ? 'bg-rose-100 text-rose-800' :
-                          conv.bookingStatus === 'EXPIRED' ? 'bg-slate-100 text-slate-600' :
-                          'bg-amber-100 text-amber-800'
+                          conv.bookingStatus === 'ACCEPTED' ? 'badge-success' :
+                          conv.bookingStatus === 'DECLINED' ? 'badge-danger' :
+                          conv.bookingStatus === 'EXPIRED' ? 'badge-neutral' :
+                          'badge-warning'
                         }`}>
                           {statusLabel}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-600 truncate">
+                    <p className="text-xs text-slate-500 truncate">
                       {conv.lastMsg}
                     </p>
                   </div>
@@ -765,19 +691,19 @@ export default function RealtimeChat() {
       </section>
 
       {/* 3. Right Column: Active Chat Canvas */}
-      <section className="hidden md:flex flex-col flex-grow bg-[#F8FAFC]">
+      <section className="hidden md:flex flex-col flex-grow bg-slate-50/50">
         {!activeConv ? (
-          <div className="flex-grow flex flex-col items-center justify-center p-8 text-center text-slate-400 bg-slate-50/50">
-            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4 text-slate-400 shadow-sm">
-              <span className="material-symbols-outlined text-[32px] text-[#005A71]">chat</span>
+          <div className="flex-grow flex flex-col items-center justify-center p-8 text-center text-slate-400 bg-slate-50/30">
+            <div className="w-16 h-16 rounded-2xl bg-teal-50 border border-teal-200/60 flex items-center justify-center mb-4 text-teal-700 shadow-2xs">
+              <span className="material-symbols-outlined text-[32px]">chat</span>
             </div>
-            <h3 className="font-bold text-slate-800 text-base mb-1">Chưa chọn cuộc trò chuyện</h3>
-            <p className="text-xs text-slate-500 max-w-sm mb-6">
+            <h3 className="font-bold text-slate-900 text-base mb-1">Chưa chọn cuộc trò chuyện</h3>
+            <p className="text-xs text-slate-500 max-w-sm mb-6 leading-relaxed">
               Khi bạn gửi yêu cầu đặt lịch với Local Helper, cuộc trò chuyện sẽ tự động xuất hiện tại đây để bạn tiện trao đổi.
             </p>
             <button
-              onClick={() => navigate('/search')}
-              className="px-5 py-2.5 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-primary-dark transition-all shadow-sm cursor-pointer"
+              onClick={() => navigate('/helpers')}
+              className="btn-primary text-xs !py-2.5 !px-5"
             >
               Khám phá Local Helper
             </button>
@@ -785,12 +711,12 @@ export default function RealtimeChat() {
         ) : (
           <>
             {/* Chat Header */}
-            <header className="h-16 border-b border-slate-200 flex items-center justify-between px-6 shrink-0 bg-white shadow-sm z-10">
+            <header className="h-16 border-b border-slate-200/80 flex items-center justify-between px-6 shrink-0 bg-white shadow-2xs z-10">
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <img 
                     alt={activeConv.name} 
-                    className="w-10 h-10 rounded-full object-cover shadow-sm ring-1 ring-slate-200" 
+                    className="w-10 h-10 rounded-full object-cover shadow-2xs ring-2 ring-slate-100" 
                     src={activeConv.avatar} 
                   />
                   {activeConv.online && (
@@ -804,39 +730,39 @@ export default function RealtimeChat() {
                   </h2>
                   <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                    ĐANG HOẠT ĐỘNG
+                    Đang hoạt động
                   </p>
                 </div>
               </div>
               
               {/* Action Icons */}
-              <div className="flex items-center gap-2 text-slate-700">
+              <div className="flex items-center gap-1 text-slate-600">
                 <button 
                   onClick={() => setCallStatus('video')}
                   title="Gọi Video"
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
+                  className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[22px]">videocam</span>
+                  <span className="material-symbols-outlined text-[20px]">videocam</span>
                 </button>
                 <button 
                   onClick={() => setCallStatus('voice')}
                   title="Gọi thoại"
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
+                  className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[20px]">call</span>
+                  <span className="material-symbols-outlined text-[19px]">call</span>
                 </button>
                 <button 
                   title="Tùy chọn khác"
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
+                  className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-600 hover:text-slate-900 cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[22px]">more_vert</span>
+                  <span className="material-symbols-outlined text-[20px]">more_vert</span>
                 </button>
               </div>
             </header>
 
             {/* Video / Call Modal Notification */}
             {callStatus && (
-              <div className="bg-[#005A71] text-white px-6 py-3 flex items-center justify-between shadow-md">
+              <div className="bg-teal-800 text-white px-6 py-3 flex items-center justify-between shadow-md">
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined animate-bounce">
                     {callStatus === 'video' ? 'videocam' : 'call'}
@@ -847,7 +773,7 @@ export default function RealtimeChat() {
                 </div>
                 <button 
                   onClick={() => setCallStatus(null)}
-                  className="px-3 py-1 bg-red-500 hover:bg-red-600 rounded-lg text-xs font-semibold cursor-pointer"
+                  className="px-3 py-1 bg-rose-500 hover:bg-rose-600 rounded-lg text-xs font-semibold cursor-pointer"
                 >
                   Kết thúc cuộc gọi
                 </button>
@@ -855,16 +781,16 @@ export default function RealtimeChat() {
             )}
 
             {/* Messages Scrollable Canvas */}
-            <div className="flex-grow overflow-y-auto p-6 md:p-8 space-y-5">
+            <div className="flex-grow overflow-y-auto p-6 md:p-8 space-y-4">
               {/* Linked Booking Context Banner */}
               {activeConv.tourName && (
-                <div className="p-4 bg-cyan-50/90 border border-cyan-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-sm mb-4">
+                <div className="p-4 bg-teal-50/80 border border-teal-200/80 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs mb-4">
                   <div className="flex items-center gap-2.5">
-                    <span className="material-symbols-outlined text-cyan-700 text-[22px]">confirmation_number</span>
+                    <span className="material-symbols-outlined text-teal-700 text-[22px]">confirmation_number</span>
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-slate-900">Lịch đặt liên quan: </span>
-                        <span className="text-cyan-900 font-semibold">{activeConv.tourName}</span>
+                        <span className="text-teal-900 font-bold">{activeConv.tourName}</span>
                       </div>
                       <span className="text-slate-500">
                         {activeConv.tourDate} {activeConv.tourPrice ? `• ${activeConv.tourPrice}` : ''}
@@ -880,7 +806,7 @@ export default function RealtimeChat() {
                         <button
                           onClick={() => handleAcceptBookingInChat(activeConv.bookingId, activeConv.name, activeConv.tourName)}
                           disabled={acceptingChatBooking}
-                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-xs shadow-2xs flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
                         >
                           {acceptingChatBooking ? (
                             <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -899,9 +825,9 @@ export default function RealtimeChat() {
                     )}
 
                     <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider ${
-                      activeConv.bookingStatus === 'ACCEPTED' || activeConv.bookingStatus === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' :
-                      activeConv.bookingStatus === 'DECLINED' ? 'bg-rose-100 text-rose-800' :
-                      'bg-amber-100 text-amber-800'
+                      activeConv.bookingStatus === 'ACCEPTED' || activeConv.bookingStatus === 'CONFIRMED' ? 'badge-success' :
+                      activeConv.bookingStatus === 'DECLINED' ? 'badge-danger' :
+                      'badge-warning'
                     }`}>
                       {activeConv.bookingStatus === 'ACCEPTED' ? 'ĐÃ XÁC NHẬN TOUR' : (activeConv.bookingStatus === 'DECLINED' ? 'ĐÃ TỪ CHỐI' : 'CHỜ DUYỆT')}
                     </span>
@@ -911,12 +837,12 @@ export default function RealtimeChat() {
 
               {loadingMessages ? (
                 <div className="flex items-center justify-center h-48">
-                  <span className="material-symbols-outlined animate-spin text-cyan-700 text-3xl">progress_activity</span>
+                  <span className="material-symbols-outlined animate-spin text-teal-700 text-3xl">progress_activity</span>
                 </div>
               ) : messages.length === 0 ? (
-                <div className="p-8 text-center flex flex-col items-center justify-center text-slate-400 bg-white/60 rounded-3xl border border-dashed border-slate-200 my-8">
-                  <span className="material-symbols-outlined text-[36px] text-primary/60 mb-2">waving_hand</span>
-                  <p className="font-bold text-slate-700 text-sm mb-1">Bắt đầu trò chuyện với {activeConv.name}!</p>
+                <div className="p-8 text-center flex flex-col items-center justify-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200 my-8">
+                  <span className="material-symbols-outlined text-[36px] text-teal-600 mb-2">waving_hand</span>
+                  <p className="font-bold text-slate-800 text-sm mb-1">Bắt đầu trò chuyện với {activeConv.name}!</p>
                   <p className="text-xs text-slate-500 max-w-sm mb-4">
                     Gửi lời chào để trao đổi chi tiết điểm hẹn, lịch trình hoặc bất kỳ câu hỏi nào.
                   </p>
@@ -930,7 +856,7 @@ export default function RealtimeChat() {
                         key={pIdx}
                         type="button"
                         onClick={() => setInputMsg(prompt)}
-                        className="px-3.5 py-1.5 rounded-full bg-cyan-50 hover:bg-cyan-100 text-cyan-800 text-xs font-semibold border border-cyan-200 transition-all hover:scale-[1.02] active:scale-95 text-left cursor-pointer shadow-2xs"
+                        className="px-3.5 py-1.5 rounded-full bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-semibold border border-teal-200/80 transition-all hover:scale-[1.02] active:scale-95 text-left cursor-pointer shadow-2xs"
                       >
                         💬 "{prompt}"
                       </button>
@@ -947,21 +873,21 @@ export default function RealtimeChat() {
                   return (
                     <div 
                       key={msg.id || idx} 
-                      className={`flex items-end gap-3 max-w-[85%] sm:max-w-[70%] ${
+                      className={`flex items-end gap-2.5 max-w-[85%] sm:max-w-[70%] ${
                         isMe ? 'ml-auto flex-row-reverse' : ''
                       }`}
                     >
                       <img 
                         alt={bubbleName} 
-                        className="w-8 h-8 rounded-full object-cover mb-5 flex-shrink-0 shadow-sm ring-1 ring-slate-200" 
+                        className="w-8 h-8 rounded-full object-cover mb-4 flex-shrink-0 shadow-2xs ring-1 ring-slate-200" 
                         src={bubbleAvatar} 
                       />
                       
                       <div>
                         {msg.messageType === 'LOCATION' || (msg.latitude && msg.longitude) ? (
-                          <div className="bg-white border border-slate-200/90 rounded-2xl shadow-sm overflow-hidden max-w-sm w-72 sm:w-80">
+                          <div className="bg-white border border-slate-200/90 rounded-2xl shadow-2xs overflow-hidden max-w-sm w-72 sm:w-80">
                             {/* Card Header */}
-                            <div className="bg-gradient-to-r from-[#005A71] to-[#007A99] text-white px-3.5 py-2.5 flex items-center justify-between">
+                            <div className="bg-gradient-to-r from-teal-700 to-teal-800 text-white px-3.5 py-2.5 flex items-center justify-between">
                               <div className="flex items-center gap-1.5 font-medium text-xs">
                                 <span className="material-symbols-outlined text-[18px] text-amber-300">location_on</span>
                                 <span>{isMe ? 'Vị trí của tôi' : `Vị trí của ${bubbleName}`}</span>
@@ -982,7 +908,7 @@ export default function RealtimeChat() {
                             {/* Address & Direct Link */}
                             <div className="p-3 bg-white">
                               <div className="flex items-start gap-2 mb-2.5">
-                                <span className="material-symbols-outlined text-red-500 text-[20px] mt-0.5 shrink-0">pin_drop</span>
+                                <span className="material-symbols-outlined text-rose-500 text-[20px] mt-0.5 shrink-0">pin_drop</span>
                                 <div className="min-w-0">
                                   <p className="text-xs font-semibold text-slate-800 line-clamp-2 leading-tight">
                                     {msg.locationName || 'Vị trí hiện tại'}
@@ -997,7 +923,7 @@ export default function RealtimeChat() {
                                 href={`https://www.google.com/maps/search/?api=1&query=${msg.latitude},${msg.longitude}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-slate-100 hover:bg-[#005A71] text-slate-700 hover:text-white rounded-xl text-xs font-medium transition-all shadow-sm group"
+                                className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-slate-50 hover:bg-teal-700 text-slate-700 hover:text-white rounded-xl text-xs font-semibold transition-all border border-slate-200/80 hover:border-teal-700 group cursor-pointer"
                               >
                                 <span>Mở trên Google Maps</span>
                                 <span className="material-symbols-outlined text-[15px] group-hover:translate-x-0.5 transition-transform">open_in_new</span>
@@ -1005,7 +931,7 @@ export default function RealtimeChat() {
                             </div>
                           </div>
                         ) : msg.imgAttachment ? (
-                          <div className="bg-white border border-slate-200/90 rounded-2xl shadow-sm overflow-hidden max-w-md">
+                          <div className="bg-white border border-slate-200/90 rounded-2xl shadow-2xs overflow-hidden max-w-md">
                             <img 
                               alt="Tệp đính kèm" 
                               className="w-full h-56 object-cover" 
@@ -1018,16 +944,16 @@ export default function RealtimeChat() {
                             )}
                           </div>
                         ) : (
-                          <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                          <div className={`p-3.5 px-4 rounded-2xl text-sm leading-relaxed shadow-2xs ${
                             isMe 
-                              ? 'bg-[#005A71] text-white rounded-tr-sm' 
-                              : 'bg-white text-slate-800 border border-slate-200/90 rounded-tl-sm'
+                              ? 'bg-teal-700 text-white rounded-tr-xs font-normal' 
+                              : 'bg-white text-slate-800 border border-slate-200/90 rounded-tl-xs'
                           }`}>
                             <p className="whitespace-pre-wrap">{msg.content || msg.text}</p>
                           </div>
                         )}
 
-                        <span className={`text-[11px] text-slate-400 mt-1 block ${
+                        <span className={`text-[10px] text-slate-400 mt-1 block ${
                           isMe ? 'text-right mr-1' : 'ml-1'
                         }`}>
                           {formatTime(msg.createdAt || msg.time)}
@@ -1041,12 +967,12 @@ export default function RealtimeChat() {
               {/* Image Upload Preview */}
               {selectedImage && (
                 <div className="flex flex-row-reverse items-end gap-3 ml-auto max-w-[70%]">
-                  <div className="p-2 bg-[#005A71]/10 rounded-2xl border border-[#005A71]/30 relative">
+                  <div className="p-2 bg-teal-50 rounded-2xl border border-teal-200/80 relative">
                     <img alt="Xem trước ảnh" src={selectedImage} className="w-48 h-32 object-cover rounded-xl" />
                     <button 
                       type="button" 
                       onClick={() => setSelectedImage(null)}
-                      className="absolute -top-2 -left-2 bg-red-500 text-white rounded-full p-1 shadow hover:bg-red-600 transition-colors cursor-pointer"
+                      className="absolute -top-2 -left-2 bg-rose-500 text-white rounded-full p-1 shadow hover:bg-rose-600 transition-colors cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-[16px]">close</span>
                     </button>
@@ -1059,7 +985,7 @@ export default function RealtimeChat() {
 
             {/* Polite Location Error Alert Banner */}
             {locationError && (
-              <div className="mx-6 mb-2 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-800 shadow-sm shrink-0">
+              <div className="mx-6 mb-2 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-800 shadow-2xs shrink-0">
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[18px] text-amber-600 shrink-0">warning</span>
                   <span>{locationError}</span>
@@ -1077,7 +1003,7 @@ export default function RealtimeChat() {
             {/* Bottom Input Bar */}
             <form 
               onSubmit={handleSend} 
-              className="p-4 px-6 border-t border-slate-200 flex items-center gap-3 bg-white shrink-0"
+              className="p-3.5 px-6 border-t border-slate-200/80 flex items-center gap-2.5 bg-white shrink-0"
             >
               <input 
                 type="file" 
@@ -1091,9 +1017,9 @@ export default function RealtimeChat() {
                 type="button" 
                 onClick={() => fileInputRef.current?.click()}
                 title="Đính kèm ảnh"
-                className="p-2.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+                className="p-2.5 text-slate-500 hover:text-teal-700 hover:bg-teal-50 rounded-xl transition-colors cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[24px]">attach_file</span>
+                <span className="material-symbols-outlined text-[22px]">attach_file</span>
               </button>
 
               {/* Share Location Button */}
@@ -1105,13 +1031,13 @@ export default function RealtimeChat() {
                 className={`p-2.5 rounded-xl transition-all cursor-pointer ${
                   sharingLocation 
                     ? 'bg-amber-50 text-amber-600 animate-pulse' 
-                    : 'text-slate-500 hover:text-red-500 hover:bg-red-50'
+                    : 'text-slate-500 hover:text-rose-600 hover:bg-rose-50'
                 }`}
               >
                 {sharingLocation ? (
-                  <span className="material-symbols-outlined text-[24px] animate-spin">progress_activity</span>
+                  <span className="material-symbols-outlined text-[22px] animate-spin">progress_activity</span>
                 ) : (
-                  <span className="material-symbols-outlined text-[24px]">location_on</span>
+                  <span className="material-symbols-outlined text-[22px]">location_on</span>
                 )}
               </button>
               
@@ -1119,14 +1045,14 @@ export default function RealtimeChat() {
                 type="text" 
                 value={inputMsg}
                 onChange={(e) => setInputMsg(e.target.value)}
-                className="flex-grow py-3 px-4 bg-slate-100/90 rounded-xl text-slate-900 placeholder:text-slate-400 text-sm outline-none border-none focus:ring-1 focus:ring-[#005A71]" 
+                className="flex-grow py-2.5 px-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 transition-all" 
                 placeholder="Nhập tin nhắn..." 
               />
               
               <button 
                 type="submit" 
                 disabled={!inputMsg.trim() && !selectedImage}
-                className="p-3 bg-[#005A71] hover:bg-[#004B5E] text-white rounded-xl shadow-sm hover:shadow transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center shrink-0 cursor-pointer"
+                className="p-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl shadow-sm hover:shadow transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center shrink-0 cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[20px]">send</span>
               </button>
